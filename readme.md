@@ -3,3 +3,5 @@ Healthcare professionals in rural areas struggle to keep medical records unified
 
 **Proposed Solution**
 We propose a web-based interoperable digital health records system that enables healthcare professionals to securely create, store, and access patient records through a unified platform.
+
+
