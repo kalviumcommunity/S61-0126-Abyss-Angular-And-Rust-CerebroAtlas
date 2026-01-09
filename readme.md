@@ -343,3 +343,200 @@ This project demonstrates the foundational concepts of building **fast, type-saf
 Understanding routes, handlers, structs, and async workflows enables scalable and maintainable backend systems.
 
 
+---
+
+# **Creating Interactive, Modular Frontends with Angular**
+
+---
+
+## **1. Explanation of Angular Components & Services**
+
+### **Angular Components**
+
+In our project, Angular components are used to divide the UI into **small, reusable, and independent blocks**, making the application easy to scale and maintain.
+
+For the healthcare records system, we design components such as:
+
+* **LoginComponent** – handles doctor authentication UI
+* **DashboardComponent** – displays patient records overview
+* **PatientFormComponent** – used to add or update medical records
+* **PatientListComponent** – displays a list of patients
+
+Each component contains:
+
+* **HTML** for structure
+* **TypeScript** for logic
+* **CSS** for styling
+
+This separation ensures that UI logic remains clean and manageable.
+
+---
+
+### **Angular Services**
+
+Services are used to handle **shared logic and API communication** instead of embedding that logic inside components.
+
+In our project, services are responsible for:
+
+* Communicating with the Rust backend
+* Fetching patient data
+* Sending patient record updates
+* Managing authentication tokens
+
+This approach ensures that:
+
+* Components focus only on UI
+* API logic is centralized
+* Code is reusable and easier to test
+
+---
+
+## **2. Diagram: Angular UI Interaction with Rust Backend**
+
+```
+Angular Component (UI)
+        ↓
+Angular Service (HTTP Client)
+        ↓
+Rust REST API (Actix / Axum)
+        ↓
+Business Logic Layer
+        ↓
+PostgreSQL Database
+        ↓
+JSON Response
+        ↓
+Angular Service
+        ↓
+Angular Component (UI Updates Automatically)
+```
+
+This flow ensures **clear frontend–backend separation** and smooth interoperability.
+
+---
+
+## **3. Simple UI Feature Implemented Using Angular Components**
+
+### **Feature: Add Patient Medical Record**
+
+**Description:**
+A doctor logs in and adds a patient’s medical record through a form.
+
+**Components Involved:**
+
+* `PatientFormComponent`
+* `PatientListComponent`
+
+**UI Flow:**
+
+1. Doctor opens dashboard
+2. Clicks “Add Patient”
+3. Fills patient details
+4. Submits form
+5. UI updates automatically with new patient record
+
+This feature demonstrates:
+
+* Component reuse
+* Event handling
+* Reactive UI updates
+
+---
+
+## **4. Sample Angular Service Calling a Rust API Endpoint**
+
+```
+ts
+@Injectable({ providedIn: 'root' })
+export class PatientService {
+  constructor(private http: HttpClient) {}
+
+  addPatient(patientData: any) {
+    return this.http.post('/api/patients', patientData);
+  }
+
+  getPatients() {
+    return this.http.get('/api/patients');
+  }
+}
+```
+
+**Explanation:**
+
+* The service sends HTTP requests to Rust APIs
+* Components subscribe to responses
+* Rust returns JSON data
+* Angular updates the UI automatically
+
+This design keeps API communication **clean and scalable**.
+
+---
+
+## **5. Routing Structure Used in the UI**
+
+```
+ts
+const routes: Routes = [
+  { path: 'login', component: LoginComponent },
+  { path: 'dashboard', component: DashboardComponent },
+  { path: 'patients', component: PatientListComponent }
+];
+```
+
+**Purpose:**
+
+* Enables multi-page navigation
+* Keeps UI structured
+* Improves user experience for healthcare professionals
+
+---
+
+## **6. How Modular Architecture Supports the Project**
+
+Our Angular application follows a **modular architecture**, where:
+
+* Each feature has its own module
+* Components are grouped logically
+* Services are shared across modules
+
+Example structure:
+
+```
+AppModule
+ ├── AuthModule
+ ├── PatientModule
+ ├── DashboardModule
+ └── SharedModule
+```
+
+This structure ensures:
+
+* Easy feature expansion
+* Clear ownership of code
+* Reduced bugs during scaling
+
+---
+
+## **7. Reflection: Why Modular Architecture Improves Scalability**
+
+Modular architecture improves scalability because:
+
+* Features can be added without breaking existing code
+* Teams can work independently on modules
+* Code becomes easier to test and debug
+* Backend API changes affect only services, not UI components
+
+For our healthcare records system, this is critical because:
+
+* Medical data systems evolve continuously
+* New features like reports or integrations can be added later
+* Privacy and security logic stays centralized
+
+---
+
+## **Conclusion**
+
+By using Angular’s component-driven and service-based architecture, we created a **clean, scalable, and maintainable frontend** that integrates seamlessly with a **Rust backend**. This design directly supports the project goal of building **interoperable and privacy-preserving digital health records**.
+
+---
+
