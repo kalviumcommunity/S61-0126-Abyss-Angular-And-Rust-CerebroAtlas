@@ -540,3 +540,234 @@ By using Angular’s component-driven and service-based architecture, we created
 
 ---
 
+# Sprint #2 – Full-Stack Environment Setup (Angular + Rust)
+
+## Overview
+
+This repository contains the complete environment setup for **Sprint #2**, covering both **Angular frontend** and **Rust backend (Actix or Axum)**. The goal of this setup is to ensure that the full-stack development environment is correctly installed, configured, and verified before starting feature development.
+
+A correct setup at this stage prevents common tooling, dependency, and runtime issues later in the sprint.
+
+---
+
+## Objectives
+
+By completing this setup, the following goals are achieved:
+
+* Run Angular applications locally using Angular CLI
+* Build and run Rust web servers using Actix or Axum
+* Verify installation through successful builds and local servers
+* Push both frontend and backend into a single GitHub repository
+* Create a Pull Request (PR) as proof of environment readiness
+* Record a short demo video showing both applications running
+
+---
+
+## Repository Structure
+
+```
+Cerebro-Atlas/
+│
+├── frontend/        # Angular application
+│
+├── backend/         # Rust backend (Actix or Axum)
+│
+└── README.md        # Environment setup documentation
+```
+
+---
+
+## STEP 1 – Angular CLI Setup
+
+### 1. Install Node.js (LTS)
+
+Download and install Node.js (LTS version):
+
+```
+https://nodejs.org/en
+```
+
+Verify installation:
+
+```
+node -v
+npm -v
+```
+
+---
+
+### 2. Install Angular CLI
+
+Install Angular CLI globally:
+
+```
+npm install -g @angular/cli
+```
+
+Verify installation:
+
+```
+ng version
+```
+
+---
+
+### 3. Create Angular Project
+
+Navigate to the frontend directory and create the project:
+
+```
+ng new frontend
+cd frontend
+ng serve
+```
+
+Expected output:
+
+```
+Compiled successfully
+```
+
+Verify in browser:
+
+```
+http://localhost:4200/
+```
+
+---
+
+## STEP 2 – Rust Toolchain Setup
+
+### 1. Install Rust using rustup
+
+Run the following command:
+
+```
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
+
+Restart the terminal after installation.
+
+---
+
+### 2. Verify Rust Installation
+
+```
+rustc --version
+cargo --version
+```
+
+---
+
+### 3. Add Essential Rust Components
+
+```
+rustup component add clippy
+rustup component add rustfmt
+```
+
+These tools help maintain code quality and formatting.
+
+---
+
+## STEP 3 – Rust Backend Setup (Choose ONE)
+
+Create the backend project:
+
+```
+cargo new backend
+cd backend
+```
+
+---
+
+### Option A – Actix-Web Backend
+
+#### Dependencies (`Cargo.toml`)
+
+```
+actix-web = "4"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+```
+
+#### Starter Server (`src/main.rs`)
+
+```
+use actix_web::{get, App, HttpServer, Responder};
+
+#[get("/")]
+async fn hello() -> impl Responder {
+    "Rust backend is running"
+}
+
+#[tokio::main]
+async fn main() -> std::io::Result<()> {
+    HttpServer::new(|| App::new().service(hello))
+        .bind(("127.0.0.1", 8080))?
+        .run()
+        .await
+}
+```
+
+Run server:
+
+```
+cargo run
+```
+
+Verify in browser:
+
+```
+http://localhost:8080/
+```
+
+---
+
+### Option B – Axum Backend (Axum 0.7+)
+
+#### Dependencies (`Cargo.toml`)
+
+```
+axum = "0.7"
+tokio = { version = "1", features = ["full"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+```
+
+#### Starter Server (`src/main.rs`)
+
+```
+use axum::{routing::get, Router};
+use tokio::net::TcpListener;
+
+async fn hello() -> &'static str {
+    "Rust Axum backend running"
+}
+
+#[tokio::main]
+async fn main() {
+    let app = Router::new().route("/", get(hello));
+
+    let listener = TcpListener::bind("127.0.0.1:8080").await.unwrap();
+    println!("Running on http://127.0.0.1:8080");
+
+    axum::serve(listener, app).await.unwrap();
+}
+```
+
+Run server:
+
+```
+cargo run
+```
+
+Verify in browser:
+
+```
+http://localhost:8080/
+```
+
+
+
+---
