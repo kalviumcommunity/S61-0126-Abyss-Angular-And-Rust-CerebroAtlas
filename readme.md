@@ -770,4 +770,176 @@ http://localhost:8080/
 
 
 
+# Exploring Angular and Rust Project Structures
+
+## 📌 Project Overview
+
+This project demonstrates the **default folder structures of an Angular frontend and a Rust backend (Actix/Axum)**.
+The goal is to understand how both frameworks organize code for **scalable, maintainable, and modular development**, and how they communicate in a real-world full-stack application.
+
+This submission focuses on **project structure exploration**, not full feature implementation.
+
+---
+
+## 🖥️ Angular Frontend Structure
+
+The Angular application was created using:
+
+```
+bash
+ng new frontend
+```
+
+### 📁 Key Directories & Files
+
+```
+src/
+ ├── app/
+ │   ├── app.component.ts
+ │   ├── app.component.html
+ │   ├── app.component.css
+ │   ├── app.module.ts
+ │   ├── components/
+ │   │   └── product/
+ │   │       ├── product.component.ts
+ │   │       ├── product.component.html
+ │   │       └── product.component.css
+ │   └── services/
+ │       └── product.service.ts
+ ├── assets/
+ ├── environments/
+angular.json
+package.json
+```
+
+### 🔍 Explanation of Key Files
+
+* **`src/app/`**
+  Contains all application logic including components, services, and routing.
+
+* **`app.component.*`**
+  Root component of the Angular application. All other components are rendered inside it.
+
+* **`app.module.ts`**
+  The heart of the Angular app. Registers components, services, and imports required modules.
+
+* **`components/`**
+  Contains UI building blocks. Each feature is isolated into its own component folder.
+
+* **`services/`**
+  Handles business logic and API calls to the Rust backend using `HttpClient`.
+
+* **`angular.json`**
+  Controls build configuration and assets.
+
+* **`package.json`**
+  Lists project dependencies like Angular core libraries and RxJS.
+
+---
+
+## 🦀 Rust Backend Structure (Actix/Axum)
+
+The Rust backend was created using:
+
+```bash
+cargo new rust-backend
+```
+
+### 📁 Key Directories & Files
+
+```
+src/
+ ├── main.rs
+ ├── routes/
+ │   └── products.rs
+ ├── handlers/
+ │   └── product_handler.rs
+ ├── models/
+ │   └── product.rs
+ ├── config/
+Cargo.toml
+```
+
+### 🔍 Explanation of Key Files
+
+* **`main.rs`**
+  Entry point of the Rust application. Initializes the server and registers routes.
+
+* **`routes/`**
+  Defines API endpoints and maps them to handlers.
+
+* **`handlers/`**
+  Contains business logic. Processes incoming requests and returns responses.
+
+* **`models/`**
+  Stores request and response structs and database models.
+
+* **`config/`**
+  (Optional) Used for environment variables, database configuration, and app settings.
+
+* **`Cargo.toml`**
+  Rust dependency manager file. Declares libraries like Actix, Serde, and Tokio.
+
+---
+
+## 🔁 How Angular and Rust Communicate
+
+The communication follows a clean request–response flow:
+
+```
+Angular Component
+ → Angular Service
+ → Rust Route
+ → Rust Handler
+ → (Database)
+ → Response
+ → UI Update
+```
+
+* Angular services make HTTP requests
+* Rust routes receive requests
+* Handlers process logic and return responses
+* Angular updates the UI accordingly
+
+---
+
+## 🧪 Case Study: "Create Product" Feature
+
+### 🔹 Angular Files Involved
+
+* `components/product/product.component.ts`
+  Displays the UI form for creating a product.
+
+* `services/product.service.ts`
+  Sends POST request to backend API.
+
+* `app.module.ts`
+  Registers the component and service.
+
+### 🔹 Rust Files Involved
+
+* `routes/products.rs`
+  Defines `/products` endpoint.
+
+* `handlers/product_handler.rs`
+  Contains logic to create a product.
+
+* `models/product.rs`
+  Defines request and response structures.
+
+* `main.rs`
+  Registers the routes and starts the server.
+
+---
+
+## 📸 Screenshots Included
+
+* Angular project file tree
+* Rust project file tree
+* `components/` folder
+* `services/` folder
+* `routes/` folder
+* `models/` folder
+* `Cargo.toml` dependencies
+
 ---
