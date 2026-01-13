@@ -1,0 +1,31 @@
+:host {
+	display: block;
+	min-height: 100vh;
+}
+
+.app-shell {
+	min-height: 100vh;
+}
+
+.app-header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 1rem 1.5rem;
+	color: #e9f0f7;
+	background: transparent;
+}
+
+.brand {
+	font-weight: 800;
+	letter-spacing: 0.08rem;
+}
+
+.subtitle {
+	margin: 0;
+	color: #bcd2e8;
+}
+
+.app-content {
+	min-height: calc(100vh - 64px);
+}

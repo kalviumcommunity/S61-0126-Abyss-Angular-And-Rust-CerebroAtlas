@@ -79,26 +79,24 @@ Accessed only through the Rust backend
 The following diagram represents the complete request lifecycle:
 
 User
-  ↓
+↓
 Angular Component
-  ↓
+↓
 Angular Service
-  ↓
+↓
 HTTPClient
-  ↓
+↓
 Rust API
-  ↓
+↓
 PostgreSQL Database
-  ↓
+↓
 Rust API Response
-  ↓
+↓
 Angular Service
-  ↓
+↓
 Angular Component
-  ↓
+↓
 UI Update
-
-
 
 # Building Type-Safe, Fast APIs Using Rust (Actix)
 
@@ -115,11 +113,11 @@ The goal of this assignment is **conceptual clarity**, not complexity.
 
 Rust is increasingly used for backend systems because it provides:
 
-* **Memory Safety** without garbage collection
-* **High performance** comparable to C/C++
-* **Zero-cost abstractions**
-* **Fearless concurrency** for handling multiple requests safely
-* **Compile-time guarantees** that reduce runtime failures
+- **Memory Safety** without garbage collection
+- **High performance** comparable to C/C++
+- **Zero-cost abstractions**
+- **Fearless concurrency** for handling multiple requests safely
+- **Compile-time guarantees** that reduce runtime failures
 
 Because of these strengths, Rust is widely adopted by companies like Amazon, Cloudflare, Discord, Dropbox, and Figma.
 
@@ -165,12 +163,12 @@ Handlers are asynchronous, allowing the server to handle many users simultaneous
 Rust uses strongly typed structs to validate request and response data.
 
 ``
-`rust
-#[derive(Deserialize)]
+`rust #[derive(Deserialize)]
 struct CreateItem {
-    name: String,
-    quantity: i32,
+name: String,
+quantity: i32,
 }
+
 ```
 
 This ensures:
@@ -194,36 +192,39 @@ Below is a simple POST endpoint implemented using **Actix Web**.
 ### Endpoint Code (`main.rs`)
 
 ```
+
 rust
 use actix_web::{post, web, App, HttpResponse, HttpServer, Responder};
 use serde::Deserialize;
 
 #[derive(Deserialize)]
 struct CreateItem {
-    name: String,
-    quantity: i32,
+name: String,
+quantity: i32,
 }
 
 #[post("/api/items")]
 async fn create_item(item: web::Json<CreateItem>) -> impl Responder {
-    println!("Received item: {} - {}", item.name, item.quantity);
+println!("Received item: {} - {}", item.name, item.quantity);
 
     HttpResponse::Ok().json(format!(
         "Item created: {} with quantity {}",
         item.name, item.quantity
     ))
+
 }
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| {
-        App::new()
-            .service(create_item)
-    })
-    .bind(("127.0.0.1", 8080))?
-    .run()
-    .await
+HttpServer::new(|| {
+App::new()
+.service(create_item)
+})
+.bind(("127.0.0.1", 8080))?
+.run()
+.await
 }
+
 ```
 
 ---
@@ -238,18 +239,22 @@ async fn main() -> std::io::Result<()> {
 Example request:
 
 ```
+
 json
 {
-  "name": "Keyboard",
-  "quantity": 10
+"name": "Keyboard",
+"quantity": 10
 }
+
 ```
 
 Example response:
 
 ```
+
 json
 "Item created: Keyboard with quantity 10"
+
 ```
 
 ---
@@ -261,14 +266,16 @@ In real-world applications, handlers interact with PostgreSQL using libraries li
 Example SQLx query:
 
 ```
+
 rust
 sqlx::query!(
-    "INSERT INTO items (name, quantity) VALUES ($1, $2)",
-    item.name,
-    item.quantity
+"INSERT INTO items (name, quantity) VALUES ($1, $2)",
+item.name,
+item.quantity
 )
 .execute(&pool)
 .await?;
+
 ```
 
 ### Benefits:
@@ -285,19 +292,21 @@ sqlx::query!(
 The architecture follows this sequence:
 
 ```
+
 Angular Component (Form Submit)
-        ↓
+↓
 Angular Service (HTTP POST)
-        ↓
+↓
 Rust Route (/api/items)
-        ↓
+↓
 Rust Handler (Validates Input using Structs)
-        ↓
+↓
 PostgreSQL (Insert Query)
-        ↓
+↓
 JSON Response
-        ↓
+↓
 Angular Updates UI
+
 ```
 ---
 
@@ -394,21 +403,23 @@ This approach ensures that:
 ## **2. Diagram: Angular UI Interaction with Rust Backend**
 
 ```
+
 Angular Component (UI)
-        ↓
+↓
 Angular Service (HTTP Client)
-        ↓
+↓
 Rust REST API (Actix / Axum)
-        ↓
+↓
 Business Logic Layer
-        ↓
+↓
 PostgreSQL Database
-        ↓
+↓
 JSON Response
-        ↓
+↓
 Angular Service
-        ↓
+↓
 Angular Component (UI Updates Automatically)
+
 ```
 
 This flow ensures **clear frontend–backend separation** and smooth interoperability.
@@ -446,19 +457,21 @@ This feature demonstrates:
 ## **4. Sample Angular Service Calling a Rust API Endpoint**
 
 ```
+
 ts
 @Injectable({ providedIn: 'root' })
 export class PatientService {
-  constructor(private http: HttpClient) {}
+constructor(private http: HttpClient) {}
 
-  addPatient(patientData: any) {
-    return this.http.post('/api/patients', patientData);
-  }
-
-  getPatients() {
-    return this.http.get('/api/patients');
-  }
+addPatient(patientData: any) {
+return this.http.post('/api/patients', patientData);
 }
+
+getPatients() {
+return this.http.get('/api/patients');
+}
+}
+
 ```
 
 **Explanation:**
@@ -475,12 +488,14 @@ This design keeps API communication **clean and scalable**.
 ## **5. Routing Structure Used in the UI**
 
 ```
+
 ts
 const routes: Routes = [
-  { path: 'login', component: LoginComponent },
-  { path: 'dashboard', component: DashboardComponent },
-  { path: 'patients', component: PatientListComponent }
+{ path: 'login', component: LoginComponent },
+{ path: 'dashboard', component: DashboardComponent },
+{ path: 'patients', component: PatientListComponent }
 ];
+
 ```
 
 **Purpose:**
@@ -502,11 +517,13 @@ Our Angular application follows a **modular architecture**, where:
 Example structure:
 
 ```
+
 AppModule
- ├── AuthModule
- ├── PatientModule
- ├── DashboardModule
- └── SharedModule
+├── AuthModule
+├── PatientModule
+├── DashboardModule
+└── SharedModule
+
 ```
 
 This structure ensures:
@@ -566,13 +583,15 @@ By completing this setup, the following goals are achieved:
 ## Repository Structure
 
 ```
+
 Cerebro-Atlas/
 │
-├── frontend/        # Angular application
+├── frontend/ # Angular application
 │
-├── backend/         # Rust backend (Actix or Axum)
+├── backend/ # Rust backend (Actix or Axum)
 │
-└── README.md        # Environment setup documentation
+└── README.md # Environment setup documentation
+
 ```
 
 ---
@@ -584,14 +603,18 @@ Cerebro-Atlas/
 Download and install Node.js (LTS version):
 
 ```
+
 https://nodejs.org/en
+
 ```
 
 Verify installation:
 
 ```
+
 node -v
 npm -v
+
 ```
 
 ---
@@ -601,13 +624,17 @@ npm -v
 Install Angular CLI globally:
 
 ```
+
 npm install -g @angular/cli
+
 ```
 
 Verify installation:
 
 ```
+
 ng version
+
 ```
 
 ---
@@ -617,21 +644,27 @@ ng version
 Navigate to the frontend directory and create the project:
 
 ```
+
 ng new frontend
 cd frontend
 ng serve
+
 ```
 
 Expected output:
 
 ```
+
 Compiled successfully
+
 ```
 
 Verify in browser:
 
 ```
+
 http://localhost:4200/
+
 ```
 
 ---
@@ -643,7 +676,9 @@ http://localhost:4200/
 Run the following command:
 
 ```
+
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
 ```
 
 Restart the terminal after installation.
@@ -653,8 +688,10 @@ Restart the terminal after installation.
 ### 2. Verify Rust Installation
 
 ```
+
 rustc --version
 cargo --version
+
 ```
 
 ---
@@ -662,8 +699,10 @@ cargo --version
 ### 3. Add Essential Rust Components
 
 ```
+
 rustup component add clippy
 rustup component add rustfmt
+
 ```
 
 These tools help maintain code quality and formatting.
@@ -675,8 +714,10 @@ These tools help maintain code quality and formatting.
 Create the backend project:
 
 ```
+
 cargo new backend
 cd backend
+
 ```
 
 ---
@@ -686,40 +727,48 @@ cd backend
 #### Dependencies (`Cargo.toml`)
 
 ```
+
 actix-web = "4"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+
 ```
 
 #### Starter Server (`src/main.rs`)
 
 ```
+
 use actix_web::{get, App, HttpServer, Responder};
 
 #[get("/")]
 async fn hello() -> impl Responder {
-    "Rust backend is running"
+"Rust backend is running"
 }
 
 #[tokio::main]
 async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| App::new().service(hello))
-        .bind(("127.0.0.1", 8080))?
-        .run()
-        .await
+HttpServer::new(|| App::new().service(hello))
+.bind(("127.0.0.1", 8080))?
+.run()
+.await
 }
+
 ```
 
 Run server:
 
 ```
+
 cargo run
+
 ```
 
 Verify in browser:
 
 ```
+
 http://localhost:8080/
+
 ```
 
 ---
@@ -729,43 +778,52 @@ http://localhost:8080/
 #### Dependencies (`Cargo.toml`)
 
 ```
+
 axum = "0.7"
 tokio = { version = "1", features = ["full"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+
 ```
 
 #### Starter Server (`src/main.rs`)
 
 ```
+
 use axum::{routing::get, Router};
 use tokio::net::TcpListener;
 
 async fn hello() -> &'static str {
-    "Rust Axum backend running"
+"Rust Axum backend running"
 }
 
 #[tokio::main]
 async fn main() {
-    let app = Router::new().route("/", get(hello));
+let app = Router::new().route("/", get(hello));
 
     let listener = TcpListener::bind("127.0.0.1:8080").await.unwrap();
     println!("Running on http://127.0.0.1:8080");
 
     axum::serve(listener, app).await.unwrap();
+
 }
+
 ```
 
 Run server:
 
 ```
+
 cargo run
+
 ```
 
 Verify in browser:
 
 ```
+
 http://localhost:8080/
+
 ```
 
 
@@ -786,31 +844,35 @@ This submission focuses on **project structure exploration**, not full feature i
 The Angular application was created using:
 
 ```
+
 bash
 ng new frontend
+
 ```
 
 ### 📁 Key Directories & Files
 
 ```
+
 src/
- ├── app/
- │   ├── app.component.ts
- │   ├── app.component.html
- │   ├── app.component.css
- │   ├── app.module.ts
- │   ├── components/
- │   │   └── product/
- │   │       ├── product.component.ts
- │   │       ├── product.component.html
- │   │       └── product.component.css
- │   └── services/
- │       └── product.service.ts
- ├── assets/
- ├── environments/
+├── app/
+│ ├── app.component.ts
+│ ├── app.component.html
+│ ├── app.component.css
+│ ├── app.module.ts
+│ ├── components/
+│ │ └── product/
+│ │ ├── product.component.ts
+│ │ ├── product.component.html
+│ │ └── product.component.css
+│ └── services/
+│ └── product.service.ts
+├── assets/
+├── environments/
 angular.json
 package.json
-```
+
+````
 
 ### 🔍 Explanation of Key Files
 
@@ -843,7 +905,7 @@ The Rust backend was created using:
 
 ```bash
 cargo new rust-backend
-```
+````
 
 ### 📁 Key Directories & Files
 
@@ -862,22 +924,22 @@ Cargo.toml
 
 ### 🔍 Explanation of Key Files
 
-* **`main.rs`**
+- **`main.rs`**
   Entry point of the Rust application. Initializes the server and registers routes.
 
-* **`routes/`**
+- **`routes/`**
   Defines API endpoints and maps them to handlers.
 
-* **`handlers/`**
+- **`handlers/`**
   Contains business logic. Processes incoming requests and returns responses.
 
-* **`models/`**
+- **`models/`**
   Stores request and response structs and database models.
 
-* **`config/`**
+- **`config/`**
   (Optional) Used for environment variables, database configuration, and app settings.
 
-* **`Cargo.toml`**
+- **`Cargo.toml`**
   Rust dependency manager file. Declares libraries like Actix, Serde, and Tokio.
 
 ---
@@ -896,10 +958,10 @@ Angular Component
  → UI Update
 ```
 
-* Angular services make HTTP requests
-* Rust routes receive requests
-* Handlers process logic and return responses
-* Angular updates the UI accordingly
+- Angular services make HTTP requests
+- Rust routes receive requests
+- Handlers process logic and return responses
+- Angular updates the UI accordingly
 
 ---
 
@@ -907,39 +969,107 @@ Angular Component
 
 ### 🔹 Angular Files Involved
 
-* `components/product/product.component.ts`
+- `components/product/product.component.ts`
   Displays the UI form for creating a product.
 
-* `services/product.service.ts`
+- `services/product.service.ts`
   Sends POST request to backend API.
 
-* `app.module.ts`
+- `app.module.ts`
   Registers the component and service.
 
 ### 🔹 Rust Files Involved
 
-* `routes/products.rs`
+- `routes/products.rs`
   Defines `/products` endpoint.
 
-* `handlers/product_handler.rs`
+- `handlers/product_handler.rs`
   Contains logic to create a product.
 
-* `models/product.rs`
+- `models/product.rs`
   Defines request and response structures.
 
-* `main.rs`
+- `main.rs`
   Registers the routes and starts the server.
 
 ---
 
 ## 📸 Screenshots Included
 
-* Angular project file tree
-* Rust project file tree
-* `components/` folder
-* `services/` folder
-* `routes/` folder
-* `models/` folder
-* `Cargo.toml` dependencies
+- Angular project file tree
+- Rust project file tree
+- `components/` folder
+- `services/` folder
+- `routes/` folder
+- `models/` folder
+- `Cargo.toml` dependencies
+
+---
+
+## **Reflection: Typed Staff Login (Cerebro Atlas)**
+
+**Overview**
+
+- Implemented a typed staff login page that accepts staff ID or email plus password, designed to demonstrate TypeScript types, Angular data integrity, and how the frontend can align with Rust contracts.
+- Branded experience and predictable component behavior using Angular standalone components, signals, and reactive forms.
+
+**TypeScript Confidence**
+
+- Typed variables showcased in UI: number, boolean, array, and a structured object (rendered as “Tech stack”, “Topics”, etc.).
+- Defined core interfaces in the Angular service: `StaffCredentials`, `StaffProfile`, `LoginResponse`, `LoginMetadata`, and an internal `AuthPayload` for request shaping.
+- Wrote typed functions and a small class: `AuthService.login()`, `buildPayload()` with explicit return type, and `StaffLoginAudit` constructor for audit sampling.
+
+**Angular Data Integrity**
+
+- Reactive form with validators: `staffIdOrEmail` required, `password` min-length 8 to mirror backend expectation.
+- Signals for predictable state: `feedback` (status/message) and `loginMetadata` (computed), enabling explicit UI states: idle/pending/success/error.
+- Dependency injection with `inject(FormBuilder)` and `inject(AuthService)` prevents “used before initialization” issues and keeps constructors clean.
+- Routing wired to `/login` and a minimal `app.html` shell for Cerebro Atlas branding.
+
+**Rust Alignment (Contracts)**
+
+- The Angular `AuthPayload` mirrors a likely Rust struct, e.g.:
+  ```rust
+  #[derive(Deserialize)]
+  struct AuthPayload {
+      identity: String,
+      email: Option<String>,
+      staff_id: Option<String>,
+      password: String,
+      channel: String,
+      device: String,
+      version: String,
+  }
+  ```
+- Frontend enforces shape before sending; when the backend is ready, swap the simulated response in `AuthService.login()` with a typed `HttpClient.post<LoginResponse>(...)` call.
+
+**Predictable Components & Services**
+
+- `LoginComponent` is standalone, imports `ReactiveFormsModule`, and uses signals to drive feedback.
+- `AuthService` centralizes authentication logic, returning typed observables; the component only handles UI flow.
+
+**Files Touched (Frontend)**
+
+- `src/app/components/login/login.component.ts` — typed component, reactive form, signals.
+- `src/app/components/login/login.component.html` — login form + type demo badges with user-friendly labels.
+- `src/app/components/login/login.component.css` — focused, accessible styling.
+- `src/app/services/auth.service.ts` — typed interfaces and simulated login.
+- `src/app/app.routes.ts` — route to `/login`.
+- `src/app/app.html`, `src/app/app.css` — lightweight shell and branding.
+
+**How to Try It**
+
+```bash
+cd frontend
+npm install
+ng serve
+# Open http://localhost:4200 and navigate to /login
+```
+
+**Next Steps**
+
+- Replace the simulated login with the Rust endpoint; persist the token securely.
+- Add route guards and a typed session model.
+- Expand typed models for patients/records to match Rust DTOs.
 
 ---

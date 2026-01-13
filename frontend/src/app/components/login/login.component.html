@@ -1,0 +1,74 @@
+<section class="login-shell">
+	<div class="intro">
+		<p class="eyebrow">Typed data, predictable flow</p>
+		<h1>{{ pageTitle }}</h1>
+		<p class="lede">Staff authentication aligned with Angular signals and Rust-style contracts.</p>
+
+		<div class="type-grid">
+			<div class="badge">Typed number -> {{ typedNumber }}</div>
+			<div class="badge">Feature enabled -> {{ typedBoolean }}</div>
+			<div class="badge">Topics -> {{ typedArray.join(', ') }}</div>
+			<div class="badge">Tech stack -> {{ typedObject['stack'] }}</div>
+		</div>
+
+		<div class="profile-card">
+			<div class="profile-row">
+				<span>ID</span><span>{{ typedProfile.id }}</span>
+			</div>
+			<div class="profile-row">
+				<span>Email</span><span>{{ typedProfile.email }}</span>
+			</div>
+			<div class="profile-row">
+				<span>Name</span><span>{{ typedProfile.fullName }}</span>
+			</div>
+			<div class="profile-row">
+				<span>Role</span><span class="pill">{{ typedProfile.role }}</span>
+			</div>
+			<div class="profile-row">
+				<span>Last login</span><span>{{ typedProfile.lastLogin }}</span>
+			</div>
+			<div class="profile-row">
+				<span>Audit sample</span><span>{{ auditTrail.attemptedAt | date:'short' }}</span>
+			</div>
+		</div>
+	</div>
+
+	<div class="card">
+		<div class="card-head">
+			<h2>Staff sign-in</h2>
+			<p>Use staff ID or email + password. Typed service returns a structured token.</p>
+		</div>
+
+		<form class="form" [formGroup]="form" (ngSubmit)="submit()">
+			<label class="field">
+				<span>Staff ID or email</span>
+				<input
+					type="text"
+					placeholder="STAFF-123 or jane@cerebro.atlas"
+					formControlName="staffIdOrEmail"
+					[class.invalid]="form.controls.staffIdOrEmail.touched && form.controls.staffIdOrEmail.invalid"
+				/>
+			</label>
+
+			<label class="field">
+				<span>Password</span>
+				<input
+					type="password"
+					placeholder="Enter your password"
+					formControlName="password"
+					[class.invalid]="form.controls.password.touched && form.controls.password.invalid"
+				/>
+				<small class="hint" *ngIf="showPasswordHint">8+ characters keeps Rust + Angular validators aligned.</small>
+			</label>
+
+			<button type="submit" [disabled]="feedback().status === 'pending'">
+				@if (feedback().status === 'pending') { Checking... } @else { Sign in }
+			</button>
+		</form>
+
+		<div class="status" [class.success]="feedback().status === 'success'" [class.error]="feedback().status === 'error'">
+			<p>{{ feedback().message }}</p>
+			<small *ngIf="feedback().issuedAt">Issued at: {{ feedback().issuedAt }}</small>
+		</div>
+	</div>
+</section>
