@@ -1029,7 +1029,8 @@ Angular Component
 **Rust Alignment (Contracts)**
 
 - The Angular `AuthPayload` mirrors a likely Rust struct, e.g.:
-  ```rust
+  ```
+  rust
   #[derive(Deserialize)]
   struct AuthPayload {
       identity: String,
@@ -1084,7 +1085,8 @@ Rust prevents memory bugs at compile time without garbage collection.
 - **Drops when owner goes out of scope**: Automatic cleanup
 - **Move transfers ownership**: No double-free bugs
 
-```rust
+```
+rust
 let s1 = String::from("hello");
 let s2 = s1;  // s1 is now invalid, ownership moved to s2
 ```
@@ -1094,7 +1096,8 @@ let s2 = s1;  // s1 is now invalid, ownership moved to s2
 - **`&T` (immutable)**: Multiple immutable borrows allowed
 - **`&mut T` (mutable)**: Only one mutable borrow at a time
 
-```rust
+```
+rust
 fn len(s: &String) { println!("{}", s.len()); }
 fn push(s: &mut String) { s.push('!'); }
 ```
@@ -1103,7 +1106,8 @@ fn push(s: &mut String) { s.push('!'); }
 
 Ensures references don't outlive the data they reference:
 
-```rust
+```
+rust
 fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
     if x.len() > y.len() { x } else { y }
 }
@@ -1111,7 +1115,8 @@ fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
 
 ## Backend Handler Pattern
 
-```rust
+```
+rust
 #[get("/user")]
 async fn get_user(pool: web::Data<DbPool>) -> impl Responder {
     let conn = pool.get()?;
@@ -1121,3 +1126,138 @@ async fn get_user(pool: web::Data<DbPool>) -> impl Responder {
 ```
 
 **Key Insight**: If it compiles, it's memory-safe. No null pointer dereferences, no data races, no memory leaks.
+
+# Angular Component Architecture & Reactive UI
+
+## Login Component Assignment
+
+## 📌 Objective
+
+To demonstrate understanding of **Angular’s component-based architecture** and **reactive UI model** using a **Login Component**.
+
+---
+
+## 🧩 Component Overview
+
+Angular applications are built using **components**.
+Each component controls:
+
+* UI (HTML)
+* Logic (TypeScript)
+* Styling (CSS)
+
+This assignment uses a **Login Component** to show how Angular handles user input and UI updates reactively.
+
+---
+
+## 📁 Component Structure
+
+```
+login/
+ ├── login.component.ts
+ ├── login.component.html
+ ├── login.component.css
+```
+
+---
+
+## 🏷️ Component Definition
+
+```
+ts
+@Component({
+  selector: 'app-login',
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.css']
+})
+export class LoginComponent {
+  email = '';
+  password = '';
+}
+```
+
+The `@Component` decorator defines:
+
+* Component selector
+* Template file
+* Style file
+
+---
+
+## 🔗 Template Binding Used
+
+### Interpolation
+
+```
+html
+<p>{{ email }}</p>
+```
+
+Automatically updates the UI when data changes.
+
+---
+
+### Event Binding
+
+```
+html
+<button (click)="onSubmit()">Sign In</button>
+```
+
+Handles user actions like button clicks.
+
+---
+
+### Form Binding (Reactive Forms)
+
+```
+html
+<input formControlName="email">
+<input formControlName="password">
+```
+
+Angular automatically tracks input changes and updates the UI.
+
+---
+
+## ⚡ Reactive UI & Change Detection
+
+Angular automatically updates the UI when:
+
+* User types in input fields
+* A button is clicked
+* Form validation state changes
+
+Example:
+
+```
+ts
+onSubmit() {
+  console.log(this.loginForm.value);
+}
+```
+
+No manual DOM updates are required — Angular handles everything reactively.
+
+---
+
+## 🔄 Component Behavior
+
+* User enters email and password
+* Form validation runs automatically
+* Clicking **Sign In** triggers submission
+* UI updates based on form state
+
+---
+
+## ✅ Conclusion
+
+This assignment demonstrates:
+
+* Angular component architecture
+* Reactive form handling
+* Event-driven UI updates
+* Automatic change detection
+
+The **Login Component** represents a real-world example of how Angular builds reactive user interfaces.
+
