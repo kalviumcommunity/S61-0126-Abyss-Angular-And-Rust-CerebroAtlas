@@ -1,74 +1,89 @@
-<section class="login-shell">
-	<div class="intro">
-		<p class="eyebrow">Typed data, predictable flow</p>
-		<h1>{{ pageTitle }}</h1>
-		<p class="lede">Staff authentication aligned with Angular signals and Rust-style contracts.</p>
+<div class="login-container">
+  <!-- LEFT SECTION -->
+  <div class="left-panel">
+    <div class="brand">
+      <div class="logo">❤</div>
+      <h2>CerebroAtlas</h2>
+      <p>Digital Records System</p>
+    </div>
 
-		<div class="type-grid">
-			<div class="badge">Typed number -> {{ typedNumber }}</div>
-			<div class="badge">Feature enabled -> {{ typedBoolean }}</div>
-			<div class="badge">Topics -> {{ typedArray.join(', ') }}</div>
-			<div class="badge">Tech stack -> {{ typedObject['stack'] }}</div>
-		</div>
+    <h1>Secure, Interoperable Healthcare for Every Community</h1>
 
-		<div class="profile-card">
-			<div class="profile-row">
-				<span>ID</span><span>{{ typedProfile.id }}</span>
-			</div>
-			<div class="profile-row">
-				<span>Email</span><span>{{ typedProfile.email }}</span>
-			</div>
-			<div class="profile-row">
-				<span>Name</span><span>{{ typedProfile.fullName }}</span>
-			</div>
-			<div class="profile-row">
-				<span>Role</span><span class="pill">{{ typedProfile.role }}</span>
-			</div>
-			<div class="profile-row">
-				<span>Last login</span><span>{{ typedProfile.lastLogin }}</span>
-			</div>
-			<div class="profile-row">
-				<span>Audit sample</span><span>{{ auditTrail.attemptedAt | date:'short' }}</span>
-			</div>
-		</div>
-	</div>
+    <ul class="features">
+      <li>🔒 Privacy-First Design</li>
+      <li>📶 Offline-Ready</li>
+      <li>🧬 Biometric Security</li>
+    </ul>
+  </div>
 
-	<div class="card">
-		<div class="card-head">
-			<h2>Staff sign-in</h2>
-			<p>Use staff ID or email + password. Typed service returns a structured token.</p>
-		</div>
+  <!-- RIGHT SECTION -->
+  <div class="right-panel">
 
-		<form class="form" [formGroup]="form" (ngSubmit)="submit()">
-			<label class="field">
-				<span>Staff ID or email</span>
-				<input
-					type="text"
-					placeholder="STAFF-123 or jane@cerebro.atlas"
-					formControlName="staffIdOrEmail"
-					[class.invalid]="form.controls.staffIdOrEmail.touched && form.controls.staffIdOrEmail.invalid"
-				/>
-			</label>
+    <div class="login-card">
+      <h2 style="color: black;">Welcome Back</h2>
+      <p class="subtitle">Sign in to access patient records securely</p>
 
-			<label class="field">
-				<span>Password</span>
-				<input
-					type="password"
-					placeholder="Enter your password"
-					formControlName="password"
-					[class.invalid]="form.controls.password.touched && form.controls.password.invalid"
-				/>
-				<small class="hint" *ngIf="showPasswordHint">8+ characters keeps Rust + Angular validators aligned.</small>
-			</label>
+      <!-- Tabs -->
+      <div class="tabs">
+        <button
+          type="button"
+          [class.active]="activeTab === 'password'"
+          (click)="setTab('password')">
+          Password
+        </button>
 
-			<button type="submit" [disabled]="feedback().status === 'pending'">
-				@if (feedback().status === 'pending') { Checking... } @else { Sign in }
-			</button>
-		</form>
+        <button
+          type="button"
+          [class.active]="activeTab === 'biometric'"
+          (click)="setTab('biometric')">
+          Biometric
+        </button>
+      </div>
 
-		<div class="status" [class.success]="feedback().status === 'success'" [class.error]="feedback().status === 'error'">
-			<p>{{ feedback().message }}</p>
-			<small *ngIf="feedback().issuedAt">Issued at: {{ feedback().issuedAt }}</small>
-		</div>
-	</div>
-</section>
+      <!-- PASSWORD LOGIN -->
+      <form
+        *ngIf="activeTab === 'password'"
+        [formGroup]="loginForm"
+        (ngSubmit)="onSubmit()">
+
+        <label>Email or Staff ID</label>
+        <input type="email" formControlName="email" placeholder="Enter your email or staff ID">
+
+        <div class="error"
+          *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+          Valid email required
+        </div>
+
+        <label>Password</label>
+        <input type="password" formControlName="password" placeholder="Enter your password">
+
+        <div class="error"
+          *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+          Minimum 6 characters
+        </div>
+
+        <button class="primary-btn" type="submit">Sign In</button>
+      </form>
+
+      <!-- BIOMETRIC LOGIN -->
+      <div *ngIf="activeTab === 'biometric'" class="biometric">
+        <button class="primary-btn" type="button" (click)="onSubmit()">
+          Sign in with Biometric
+        </button>
+      </div>
+
+      <!-- STATUS MESSAGE -->
+      <div
+        class="status-message"
+        [ngClass]="{ error: errorMessage, success: !errorMessage && loginForm.valid }"
+        *ngIf="errorMessage || loginForm.valid">
+        {{ errorMessage || 'Sign in successful!' }}
+      </div>
+
+      <p class="help">
+        Having trouble signing in?
+        <span>Contact Support</span>
+      </p>
+    </div>
+  </div>
+</div>
