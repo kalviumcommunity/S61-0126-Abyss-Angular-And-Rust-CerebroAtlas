@@ -1073,3 +1073,51 @@ ng serve
 - Expand typed models for patients/records to match Rust DTOs.
 
 ---
+
+# Rust Ownership, Borrowing, Lifetimes – Backend
+
+Rust prevents memory bugs at compile time without garbage collection.
+
+## Ownership Rules
+
+- **Single owner per value**: Each value has exactly one owner
+- **Drops when owner goes out of scope**: Automatic cleanup
+- **Move transfers ownership**: No double-free bugs
+
+```rust
+let s1 = String::from("hello");
+let s2 = s1;  // s1 is now invalid, ownership moved to s2
+```
+
+## Borrowing
+
+- **`&T` (immutable)**: Multiple immutable borrows allowed
+- **`&mut T` (mutable)**: Only one mutable borrow at a time
+
+```rust
+fn len(s: &String) { println!("{}", s.len()); }
+fn push(s: &mut String) { s.push('!'); }
+```
+
+## Lifetimes
+
+Ensures references don't outlive the data they reference:
+
+```rust
+fn longest<'a>(x: &'a str, y: &'a str) -> &'a str {
+    if x.len() > y.len() { x } else { y }
+}
+```
+
+## Backend Handler Pattern
+
+```rust
+#[get("/user")]
+async fn get_user(pool: web::Data<DbPool>) -> impl Responder {
+    let conn = pool.get()?;
+    let user = query_user(&conn);  // Safe borrow
+    HttpResponse::Ok().json(user)
+}
+```
+
+**Key Insight**: If it compiles, it's memory-safe. No null pointer dereferences, no data races, no memory leaks.
