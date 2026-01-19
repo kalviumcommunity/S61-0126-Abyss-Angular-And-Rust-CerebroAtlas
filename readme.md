@@ -1408,3 +1408,155 @@ By building this project, I learned how to:
 * Build reactive and maintainable UIs
 
 These skills directly support building scalable frontend features for **Sprint #2 projects** and beyond.
+
+---
+
+# Building Responsive Layouts with Angular (Flexbox & CSS Grid)
+
+## Overview
+
+Modern web applications are accessed across a wide range of devices including mobile phones, tablets, laptops, and large desktop screens. To ensure a consistent and usable experience, user interfaces must adapt automatically to different screen sizes without breaking layout or usability.
+
+This task focuses on implementing **responsive layouts in Angular** using modern CSS techniques such as **Flexbox** and **CSS Grid**, with an optional introduction to **Angular Flex Layout utilities**.
+
+---
+
+## Objective
+
+The objective of this task is to understand and apply **responsive design principles** by building Angular components that adapt gracefully across screen sizes using:
+
+- CSS Flexbox for one-dimensional layouts
+- CSS Grid for two-dimensional layouts
+- Media queries for fine-grained control
+- Angular data binding for dynamic content
+
+By completing this task, the UI should automatically rearrange, resize, and adapt smoothly across devices without the need for separate mobile or desktop applications.
+
+---
+
+## What Is Responsive Design?
+
+Responsive design refers to creating a single flexible UI that:
+
+- Adjusts layout based on screen width
+- Keeps content readable on all devices
+- Reorganizes UI components intelligently
+- Avoids horizontal scrolling or broken views
+
+Instead of maintaining separate codebases for mobile and desktop, a single responsive layout is used.
+
+---
+
+## CSS Flexbox – One-Dimensional Layouts
+
+CSS Flexbox is ideal for layouts that flow in **one direction** (row or column).
+
+### Key Concepts Demonstrated:
+- `display: flex`
+- `flex-wrap` for automatic wrapping
+- `gap` for spacing
+- Flexible sizing using `flex: 1 1 200px`
+
+### Behavior:
+- Items appear in a row on larger screens
+- Items wrap automatically on smaller screens
+- Spacing and proportions are maintained
+
+Flexbox is especially useful for toolbars, lists, and simple content sections.
+
+---
+
+## CSS Grid – Two-Dimensional Layouts
+
+CSS Grid is designed for layouts involving both **rows and columns**, making it ideal for dashboards and card grids.
+
+### Key Concepts Demonstrated:
+- `display: grid`
+- `repeat(auto-fit, minmax(250px, 1fr))`
+- `gap` for consistent spacing
+
+### Behavior:
+- Automatically adjusts the number of columns based on screen width
+- No media queries required in most cases
+- Creates clean and scalable layouts
+
+---
+
+## Responsive Breakpoints Using Media Queries
+
+While Grid and Flexbox handle most responsiveness automatically, media queries are used when additional control is required.
+
+### Example Use Case:
+- Switching a Flexbox layout from row to column when the screen width is below `768px`
+
+This ensures better readability and usability on smaller devices.
+
+---
+
+## Angular Flex Layout (Optional)
+
+Angular Flex Layout provides directive-based responsive utilities such as:
+
+- `fxLayout`
+- `fxFlex`
+- `fxLayoutGap`
+- Responsive aliases like `lt-md`
+
+This task does not require Angular Flex Layout, but it is introduced as an optional approach for achieving responsiveness with minimal CSS.
+
+---
+
+## Combining Responsiveness with Angular Data Binding
+
+Responsive layouts work best when combined with Angular’s template features.
+
+### Demonstrated Techniques:
+- `*ngFor` to render dynamic data
+- Responsive Grid layout that adapts as data changes
+
+As the data grows or shrinks, the layout remains responsive without additional code changes.
+
+---
+
+## Practical UI Example
+
+The task includes a **responsive product grid** that behaves as follows:
+
+- **Desktop:** 4 cards per row
+- **Tablet:** 2 cards per row
+- **Mobile:** 1 card per row
+
+This behavior is achieved using **CSS Grid with `auto-fit` and `minmax()`**, mirroring real-world dashboards and e-commerce layouts.
+
+---
+
+## Clean Responsive Design Practices Followed
+
+- Flexbox and Grid are preferred over floats
+- Fixed widths are avoided
+- `minmax()`, `auto-fit`, and `fr` units are used
+- Layout is mobile-friendly and scalable
+- Design is easy to test using browser developer tools
+
+---
+
+## Project Alignment
+
+This component is integrated into the Angular project as a routed page and serves as a **foundational UI exercise**.  
+The layout techniques demonstrated here can later be reused in dashboards, data views, and feature components within the project.
+
+---
+
+## Outcome
+
+By completing this task, the following have been achieved:
+
+- Understanding of responsive design principles
+- Practical implementation of Flexbox and CSS Grid
+- Use of media queries for fine control
+- Integration of responsive layouts with Angular data binding
+- A clean, readable, and evaluation-safe solution
+
+This setup prepares the project for building more complex, responsive UI features in future sprints.
+
+---
