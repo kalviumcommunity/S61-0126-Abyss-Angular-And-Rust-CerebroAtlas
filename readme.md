@@ -830,7 +830,7 @@ http://localhost:8080/
 
 # Exploring Angular and Rust Project Structures
 
-## 📌 Project Overview
+##  Project Overview
 
 This project demonstrates the **default folder structures of an Angular frontend and a Rust backend (Actix/Axum)**.
 The goal is to understand how both frameworks organize code for **scalable, maintainable, and modular development**, and how they communicate in a real-world full-stack application.
@@ -839,7 +839,7 @@ This submission focuses on **project structure exploration**, not full feature i
 
 ---
 
-## 🖥️ Angular Frontend Structure
+##  Angular Frontend Structure
 
 The Angular application was created using:
 
@@ -850,7 +850,7 @@ ng new frontend
 
 ```
 
-### 📁 Key Directories & Files
+###  Key Directories & Files
 
 ```
 
@@ -874,7 +874,7 @@ package.json
 
 ````
 
-### 🔍 Explanation of Key Files
+###  Explanation of Key Files
 
 * **`src/app/`**
   Contains all application logic including components, services, and routing.
@@ -899,7 +899,7 @@ package.json
 
 ---
 
-## 🦀 Rust Backend Structure (Actix/Axum)
+##  Rust Backend Structure (Actix/Axum)
 
 The Rust backend was created using:
 
@@ -907,7 +907,7 @@ The Rust backend was created using:
 cargo new rust-backend
 ````
 
-### 📁 Key Directories & Files
+### Key Directories & Files
 
 ```
 src/
@@ -922,7 +922,7 @@ src/
 Cargo.toml
 ```
 
-### 🔍 Explanation of Key Files
+### Explanation of Key Files
 
 - **`main.rs`**
   Entry point of the Rust application. Initializes the server and registers routes.
@@ -944,7 +944,7 @@ Cargo.toml
 
 ---
 
-## 🔁 How Angular and Rust Communicate
+## How Angular and Rust Communicate
 
 The communication follows a clean request–response flow:
 
@@ -965,7 +965,7 @@ Angular Component
 
 ---
 
-## 🧪 Case Study: "Create Product" Feature
+## Case Study: "Create Product" Feature
 
 ### 🔹 Angular Files Involved
 
@@ -1003,6 +1003,20 @@ Angular Component
 - `routes/` folder
 - `models/` folder
 - `Cargo.toml` dependencies
+
+### Visuals
+
+![Angular scaffold](assets/screenshots/frontend-scaffold.png)
+
+![Rust scaffold](assets/screenshots/backend-scaffold.png)
+
+![Angular app running](assets/screenshots/running-angular.png)
+
+![Rust API running](assets/screenshots/running-rust.png)
+
+![Angular dev server](assets/screenshots/Running_angular.png)
+
+![Angular test/build output](assets/screenshots/Testing_Build.png)
 
 ---
 
@@ -1131,26 +1145,26 @@ async fn get_user(pool: web::Data<DbPool>) -> impl Responder {
 
 ## Login Component Assignment
 
-## 📌 Objective
+## Objective
 
 To demonstrate understanding of **Angular’s component-based architecture** and **reactive UI model** using a **Login Component**.
 
 ---
 
-## 🧩 Component Overview
+## Component Overview
 
 Angular applications are built using **components**.
 Each component controls:
 
-* UI (HTML)
-* Logic (TypeScript)
-* Styling (CSS)
+- UI (HTML)
+- Logic (TypeScript)
+- Styling (CSS)
 
 This assignment uses a **Login Component** to show how Angular handles user input and UI updates reactively.
 
 ---
 
-## 📁 Component Structure
+## Component Structure
 
 ```
 login/
@@ -1161,7 +1175,7 @@ login/
 
 ---
 
-## 🏷️ Component Definition
+## Component Definition
 
 ```
 ts
@@ -1178,13 +1192,13 @@ export class LoginComponent {
 
 The `@Component` decorator defines:
 
-* Component selector
-* Template file
-* Style file
+- Component selector
+- Template file
+- Style file
 
 ---
 
-## 🔗 Template Binding Used
+## Template Binding Used
 
 ### Interpolation
 
@@ -1220,13 +1234,13 @@ Angular automatically tracks input changes and updates the UI.
 
 ---
 
-## ⚡ Reactive UI & Change Detection
+## Reactive UI & Change Detection
 
 Angular automatically updates the UI when:
 
-* User types in input fields
-* A button is clicked
-* Form validation state changes
+- User types in input fields
+- A button is clicked
+- Form validation state changes
 
 Example:
 
@@ -1241,23 +1255,48 @@ No manual DOM updates are required — Angular handles everything reactively.
 
 ---
 
-## 🔄 Component Behavior
+## Component Behavior
 
-* User enters email and password
-* Form validation runs automatically
-* Clicking **Sign In** triggers submission
-* UI updates based on form state
+- User enters email and password
+- Form validation runs automatically
+- Clicking **Sign In** triggers submission
+- UI updates based on form state
 
 ---
 
-## ✅ Conclusion
+## Conclusion
 
 This assignment demonstrates:
 
-* Angular component architecture
-* Reactive form handling
-* Event-driven UI updates
-* Automatic change detection
+- Angular component architecture
+- Reactive form handling
+- Event-driven UI updates
+- Automatic change detection
 
 The **Login Component** represents a real-world example of how Angular builds reactive user interfaces.
 
+# Angular CLI Commands – Generate, Serve, Build, and Test (Learning : DATE : 19-01-2026 )
+
+## Objective
+
+The purpose of this task is to understand and apply essential Angular CLI commands used in real-world Angular development. This includes generating components, serving the application locally, creating production builds, and running unit tests.
+
+---
+
+## Tools & Technologies Used
+
+- Angular
+- Angular CLI
+- Node.js & npm
+- TypeScript
+- Karma & Jasmine (Unit Testing)
+
+---
+
+## Angular CLI Installation
+
+Install Angular CLI globally (if not already installed):
+
+```bash
+npm install -g @angular/cli
+```
