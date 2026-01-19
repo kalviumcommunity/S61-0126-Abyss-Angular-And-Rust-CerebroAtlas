@@ -1,0 +1,58 @@
+<div class="dashboard-container">
+  <h1>Dashboard</h1>
+  <p class="welcome">Welcome back, Dr. Sarah. Here's today's overview.</p>
+  <div class="dashboard-actions">
+    <button class="action-btn new-patient"><span class="icon">+</span> New Patient</button>
+    <button class="action-btn new-consultation"><span class="icon">📄</span> New Consultation</button>
+    <button class="action-btn schedule"><span class="icon">📅</span> Schedule</button>
+    <button class="action-btn emergency"><span class="icon">&#9888;</span> Emergency</button>
+  </div>
+  <div class="dashboard-stats">
+    <div class="stat-card">
+      <div class="stat-label">Total Patients</div>
+      <div class="stat-value">{{ stats.totalPatients | number }}</div>
+      <div class="stat-change positive">+{{ stats.patientsChange }}% this week</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Records Today</div>
+      <div class="stat-value">{{ stats.recordsToday }}</div>
+      <div class="stat-change positive">+{{ stats.recordsChange }}% this week</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Appointments</div>
+      <div class="stat-value">{{ stats.appointments }}</div>
+      <div class="stat-change negative">{{ stats.appointmentsChange }}% this week</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Pending Syncs</div>
+      <div class="stat-value">{{ stats.pendingSyncs }}</div>
+    </div>
+  </div>
+  <div class="dashboard-main">
+    <div class="recent-patients">
+      <h2>Recent Patients</h2>
+      <p class="subtitle">Patients you've seen recently</p>
+      <ul>
+        <li *ngFor="let patient of recentPatients">
+          <span class="avatar">{{ patient.initials }}</span>
+          <span class="patient-info">
+            <span class="name">{{ patient.name }}</span>
+            <span class="details">{{ patient.age }} years • Last visit: {{ patient.lastVisit }}</span>
+          </span>
+          <span class="status" [ngClass]="patient.status">{{ patient.status }}</span>
+        </li>
+      </ul>
+      <a class="view-all" href="#">View All</a>
+    </div>
+    <div class="alerts">
+      <h2>Alerts</h2>
+      <p class="subtitle">Important notifications</p>
+      <ul>
+        <li *ngFor="let note of notifications" [ngClass]="note.type">
+          <span class="alert-message">{{ note.message }}</span>
+          <span class="alert-time">{{ note.time }}</span>
+        </li>
+      </ul>
+    </div>
+  </div>
+</div>

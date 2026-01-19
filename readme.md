@@ -1018,6 +1018,8 @@ Angular Component
 
 ![Angular test/build output](assets/screenshots/Testing_Build.png)
 
+![Angular Component dashboard](assets/screenshots/dashboard-angular.png)
+
 ---
 
 ## **Reflection: Typed Staff Login (Cerebro Atlas)**
@@ -1300,3 +1302,109 @@ Install Angular CLI globally (if not already installed):
 ```bash
 npm install -g @angular/cli
 ```
+# Angular Components Dashboard (Date: 19-01-2026)
+
+## Overview
+
+This project demonstrates the fundamentals of **Angular component architecture**, templates, styling, and reactive UI updates. It was built as part of **Kalvium – Module 3.13: Creating Angular Components, Templates, and Styles**.
+
+The application showcases a **Dashboard UI** composed of reusable Angular components such as action cards, stats cards, recent patients, and alerts—illustrating how complex UIs are built from small, self-contained components.
+
+## Key Concepts Covered
+
+* Angular component-based architecture
+* Component creation using Angular CLI
+* Template syntax (interpolation & event binding)
+* Component-level styling (CSS encapsulation)
+* Reactive UI updates through state changes
+
+## Features Implemented
+
+* **Dashboard Layout** with modular UI sections
+* **Action Cards**
+
+  * New Patient
+  * New Consultation
+  * Schedule
+  * Emergency
+* **Statistics Cards**
+
+  * Total Patients
+  * Records Today
+  * Appointments
+  * Pending Syncs
+* **Recent Patients Section**
+
+  * Displays recently visited patients
+  * Shows status indicators (active, follow-up, new)
+* **Alerts Panel**
+
+  * Consent expiry notifications
+  * Lab results updates
+  * Data sync status
+
+## Component Structure
+
+Each UI feature is implemented as a reusable Angular component with its own logic, template, and styles.
+
+```
+src/app/
+│── components/
+│   ├── dashboard/
+│   │   ├── dashboard.component.ts
+│   │   ├── dashboard.component.html
+│   │   ├── dashboard.component.css
+│   ├── stats-card/
+│   ├── action-card/
+│   ├── recent-patients/
+│   ├── alerts/
+│── app.component.ts
+│── app.component.html
+```
+
+## Technologies Used
+
+* **Angular**
+* **TypeScript**
+* **HTML5**
+* **CSS3**
+* **Angular CLI**
+
+## Angular Concepts Demonstrated
+
+* `@Component` decorator usage
+* Data binding using `{{ }}` interpolation
+* Event binding using `(click)`
+* Component state updates and automatic UI re-rendering
+* Scoped styles per component
+
+## How to Run the Project
+
+1. Install dependencies:
+
+   ```
+   bash
+   npm install
+   ```
+2. Start the development server:
+
+   ```
+   bash
+   ng serve
+   ```
+3. Open in browser:
+
+   ```
+   http://localhost:4200/dashboard
+   ```
+
+## Learning Outcome
+
+By building this project, I learned how to:
+
+* Break a UI into logical Angular components
+* Connect templates with component logic
+* Apply component-scoped styling
+* Build reactive and maintainable UIs
+
+These skills directly support building scalable frontend features for **Sprint #2 projects** and beyond.
