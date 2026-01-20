@@ -1,0 +1,224 @@
+.patients-container {
+  padding: 2rem;
+  background: #f8fafc;
+  min-height: 100vh;
+  font-family: "Inter", "Segoe UI", Arial, sans-serif;
+  color: #0f172a;
+}
+
+.patients-container .patients-header {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 1.8rem;
+}
+
+.patients-container .patients-header h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.patients-container .patients-header p {
+  flex: 1;
+  margin: 0;
+  font-size: 0.95rem;
+  color: #64748b;
+}
+
+.patients-container .register-btn {
+  background: #14b8a6;
+  color: #ffffff;
+  border: none;
+  padding: 0.65rem 1.4rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.patients-container .register-btn:hover {
+  background: #0d9488;
+}
+
+.patients-container .search-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: #ffffff;
+  padding: 0.75rem 1rem;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 1.6rem;
+}
+
+.patients-container .search-filter-bar input {
+  flex: 1;
+  background: #ffffff;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  color: #0f172a;
+}
+
+.patients-container .search-filter-bar input::placeholder {
+  color: #94a3b8;
+}
+
+.patients-container .filter-btn,
+.patients-container .export-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 0.6rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #0f172a;
+  cursor: pointer;
+}
+
+.patients-container .filter-btn:hover,
+.patients-container .export-btn:hover {
+  background: #f8fafc;
+}
+
+.patients-container .tabs {
+  display: inline-flex;
+  background: #eef2f7;
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 2rem;
+}
+
+.patients-container .tabs button {
+  background: transparent;
+  border: none;
+  padding: 0.45rem 0.9rem;
+  font-size: 0.85rem;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #475569;
+}
+
+.patients-container .tabs button.active {
+  background: #ffffff;
+  color: #0f172a;
+  font-weight: 500;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+
+.patients-container .patients-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 1.8rem;
+}
+
+.patients-container .patient-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 1.5rem;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  position: relative;
+}
+
+
+.patients-container .avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #e6f7f4;
+  color: #14b8a6;
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.6rem;
+}
+
+.patients-container .patient-info .name {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.patients-container .patient-info .details {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-bottom: 0.6rem;
+}
+
+.patients-container .patient-info .location,
+.patients-container .patient-info .phone,
+.patients-container .patient-info .next {
+  font-size: 0.85rem;
+  color: #475569;
+  margin-bottom: 0.4rem;
+}
+
+.patients-container .tags {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin: 0.7rem 0 0.9rem;
+}
+
+.patients-container .tag {
+  background: #f1f5f9;
+  border-radius: 999px;
+  padding: 0.2rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.patients-container .status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.patients-container .status.active {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.patients-container .status.follow-up {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+
+.patients-container .status.pending-sync {
+  background: #fef3c7;
+  color: #d97706;
+}
+
+.patients-container .status.new {
+  background: #e0f2fe;
+  color: #0284c7;
+}
+
+.patients-container .view-link {
+  position: absolute;
+  right: 1.5rem;
+  bottom: 1.2rem;
+}
+
+.patients-container .view-link a {
+  font-size: 0.85rem;
+  color: #0f172a;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.patients-container .view-link a:hover {
+  text-decoration: underline;
+}
