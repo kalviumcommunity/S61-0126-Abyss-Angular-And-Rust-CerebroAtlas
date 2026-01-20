@@ -1,9 +1,11 @@
 .dashboard-container {
+  margin-left: 272px; /* Sidebar width */
   padding: 2rem;
   background: #f8fafc;
   min-height: 100vh;
   font-family: 'Segoe UI', Arial, sans-serif;
   color: #111;
+  transition: margin-left 0.3s ease;
 }
 
 h1 {

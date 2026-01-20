@@ -11,3 +11,9 @@ body {
 	background: #060b15;
 	color: #e9f0f7;
 }
+
+/* Global sidebar collapse styles */
+body.sidebar-collapsed .dashboard-container,
+body.sidebar-collapsed .patients-container {
+  margin-left: 70px !important;
+}

@@ -994,7 +994,7 @@ Angular Component
 
 ---
 
-## 📸 Screenshots Included
+## Screenshots Included
 
 - Angular project file tree
 - Rust project file tree
@@ -1014,11 +1014,146 @@ Angular Component
 
 ![Rust API running](assets/screenshots/running-rust.png)
 
+![Dashboard with Navbar](assets/screenshots/dashboard_with_navbar.png)
+
+![Patients Dashboard](assets/screenshots/Patients_dashboard.png)
+
 ![Angular dev server](assets/screenshots/Running_angular.png)
 
 ![Angular test/build output](assets/screenshots/Testing_Build.png)
 
 ![Angular Component dashboard](assets/screenshots/dashboard-angular.png)
+
+---
+
+# Implementation: Reusable Collapsible Sidebar Component (January 20, 2026)
+
+## Overview
+
+Implemented a **professional, reusable sidebar navigation component** with collapsible functionality for the Cerebro Atlas healthcare application. The sidebar is used across multiple pages (Dashboard, Patients) to provide consistent navigation.
+
+## Features Implemented
+
+### 1. **Reusable Sidebar Component**
+
+- **File**: `src/app/components/shared/sidebar/`
+  - `sidebar.ts` - Component logic with toggle state management
+  - `sidebar.html` - Template with professional SVG icons and navigation items
+  - `sidebar.css` - Styling with smooth transitions and collapsed state
+
+### 2. **Collapsible Navigation**
+
+- Toggle button with hamburger menu icon at top-right
+- Smooth 0.3s transition when expanding/collapsing
+- Collapses from 272px to 70px width
+- Icons remain visible when collapsed, labels are hidden
+- Body class `sidebar-collapsed` enables global styling
+
+### 3. **Professional Navigation Items**
+
+Navigation items with custom SVG icons:
+
+- Dashboard (grid icon)
+- Patients (users icon)
+- Medical Records (file icon)
+- Consent Management (lock icon)
+- Data Sharing (share/network icon)
+- Sync Status (refresh icon)
+- Audit Logs (document icon)
+- Sign Out (logout icon)
+
+### 4. **Integration**
+
+- Added to Dashboard component
+- Added to Patients component
+- Content adjusts margin smoothly when sidebar collapses
+
+## Technical Implementation
+
+### Component Properties
+
+```
+typescript
+@Input() userStatus: 'Online' | 'Away' | 'Offline' = 'Online';
+@Input() userName: string = 'Dr. Sarah';
+isCollapsed: boolean;
+toggleSidebar(): void
+
+```
+
+### Styling Approach
+
+- **Global control**: Body class toggles collapse state across all pages
+- **Smooth transitions**: CSS transitions on width and opacity
+- **Component encapsulation**: Uses CSS to handle responsive behavior
+- **Accessibility**: ARIA labels for toggle button
+
+### Navigation Items Structure
+
+```
+typescript
+interface NavItem {
+  label: string;
+  route: string;
+}
+```
+
+## Usage
+
+### Dashboard Component
+
+```
+typescript
+imports: [CommonModule, DecimalPipe, Sidebar],
+
+```
+
+```
+html
+<app-sidebar [userStatus]="'Online'" [userName]="'Dr. Sarah'"></app-sidebar>
+<div class="dashboard-container">
+  <!-- Dashboard content -->
+</div>
+
+```
+
+### Patients Component
+
+```typescript
+imports: [CommonModule, FormsModule, DatePipe, Sidebar],
+```
+
+```html
+<app-sidebar [userStatus]="'Online'" [userName]="'Dr. Sarah'"></app-sidebar>
+<div class="patients-container">
+  <!-- Patients content -->
+</div>
+```
+
+## Screenshots
+
+- Dashboard with collapsible navbar
+- Patients dashboard with sidebar navigation
+- Compact sidebar view with icons only
+- Full sidebar view with labels
+
+## Benefits
+
+ **Reusability**: Same component used across multiple pages
+ **Consistency**: Unified navigation experience throughout app
+ **Professional**: Custom SVG icons matching healthcare app aesthetic
+ **Responsive**: Collapsible design saves screen space
+ **Accessibility**: Proper ARIA labels and semantic HTML
+ **Performance**: Smooth CSS transitions with hardware acceleration
+
+## Future Enhancements
+
+- Add active route highlighting with different styling
+- Remember collapsed state in localStorage
+- Mobile responsive breakpoint (hide sidebar on small screens)
+- Add tooltips on collapsed state for better UX
+- Support for user profile section
+- Role-based navigation item visibility
 
 ---
 
@@ -1302,6 +1437,7 @@ Install Angular CLI globally (if not already installed):
 ```bash
 npm install -g @angular/cli
 ```
+
 # Angular Components Dashboard (Date: 19-01-2026)
 
 ## Overview
@@ -1312,36 +1448,35 @@ The application showcases a **Dashboard UI** composed of reusable Angular compon
 
 ## Key Concepts Covered
 
-* Angular component-based architecture
-* Component creation using Angular CLI
-* Template syntax (interpolation & event binding)
-* Component-level styling (CSS encapsulation)
-* Reactive UI updates through state changes
+- Angular component-based architecture
+- Component creation using Angular CLI
+- Template syntax (interpolation & event binding)
+- Component-level styling (CSS encapsulation)
+- Reactive UI updates through state changes
 
 ## Features Implemented
 
-* **Dashboard Layout** with modular UI sections
-* **Action Cards**
+- **Dashboard Layout** with modular UI sections
+- **Action Cards**
+  - New Patient
+  - New Consultation
+  - Schedule
+  - Emergency
 
-  * New Patient
-  * New Consultation
-  * Schedule
-  * Emergency
-* **Statistics Cards**
+- **Statistics Cards**
+  - Total Patients
+  - Records Today
+  - Appointments
+  - Pending Syncs
 
-  * Total Patients
-  * Records Today
-  * Appointments
-  * Pending Syncs
-* **Recent Patients Section**
+- **Recent Patients Section**
+  - Displays recently visited patients
+  - Shows status indicators (active, follow-up, new)
 
-  * Displays recently visited patients
-  * Shows status indicators (active, follow-up, new)
-* **Alerts Panel**
-
-  * Consent expiry notifications
-  * Lab results updates
-  * Data sync status
+- **Alerts Panel**
+  - Consent expiry notifications
+  - Lab results updates
+  - Data sync status
 
 ## Component Structure
 
@@ -1364,19 +1499,19 @@ src/app/
 
 ## Technologies Used
 
-* **Angular**
-* **TypeScript**
-* **HTML5**
-* **CSS3**
-* **Angular CLI**
+- **Angular**
+- **TypeScript**
+- **HTML5**
+- **CSS3**
+- **Angular CLI**
 
 ## Angular Concepts Demonstrated
 
-* `@Component` decorator usage
-* Data binding using `{{ }}` interpolation
-* Event binding using `(click)`
-* Component state updates and automatic UI re-rendering
-* Scoped styles per component
+- `@Component` decorator usage
+- Data binding using `{{ }}` interpolation
+- Event binding using `(click)`
+- Component state updates and automatic UI re-rendering
+- Scoped styles per component
 
 ## How to Run the Project
 
@@ -1386,12 +1521,14 @@ src/app/
    bash
    npm install
    ```
+
 2. Start the development server:
 
    ```
    bash
    ng serve
    ```
+
 3. Open in browser:
 
    ```
@@ -1402,10 +1539,10 @@ src/app/
 
 By building this project, I learned how to:
 
-* Break a UI into logical Angular components
-* Connect templates with component logic
-* Apply component-scoped styling
-* Build reactive and maintainable UIs
+- Break a UI into logical Angular components
+- Connect templates with component logic
+- Apply component-scoped styling
+- Build reactive and maintainable UIs
 
 These skills directly support building scalable frontend features for **Sprint #2 projects** and beyond.
 
@@ -1452,12 +1589,14 @@ Instead of maintaining separate codebases for mobile and desktop, a single respo
 CSS Flexbox is ideal for layouts that flow in **one direction** (row or column).
 
 ### Key Concepts Demonstrated:
+
 - `display: flex`
 - `flex-wrap` for automatic wrapping
 - `gap` for spacing
 - Flexible sizing using `flex: 1 1 200px`
 
 ### Behavior:
+
 - Items appear in a row on larger screens
 - Items wrap automatically on smaller screens
 - Spacing and proportions are maintained
@@ -1471,11 +1610,13 @@ Flexbox is especially useful for toolbars, lists, and simple content sections.
 CSS Grid is designed for layouts involving both **rows and columns**, making it ideal for dashboards and card grids.
 
 ### Key Concepts Demonstrated:
+
 - `display: grid`
 - `repeat(auto-fit, minmax(250px, 1fr))`
 - `gap` for consistent spacing
 
 ### Behavior:
+
 - Automatically adjusts the number of columns based on screen width
 - No media queries required in most cases
 - Creates clean and scalable layouts
@@ -1487,6 +1628,7 @@ CSS Grid is designed for layouts involving both **rows and columns**, making it 
 While Grid and Flexbox handle most responsiveness automatically, media queries are used when additional control is required.
 
 ### Example Use Case:
+
 - Switching a Flexbox layout from row to column when the screen width is below `768px`
 
 This ensures better readability and usability on smaller devices.
@@ -1511,6 +1653,7 @@ This task does not require Angular Flex Layout, but it is introduced as an optio
 Responsive layouts work best when combined with Angular’s template features.
 
 ### Demonstrated Techniques:
+
 - `*ngFor` to render dynamic data
 - Responsive Grid layout that adapts as data changes
 
@@ -1575,25 +1718,25 @@ The Patients page displays patient information and allows user interaction throu
 
 The following Angular concepts from the lesson have been applied in this assignment:
 
-* Interpolation
-* Property Binding
-* Event Binding
-* Two-Way Binding using ngModel
-* Component-based UI development
-* Angular routing
-* Responsive UI design using CSS
+- Interpolation
+- Property Binding
+- Event Binding
+- Two-Way Binding using ngModel
+- Component-based UI development
+- Angular routing
+- Responsive UI design using CSS
 
 ---
 
 ## Features Implemented
 
-* Patients page with a card-based layout
-* Display of patient details such as name, age, gender, location, contact number, appointment date, medical conditions, and status
-* Search bar for filtering patients
-* Filter and Export buttons
-* Tabs for different patient categories
-* Routing to the Patients page using Angular Router
-* Scoped component styles to avoid global CSS conflicts
+- Patients page with a card-based layout
+- Display of patient details such as name, age, gender, location, contact number, appointment date, medical conditions, and status
+- Search bar for filtering patients
+- Filter and Export buttons
+- Tabs for different patient categories
+- Routing to the Patients page using Angular Router
+- Scoped component styles to avoid global CSS conflicts
 
 ---
 
@@ -1640,9 +1783,9 @@ FormsModule was imported to support ngModel.
 
 ## Component Structure
 
-* patients.component.ts
-* patients.component.html
-* patients.component.css
+- patients.component.ts
+- patients.component.html
+- patients.component.css
 
 Each component follows Angular’s separation of logic, template, and styles.
 
