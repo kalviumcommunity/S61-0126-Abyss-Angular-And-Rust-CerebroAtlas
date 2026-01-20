@@ -1,0 +1,17 @@
+<div>
+  <h2>User Registration</h2>
+  <app-user-form (formSubmitted)="onUserFormSubmitted($event)"></app-user-form>
+
+  <div *ngIf="registrationMessage">
+    <h4>{{ registrationMessage }}</h4>
+  </div>
+
+  <div *ngIf="registeredUsers.length > 0">
+    <h3>Registered Users:</h3>
+    <ul>
+      <li *ngFor="let user of registeredUsers">
+        {{ user.firstName }} {{ user.lastName }} ({{ user.email }}) - {{ user.registeredAt }}
+      </li>
+    </ul>
+  </div>
+</div>
