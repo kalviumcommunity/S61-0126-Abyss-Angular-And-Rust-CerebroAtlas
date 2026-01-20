@@ -1,6 +1,4 @@
-/* ===============================
-   CSS GRID – RESPONSIVE LAYOUT
-   =============================== */
+
 
 .grid {
   display: grid;
@@ -16,16 +14,7 @@
   background-color: #f9f9f9;
 }
 
-/*
-  Desktop: 4 cards per row (auto-fit handles this)
-  Tablet: 2 cards per row
-  Mobile: 1 card per row
-*/
 
-
-/* ===============================
-   FLEXBOX – ONE-DIMENSIONAL
-   =============================== */
 
 .flex-container {
   display: flex;
@@ -41,9 +30,6 @@
   text-align: center;
 }
 
-/* ===============================
-   MEDIA QUERY – FINE CONTROL
-   =============================== */
 
 @media (max-width: 768px) {
   .flex-container {

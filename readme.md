@@ -1560,3 +1560,113 @@ By completing this task, the following have been achieved:
 This setup prepares the project for building more complex, responsive UI features in future sprints.
 
 ---
+
+# Angular Data Binding Assignment – Patients Page
+
+## Assignment Overview
+
+This assignment demonstrates the implementation of Angular data binding concepts by building a Patients Management page in an Angular application. The work is based on Kalvium Lesson 3.16: Data Binding in Angular.
+
+The Patients page displays patient information and allows user interaction through search, filters, and action buttons while maintaining a responsive and dynamic UI.
+
+---
+
+## Concepts Covered
+
+The following Angular concepts from the lesson have been applied in this assignment:
+
+* Interpolation
+* Property Binding
+* Event Binding
+* Two-Way Binding using ngModel
+* Component-based UI development
+* Angular routing
+* Responsive UI design using CSS
+
+---
+
+## Features Implemented
+
+* Patients page with a card-based layout
+* Display of patient details such as name, age, gender, location, contact number, appointment date, medical conditions, and status
+* Search bar for filtering patients
+* Filter and Export buttons
+* Tabs for different patient categories
+* Routing to the Patients page using Angular Router
+* Scoped component styles to avoid global CSS conflicts
+
+---
+
+## Data Binding Usage
+
+### Interpolation
+
+Used to display dynamic patient data in the HTML template.
+
+Example:
+{{ patient.name }}
+{{ patient.age }}
+
+---
+
+### Property Binding
+
+Used to dynamically control HTML element properties based on component logic.
+
+Example:
+[disabled]="isDisabled"
+
+---
+
+### Event Binding
+
+Used to handle user interactions such as button clicks.
+
+Example:
+(click)="registerPatient()"
+
+---
+
+### Two-Way Binding
+
+Used for real-time synchronization between input fields and component data.
+
+Example:
+[(ngModel)]="searchText"
+
+FormsModule was imported to support ngModel.
+
+---
+
+## Component Structure
+
+* patients.component.ts
+* patients.component.html
+* patients.component.css
+
+Each component follows Angular’s separation of logic, template, and styles.
+
+---
+
+## Routing
+
+A dedicated route was added for the Patients page. Navigating to /patients loads the Patients component.
+
+---
+
+## How to Run the Project
+
+1. Install dependencies
+   npm install
+
+2. Run the Angular development server
+   ng serve
+
+3. Open the application in the browser
+   [http://localhost:4200/patients](http://localhost:4200/patients)
+
+---
+
+## Learning Outcome
+
+Through this assignment, I gained hands-on experience with Angular data binding techniques and learned how to build responsive and interactive user interfaces using Angular components.
