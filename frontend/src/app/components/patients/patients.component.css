@@ -1,9 +1,11 @@
 .patients-container {
+  margin-left: 272px; /* Sidebar width */
   padding: 2rem;
   background: #f8fafc;
   min-height: 100vh;
   font-family: "Inter", "Segoe UI", Arial, sans-serif;
   color: #0f172a;
+  transition: margin-left 0.3s ease;
 }
 
 .patients-container .patients-header {
