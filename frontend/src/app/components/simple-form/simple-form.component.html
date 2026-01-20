@@ -1,0 +1,58 @@
+<form #contactForm="ngForm" (ngSubmit)="onSubmit(contactForm)" novalidate>
+  <div>
+    <label for="name">Name:</label>
+    <input
+      type="text"
+      id="name"
+      name="name"
+      ngModel
+      required
+      minlength="2"
+      #nameControl="ngModel"
+    />
+    <div *ngIf="nameControl.invalid && nameControl.touched">
+      <small *ngIf="nameControl.errors?.['required']">Name is required.</small>
+      <small *ngIf="nameControl.errors?.['minlength']">Name must be at least 2 characters.</small>
+    </div>
+  </div>
+
+  <div>
+    <label for="email">Email:</label>
+    <input
+      type="email"
+      id="email"
+      name="email"
+      ngModel
+      required
+      email
+      #emailControl="ngModel"
+    />
+    <div *ngIf="emailControl.invalid && emailControl.touched">
+      <small *ngIf="emailControl.errors?.['required']">Email is required.</small>
+      <small *ngIf="emailControl.errors?.['email']">Please enter a valid email.</small>
+    </div>
+  </div>
+
+  <div>
+    <label for="message">Message:</label>
+    <textarea
+      id="message"
+      name="message"
+      ngModel
+      required
+      minlength="10"
+      #messageControl="ngModel"
+    ></textarea>
+    <div *ngIf="messageControl.invalid && messageControl.touched">
+      <small *ngIf="messageControl.errors?.['required']">Message is required.</small>
+      <small *ngIf="messageControl.errors?.['minlength']">Message must be at least 10 characters.</small>
+    </div>
+  </div>
+
+  <button type="submit" [disabled]="contactForm.invalid">Submit</button>
+</form>
+
+<div *ngIf="submitted && submittedData">
+  <h4>Form Data Submitted:</h4>
+  <pre>{{ submittedData | json }}</pre>
+</div>
