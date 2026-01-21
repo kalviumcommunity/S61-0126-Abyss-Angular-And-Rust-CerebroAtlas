@@ -1,32 +1,31 @@
 <aside class="sidebar" [class.collapsed]="isCollapsed">
   <button class="toggle-btn" (click)="toggleSidebar()" [attr.aria-label]="isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'">
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <line x1="3" y1="12" x2="21" y2="12"></line>
-      <line x1="3" y1="6" x2="21" y2="6"></line>
-      <line x1="3" y1="18" x2="21" y2="18"></line>
+    <svg *ngIf="!isCollapsed" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="15 18 9 12 15 6"></polyline>
+    </svg>
+    <svg *ngIf="isCollapsed" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <polyline points="9 18 15 12 9 6"></polyline>
     </svg>
   </button>
 
   <div class="sidebar-header">
     <div class="logo">
       <div class="logo-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
           <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
         </svg>
       </div>
       <div class="logo-text">
-        <h1>CereBro Atlas</h1>
+        <h1>RuralHealth</h1>
         <p>Digital Records</p>
       </div>
     </div>
-  </div>
 
-  <!-- <div class="status-indicator">
-    <span class="status-dot" [class.online]="userStatus === 'Online'" 
-                              [class.away]="userStatus === 'Away'"
-                              [class.offline]="userStatus === 'Offline'"></span>
-    <span class="status-text">{{ userStatus }}</span>
-  </div> -->
+    <!-- <div class="status-pill">
+      <span class="dot" [class.online]="userStatus === 'Online'" [class.away]="userStatus === 'Away'" [class.offline]="userStatus === 'Offline'"></span>
+      <span class="status-label">{{ userStatus }}</span>
+    </div> -->
+  </div>
 
   <nav class="sidebar-nav">
     <a *ngFor="let item of navItems" 

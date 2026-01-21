@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { Sidebar } from '../shared/sidebar/sidebar';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, DecimalPipe, Sidebar],
+  imports: [CommonModule, DecimalPipe, RouterModule, Sidebar],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })

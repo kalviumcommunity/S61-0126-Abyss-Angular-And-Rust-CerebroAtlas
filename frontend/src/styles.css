@@ -1,5 +1,7 @@
 :root {
-	color-scheme: dark;
+	color-scheme: light;
+	font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+	background-color: #f8fafc;
 }
 
 * {
@@ -8,12 +10,15 @@
 
 body {
 	margin: 0;
-	background: #060b15;
-	color: #e9f0f7;
+	background: #f8fafc;
+	color: #0f172a;
+	font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+	line-height: 1.5;
 }
 
 /* Global sidebar collapse styles */
 body.sidebar-collapsed .dashboard-container,
-body.sidebar-collapsed .patients-container {
-  margin-left: 70px !important;
+body.sidebar-collapsed .patients-container,
+body.sidebar-collapsed .new-patient-page {
+	margin-left: 70px !important;
 }

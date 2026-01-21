@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { Sidebar } from '../shared/sidebar/sidebar';
 
 interface Patient {
@@ -17,7 +18,7 @@ interface Patient {
 @Component({
   selector: 'app-patients',
   standalone: true,
-  imports: [CommonModule, FormsModule, DatePipe, Sidebar],
+  imports: [CommonModule, FormsModule, DatePipe, RouterModule, Sidebar],
   templateUrl: './patients.component.html',
   styleUrls: ['./patients.component.css']
 })
