@@ -1,0 +1,151 @@
+<div class="medical-records-layout">
+  <app-sidebar [userStatus]="'Online'" [userName]="'Dr. Sarah'"></app-sidebar>
+  <div class="medical-records-container">
+    <div class="header-row">
+      <div>
+        <h1>Medical Records</h1>
+        <div class="subtitle">View and manage patient consultations and medical history</div>
+      </div>
+      <button class="new-record-btn">+ New Record</button>
+    </div>
+
+    <div class="summary-cards">
+      <div class="summary-card">
+        <div class="summary-icon consultations"></div>
+        <div class="summary-value">156</div>
+        <div class="summary-label">Consultations</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-icon lab-results"></div>
+        <div class="summary-value">89</div>
+        <div class="summary-label">Lab Results</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-icon prescriptions"></div>
+        <div class="summary-value">234</div>
+        <div class="summary-label">Prescriptions</div>
+      </div>
+      <div class="summary-card">
+        <div class="summary-icon imaging"></div>
+        <div class="summary-value">45</div>
+        <div class="summary-label">Imaging</div>
+      </div>
+    </div>
+
+    <div class="controls-row">
+      <input class="search-input" type="text" placeholder="Search by patient name, doctor, or record type...">
+      <div class="controls-btns">
+        <button class="date-range-btn">Date Range</button>
+        <button class="filters-btn">Filters</button>
+        <button class="export-btn">Export</button>
+      </div>
+    </div>
+
+    <div class="tabs-row">
+      <button class="tab active">All Records</button>
+      <button class="tab">Consultations</button>
+      <button class="tab">Lab Results</button>
+      <button class="tab">Prescriptions</button>
+      <button class="tab">Pending Sync</button>
+    </div>
+
+    <div class="records-list">
+      <!-- Record 1 -->
+      <div class="record-card">
+        <div class="record-icon consultation"></div>
+        <div class="record-main">
+          <div class="record-title-row">
+            <span class="record-title">Follow-up Consultation</span>
+            <span class="record-type-badge consultation">Consultation</span>
+          </div>
+          <div class="record-desc">Blood sugar levels improving. Continued current medication regimen.</div>
+          <div class="record-meta-row">
+            <span class="record-initials">AO</span>
+            <span class="record-meta">Amara Okonkwo</span>
+            <span class="record-dot">•</span>
+            <span class="record-meta">Dr. Sarah Johnson</span>
+            <span class="record-dot">•</span>
+            <span class="record-meta">2024-01-15 at 10:30 AM</span>
+          </div>
+        </div>
+        <div class="record-status">
+          <span class="status-badge completed">● completed</span>
+          <a class="view-link">View</a>
+        </div>
+      </div>
+
+      <!-- Record 2 -->
+      <div class="record-card">
+        <div class="record-icon lab-result"></div>
+        <div class="record-main">
+          <div class="record-title-row">
+            <span class="record-title">Complete Blood Count</span>
+            <span class="record-type-badge lab-result">Lab Result</span>
+          </div>
+          <div class="record-desc">Results ready for physician review.</div>
+          <div class="record-meta-row">
+            <span class="record-initials">KM</span>
+            <span class="record-meta">Kwame Mensah</span>
+            <span class="record-dot">•</span>
+            <span class="record-meta">Lab Technician</span>
+            <span class="record-dot">•</span>
+            <span class="record-meta">2024-01-14 at 2:15 PM</span>
+          </div>
+        </div>
+        <div class="record-status">
+          <span class="status-badge pending">● pending review</span>
+          <span class="status-badge pending-sync">● Pending sync</span>
+          <a class="view-link">View</a>
+        </div>
+      </div>
+
+      <!-- Record 3 -->
+      <div class="record-card">
+        <div class="record-icon prescription"></div>
+        <div class="record-main">
+          <div class="record-title-row">
+            <span class="record-title">Prenatal Vitamins</span>
+            <span class="record-type-badge prescription">Prescription</span>
+          </div>
+          <div class="record-desc">Folic acid, Iron supplements, Vitamin D - 3 month supply.</div>
+          <div class="record-meta-row">
+            <span class="record-initials">FH</span>
+            <span class="record-meta">Fatima Hassan</span>
+            <span class="record-dot">•</span>
+            <span class="record-meta">Dr. James Adeyemi</span>
+            <span class="record-dot">•</span>
+            <span class="record-meta">2024-01-13 at 11:00 AM</span>
+          </div>
+        </div>
+        <div class="record-status">
+          <span class="status-badge active">● active</span>
+          <a class="view-link">View</a>
+        </div>
+      </div>
+
+      <!-- Record 4 -->
+      <div class="record-card">
+        <div class="record-icon imaging"></div>
+        <div class="record-main">
+          <div class="record-title-row">
+            <span class="record-title">Chest X-Ray</span>
+            <span class="record-type-badge imaging">Imaging</span>
+          </div>
+          <div class="record-desc">Clear lungs, no abnormalities detected.</div>
+          <div class="record-meta-row">
+            <span class="record-initials">CE</span>
+            <span class="record-meta">Chidi Eze</span>
+            <span class="record-dot">•</span>
+            <span class="record-meta">Dr. Sarah Johnson</span>
+            <span class="record-dot">•</span>
+            <span class="record-meta">2024-01-12 at 9:45 AM</span>
+          </div>
+        </div>
+        <div class="record-status">
+          <span class="status-badge completed">● completed</span>
+          <a class="view-link">View</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
