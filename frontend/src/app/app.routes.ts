@@ -1,8 +1,10 @@
+
 import { Routes } from '@angular/router';
 import { LoginComponent } from './components/login/login.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { PatientsComponent } from './components/patients/patients.component';
 import { NewPatientComponent } from './components/patients/new-patient/new-patient.component';
+import { MedicalRecordsComponent } from './components/medical-records/medical-records.component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'login' },
@@ -10,4 +12,5 @@ export const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent },
   { path: 'patients', component: PatientsComponent },
   { path: 'patients/new', component: NewPatientComponent },
+  { path: 'medical-records', component: MedicalRecordsComponent },
 ];
