@@ -1024,6 +1024,11 @@ Angular Component
 
 ![Angular Component dashboard](assets/screenshots/dashboard-angular.png)
 
+![Angular Mediacal record page](assets/screenshots/medical-record-page.png)
+
+![Angular audit-logs page](assets/screenshots/audit-logs.png)
+
+![Angular consent management page](assets/screenshots/consent-management.png)
 ---
 
 # Implementation: Reusable Collapsible Sidebar Component (January 20, 2026)
@@ -1676,7 +1681,7 @@ This behavior is achieved using **CSS Grid with `auto-fit` and `minmax()`**, mir
 ## Clean Responsive Design Practices Followed
 
 - Flexbox and Grid are preferred over floats
-- Fixed widths are avoided
+- Fixed widths are avoidedF
 - `minmax()`, `auto-fit`, and `fr` units are used
 - Layout is mobile-friendly and scalable
 - Design is easy to test using browser developer tools
@@ -1813,3 +1818,189 @@ A dedicated route was added for the Patients page. Navigating to /patients loads
 ## Learning Outcome
 
 Through this assignment, I gained hands-on experience with Angular data binding techniques and learned how to build responsive and interactive user interfaces using Angular components.
+
+
+## Using Angular Services for State and Data Management - (Date: 21-01-2026)
+
+---
+
+## Overview
+
+As Angular applications grow, managing data directly inside components becomes difficult and unstructured. This project demonstrates how Angular services are used to manage shared state and application data while keeping components clean and focused on UI rendering.
+
+The Medical Records page uses Angular services to manage consultations, lab results, prescriptions, and imaging records in a scalable and maintainable way.
+
+---
+
+## Objective
+
+* Understand why Angular services are needed
+* Use services as a single source of truth
+* Apply dependency injection
+* Manage shared state across components
+* Separate UI logic from data logic
+
+---
+
+## Project Structure
+
+```
+src/
+├── app/
+│   ├── services/
+│   │   └── medical-records.service.ts
+│   ├── medical-records/
+│   │   ├── medical-records.component.ts
+│   │   ├── medical-records.component.html
+│   │   └── medical-records.component.css
+│   └── app.module.ts
+```
+
+---
+
+## Why Angular Services Are Used
+
+Components should:
+
+* Display UI
+* Handle user interactions
+
+Components should not:
+
+* Store global state
+* Handle shared data
+* Contain business logic
+
+Angular services are used to:
+
+* Centralize data
+* Share state across components
+* Persist data during navigation
+* Improve maintainability and testing
+
+---
+
+## Angular Service Implementation
+
+The medical records data is stored in a service that is provided at the root level. This ensures a single instance is shared across the application.
+
+```
+ts
+@Injectable({ providedIn: 'root' })
+export class MedicalRecordsService {
+  records = [];
+}
+```
+
+---
+
+## Dependency Injection
+
+The service is injected into the component using Angular’s dependency injection system.
+
+```
+ts
+constructor(private recordsService: MedicalRecordsService) {}
+```
+
+This allows multiple components to access and update the same data without duplication.
+
+---
+
+## State Management
+
+The service manages:
+
+* Consultations
+* Lab results
+* Prescriptions
+* Imaging records
+
+The state persists across:
+
+* Component reloads
+* UI interactions
+* Navigation changes
+
+---
+
+## UI Responsibility
+
+* Components handle layout and user interaction
+* Services handle data and logic
+
+This follows the principle:
+Components display data. Services manage data.
+
+---
+
+## Medical Records UI Update
+
+The Medical Records UI was updated to:
+
+* Use a clean card-based layout
+* Display record type and status clearly
+* Improve spacing and alignment
+* Match the provided reference design
+
+All UI changes were implemented using component HTML and CSS without mixing business logic.
+
+---
+
+## Error Handling
+
+Basic error handling is implemented inside services to ensure safe data access and prevent UI crashes.
+
+```
+ts
+getRecords() {
+  return this.records || [];
+}
+```
+
+---
+
+## Best Practices Followed
+
+* Single responsibility per service
+* No UI logic inside services
+* Centralized shared state
+* Clean component architecture
+* Scalable and maintainable code
+
+---
+
+## Outcome
+
+By completing this assignment, I am able to:
+
+* Use Angular services correctly
+* Apply dependency injection confidently
+* Manage shared application state
+* Build scalable frontend architecture
+
+---
+
+# Summary of Recent Changes (Jan 2026)
+
+## UI Enhancements
+
+- Implemented a modern Consent Management UI in Angular with:
+  - Stats cards (consents granted/denied, expiring, compliance)
+  - Tab navigation and consent toggles for data sharing, research, emergency, and reporting
+  - Privacy notice section
+
+- Built an Audit Logs & Security UI with:
+  - Stats cards (total events, failed logins, sessions, exports)
+  - Search/filter bar, tabbed navigation, and export button
+  - Activity log with event types, user/role, time, IP, and status badges
+
+- Sidebar navigation is included on all main pages for consistency.
+
+## Code Structure
+
+- Angular components and CSS for Consent Management and Audit Logs were created/updated to match provided UI screenshots.
+- TypeScript files provide mock data for UI demonstration.
+- All changes are focused on frontend presentation and layout, not backend logic.
+
+---

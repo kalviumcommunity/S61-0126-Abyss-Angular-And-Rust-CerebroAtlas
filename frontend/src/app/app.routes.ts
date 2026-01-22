@@ -6,6 +6,7 @@ import { PatientsComponent } from './components/patients/patients.component';
 import { NewPatientComponent } from './components/patients/new-patient/new-patient.component';
 import { MedicalRecordsComponent } from './components/medical-records/medical-records.component';
 import { ConsentManagementComponent } from './components/consent-management/consent-management.component';
+import { AuditLogsComponent } from './components/audit-logs/audit-logs.component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'login' },
@@ -15,4 +16,5 @@ export const routes: Routes = [
   { path: 'patients/new', component: NewPatientComponent },
   { path: 'medical-records', component: MedicalRecordsComponent },
   { path: 'consent-management', component: ConsentManagementComponent },
+  { path: 'audit-logs', component: AuditLogsComponent },
 ];

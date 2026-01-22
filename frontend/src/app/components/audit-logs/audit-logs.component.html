@@ -1,0 +1,53 @@
+<div class="audit-logs-container">
+ <app-sidebar></app-sidebar>
+
+  <h1>Audit Logs & Security</h1>
+  <p class="subtitle">Monitor system activity and security events</p>
+
+  <div class="stats-row">
+    <div class="stat-card" *ngFor="let stat of stats">
+      <div class="stat-icon {{stat.icon}}"></div>
+      <div class="stat-value">{{stat.value}}</div>
+      <div class="stat-label">{{stat.label}}</div>
+    </div>
+  </div>
+
+  <div class="search-row">
+    <input class="search-input" placeholder="Search by action, resource, or user..." />
+    <select class="level-select">
+      <option>All Levels</option>
+      <option>Info</option>
+      <option>Warning</option>
+      <option>Error</option>
+    </select>
+    <button class="more-filters">More Filters</button>
+    <button class="export-btn">Export Logs</button>
+  </div>
+
+  <div class="tabs">
+    <button *ngFor="let tab of tabs" class="tab" [class.active]="tab.active">{{tab.label}}</button>
+  </div>
+
+  <div class="activity-log-card">
+    <h2>Activity Log</h2>
+    <p class="activity-desc">Complete audit trail of system activities</p>
+    <div class="log-list">
+      <div class="log-item" *ngFor="let log of logs">
+        <div class="log-icon {{log.type}}"></div>
+        <div class="log-main">
+          <div class="log-title">
+            {{log.title}}
+            <span *ngIf="log.role" class="log-role">{{log.role}}</span>
+          </div>
+          <div class="log-desc">{{log.desc}}</div>
+          <div class="log-meta">
+            <span *ngIf="log.user">{{log.user}}</span>
+            <span *ngIf="log.time">• {{log.time}}</span>
+            <span *ngIf="log.ip">• IP: {{log.ip}}</span>
+          </div>
+        </div>
+        <div class="log-status" [ngClass]="log.level">{{log.level}}</div>
+      </div>
+    </div>
+  </div>
+</div>

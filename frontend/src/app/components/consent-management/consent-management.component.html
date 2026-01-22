@@ -1,7 +1,125 @@
 <div class="consent-management-container">
   <app-sidebar></app-sidebar>
-  <main class="consent-content">
-    <h1>Consent Management</h1>
-    <p>Manage patient consent and permissions here.</p>
-  </main>
+  <h1>Consent Management</h1>
+  <p class="subtitle">Manage patient privacy preferences and data sharing consents</p>
+
+  <!-- Stats Row -->
+  <div class="stats-row">
+    <div class="stat-card granted">
+      <div class="stat-value">847</div>
+      <div class="stat-label">Consents Granted</div>
+    </div>
+    <div class="stat-card denied">
+      <div class="stat-value">156</div>
+      <div class="stat-label">Consents Denied</div>
+    </div>
+    <div class="stat-card expiring">
+      <div class="stat-value">23</div>
+      <div class="stat-label">Expiring Soon</div>
+    </div>
+    <div class="stat-card compliance">
+      <div class="stat-value">100%</div>
+      <div class="stat-label">Compliance Rate</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active">Consent Categories</button>
+    <button class="tab">By Patient</button>
+    <button class="tab">History</button>
+  </div>
+
+  <!-- Consent Cards Grid -->
+  <div class="consent-grid">
+    <!-- Data Sharing -->
+    <div class="consent-card">
+      <div class="card-header">
+        <span class="icon data-sharing"></span>
+        <span class="card-title">Data Sharing</span>
+        <span class="card-desc">Share medical records with other healthcare providers</span>
+      </div>
+      <div class="card-body">
+        <div class="consent-row" *ngFor="let item of dataSharing">
+          <span>{{item.label}}</span>
+          <span class="consent-status" [ngClass]="{'granted': item.granted, 'denied': !item.granted}">
+            {{item.granted ? 'Granted' : 'Denied'}}
+          </span>
+          <label class="switch">
+            <input type="checkbox" [(ngModel)]="item.granted">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Research Use -->
+    <div class="consent-card">
+      <div class="card-header">
+        <span class="icon research"></span>
+        <span class="card-title">Research Use</span>
+        <span class="card-desc">Allow anonymized data for medical research</span>
+      </div>
+      <div class="card-body">
+        <div class="consent-row" *ngFor="let item of researchUse">
+          <span>{{item.label}}</span>
+          <span class="consent-status" [ngClass]="{'granted': item.granted, 'denied': !item.granted}">
+            {{item.granted ? 'Granted' : 'Denied'}}
+          </span>
+          <label class="switch">
+            <input type="checkbox" [(ngModel)]="item.granted">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Emergency Access -->
+    <div class="consent-card">
+      <div class="card-header">
+        <span class="icon emergency"></span>
+        <span class="card-title">Emergency Access</span>
+        <span class="card-desc">Allow emergency access to critical health information</span>
+      </div>
+      <div class="card-body">
+        <div class="consent-row" *ngFor="let item of emergencyAccess">
+          <span>{{item.label}}</span>
+          <span class="consent-status" [ngClass]="{'granted': item.granted, 'denied': !item.granted}">
+            {{item.granted ? 'Granted' : 'Denied'}}
+          </span>
+          <label class="switch">
+            <input type="checkbox" [(ngModel)]="item.granted">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Government Reporting -->
+    <div class="consent-card">
+      <div class="card-header">
+        <span class="icon government"></span>
+        <span class="card-title">Government Reporting</span>
+        <span class="card-desc">Share data with government health agencies</span>
+      </div>
+      <div class="card-body">
+        <div class="consent-row" *ngFor="let item of governmentReporting">
+          <span>{{item.label}}</span>
+          <span class="consent-status" [ngClass]="{'granted': item.granted, 'denied': !item.granted}">
+            {{item.granted ? 'Granted' : 'Denied'}}
+          </span>
+          <label class="switch">
+            <input type="checkbox" [(ngModel)]="item.granted">
+            <span class="slider"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Privacy Protection Notice -->
+  <div class="privacy-notice">
+    <span class="icon privacy"></span>
+    <span>All consent data is encrypted and stored securely. Patients can revoke consent at any time. Consent changes are logged for compliance and auditing purposes.</span>
+  </div>
 </div>
