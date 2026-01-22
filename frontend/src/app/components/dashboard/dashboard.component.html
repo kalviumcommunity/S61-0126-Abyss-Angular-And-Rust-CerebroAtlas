@@ -1,60 +1,209 @@
-<app-sidebar [userStatus]="'Online'" [userName]="'Dr. Sarah'"></app-sidebar>
+<app-sidebar></app-sidebar>
 
 <div class="dashboard-container">
-  <h1>Dashboard</h1>
-  <p class="welcome">Welcome back, Dr. Sarah. Here's today's overview.</p>
-  <div class="dashboard-actions">
-    <button class="action-btn new-patient" [routerLink]="'/patients/new'"><span class="icon">+</span> New Patient</button>
-    <button class="action-btn new-consultation"><span class="icon">📄</span> New Consultation</button>
-    <button class="action-btn schedule"><span class="icon">📅</span> Schedule</button>
-    <button class="action-btn emergency"><span class="icon">&#9888;</span> Emergency</button>
+  <div class="dashboard-header">
+    <div class="header-text">
+      <h1>Dashboard</h1>
+      <p class="welcome">Welcome back, Dr. Sarah. Here's today's overview.</p>
+    </div>
+    <div class="header-search">
+      <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="m21 21-4.35-4.35"></path>
+      </svg>
+      <input type="text" placeholder="Search patients, records..." class="search-input">
+      <button class="notification-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+        </svg>
+        <span class="notification-badge">3</span>
+      </button>
+    </div>
   </div>
+
+  <div class="dashboard-actions">
+    <button class="action-btn new-patient" [routerLink]="'/patients/new'">
+      <div class="action-icon green">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+      </div>
+      New Patient
+    </button>
+    <button class="action-btn new-consultation">
+      <div class="action-icon blue">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+          <polyline points="10 9 9 9 8 9"></polyline>
+        </svg>
+      </div>
+      New Consultation
+    </button>
+    <button class="action-btn schedule">
+      <div class="action-icon orange">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+      </div>
+      Schedule
+    </button>
+    <button class="action-btn emergency">
+      <div class="action-icon red">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+      </div>
+      Emergency
+    </button>
+  </div>
+
   <div class="dashboard-stats">
     <div class="stat-card">
-      <div class="stat-label">Total Patients</div>
-      <div class="stat-value">{{ stats.totalPatients | number }}</div>
-      <div class="stat-change positive">+{{ stats.patientsChange }}% this week</div>
+      <div class="stat-content">
+        <div class="stat-label">Total Patients</div>
+        <div class="stat-value">{{ stats.totalPatients | number }}</div>
+        <div class="stat-change positive">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="18 15 12 9 6 15"></polyline>
+          </svg>
+          +{{ stats.patientsChange }}% this week
+        </div>
+      </div>
+      <div class="stat-icon patients">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+      </div>
     </div>
+
     <div class="stat-card">
-      <div class="stat-label">Records Today</div>
-      <div class="stat-value">{{ stats.recordsToday }}</div>
-      <div class="stat-change positive">+{{ stats.recordsChange }}% this week</div>
+      <div class="stat-content">
+        <div class="stat-label">Records Today</div>
+        <div class="stat-value">{{ stats.recordsToday }}</div>
+        <div class="stat-change positive">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="18 15 12 9 6 15"></polyline>
+          </svg>
+          +{{ stats.recordsChange }}% this week
+        </div>
+      </div>
+      <div class="stat-icon records">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+          <line x1="16" y1="13" x2="8" y2="13"></line>
+          <line x1="16" y1="17" x2="8" y2="17"></line>
+        </svg>
+      </div>
     </div>
+
     <div class="stat-card">
-      <div class="stat-label">Appointments</div>
-      <div class="stat-value">{{ stats.appointments }}</div>
-      <div class="stat-change negative">{{ stats.appointmentsChange }}% this week</div>
+      <div class="stat-content">
+        <div class="stat-label">Appointments</div>
+        <div class="stat-value">{{ stats.appointments }}</div>
+        <div class="stat-change negative">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"></polyline>
+          </svg>
+          {{ stats.appointmentsChange }}% this week
+        </div>
+      </div>
+      <div class="stat-icon appointments">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6"></line>
+          <line x1="8" y1="2" x2="8" y2="6"></line>
+          <line x1="3" y1="10" x2="21" y2="10"></line>
+        </svg>
+      </div>
     </div>
+
     <div class="stat-card">
-      <div class="stat-label">Pending Syncs</div>
-      <div class="stat-value">{{ stats.pendingSyncs }}</div>
+      <div class="stat-content">
+        <div class="stat-label">Pending Syncs</div>
+        <div class="stat-value">{{ stats.pendingSyncs }}</div>
+      </div>
+      <div class="stat-icon syncs">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"></circle>
+          <polyline points="12 6 12 12 16 14"></polyline>
+        </svg>
+      </div>
     </div>
   </div>
+
   <div class="dashboard-main">
     <div class="recent-patients">
-      <h2>Recent Patients</h2>
+      <div class="section-header">
+        <h2>Recent Patients</h2>
+        <a class="view-all" href="#">
+          View All
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </a>
+      </div>
       <p class="subtitle">Patients you've seen recently</p>
-      <ul>
+      <ul class="patients-list">
         <li *ngFor="let patient of recentPatients">
-          <span class="avatar">{{ patient.initials }}</span>
+          <span class="avatar" [class]="patient.status">{{ patient.initials }}</span>
           <span class="patient-info">
             <span class="name">{{ patient.name }}</span>
             <span class="details">{{ patient.age }} years • Last visit: {{ patient.lastVisit }}</span>
           </span>
-          <span class="status" [ngClass]="patient.status">{{ patient.status }}</span>
+          <span class="status-badge" [class]="patient.status">
+            <span class="status-dot"></span>
+            {{ patient.status }}
+          </span>
         </li>
       </ul>
-      <a class="view-all" href="#">View All</a>
     </div>
+
     <div class="alerts">
-      <h2>Alerts</h2>
+      <div class="section-header">
+        <h2>
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+          Alerts
+        </h2>
+      </div>
       <p class="subtitle">Important notifications</p>
-      <ul>
-        <li *ngFor="let note of notifications" [ngClass]="note.type">
-          <span class="alert-message">{{ note.message }}</span>
-          <span class="alert-time">{{ note.time }}</span>
+      <ul class="alerts-list">
+        <li *ngFor="let note of notifications" [class]="note.type">
+          <div class="alert-content">
+            <span class="alert-message">{{ note.message }}</span>
+            <span class="alert-time">{{ note.time }}</span>
+          </div>
         </li>
       </ul>
     </div>
+  </div>
+
+  <div class="sync-status">
+    <div class="sync-info">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"></circle>
+        <polyline points="12 6 12 12 16 14"></polyline>
+      </svg>
+      <span>7 records pending synchronization</span>
+      <span class="sync-time">Last sync: 2 hours ago</span>
+    </div>
+    <button class="sync-btn">View Sync Status</button>
   </div>
 </div>

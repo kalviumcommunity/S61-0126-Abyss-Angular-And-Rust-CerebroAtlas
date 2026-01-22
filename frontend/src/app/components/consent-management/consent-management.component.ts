@@ -12,6 +12,8 @@ import { Sidebar } from '../shared/sidebar/sidebar';
   styleUrls: ['./consent-management.component.css']
 })
 export class ConsentManagementComponent {
+  activeTab = 'categories';
+
   dataSharing = [
     { label: 'Share with referral hospitals', granted: true },
     { label: 'Share with specialist clinics', granted: true },
@@ -36,4 +38,67 @@ export class ConsentManagementComponent {
     { label: 'Immunization records', granted: true },
     { label: 'Notifiable diseases', granted: true },
   ];
+
+  patients = [
+    {
+      id: 'AO',
+      name: 'Amara Okonkwo',
+      granted: 8,
+      denied: 5,
+      expiring: 1
+    },
+    {
+      id: 'KM',
+      name: 'Kwame Mensah',
+      granted: 6,
+      denied: 7,
+      expiring: 0
+    },
+    {
+      id: 'FH',
+      name: 'Fatima Hassan',
+      granted: 10,
+      denied: 3,
+      expiring: 2
+    }
+  ];
+
+  consentHistory = [
+    {
+      icon: 'checkmark',
+      action: 'Granted',
+      description: 'Share with referral hospitals',
+      date: '2024-01-10',
+      time: '10:30 AM',
+      actor: 'Patient'
+    },
+    {
+      icon: 'denied',
+      action: 'Revoked',
+      description: 'Share with pharmacies',
+      date: '2024-01-05',
+      time: '2:15 PM',
+      actor: 'Patient'
+    },
+    {
+      icon: 'checkmark',
+      action: 'Granted',
+      description: 'Emergency room access',
+      date: '2024-01-03',
+      time: '9:00 AM',
+      actor: 'Patient'
+    },
+    {
+      icon: 'checkmark',
+      action: 'Granted',
+      description: 'Disease outbreak tracking',
+      date: '2024-01-02',
+      time: '11:45 AM',
+      actor: 'Healthcare Provider'
+    }
+  ];
+
+  switchTab(tab: string) {
+    this.activeTab = tab;
+  }
 }

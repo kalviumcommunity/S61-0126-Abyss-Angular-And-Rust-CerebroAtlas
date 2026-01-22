@@ -7,6 +7,9 @@ import { NewPatientComponent } from './components/patients/new-patient/new-patie
 import { MedicalRecordsComponent } from './components/medical-records/medical-records.component';
 import { ConsentManagementComponent } from './components/consent-management/consent-management.component';
 import { AuditLogsComponent } from './components/audit-logs/audit-logs.component';
+import { ReportsComponent } from './components/reports/reports.component';
+import { AdministrationComponent } from './components/administration/administration.component';
+import { AddUserComponent } from './components/administration/add-user/add-user.component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'login' },
@@ -17,4 +20,8 @@ export const routes: Routes = [
   { path: 'medical-records', component: MedicalRecordsComponent },
   { path: 'consent-management', component: ConsentManagementComponent },
   { path: 'audit-logs', component: AuditLogsComponent },
+  { path: 'reports', component: ReportsComponent },
+  { path: 'administration', component: AdministrationComponent },
+  { path: 'administration/add-user', component: AddUserComponent },
+  { path: 'Adminstration_report', component: AdministrationComponent },
 ];

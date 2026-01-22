@@ -26,8 +26,8 @@ export class Sidebar implements OnInit {
     { label: 'Patients', route: '/patients' },
     { label: 'Medical Records', route: '/medical-records' },
     { label: 'Consent Management', route: '/consent-management' },
-    { label: 'Data Sharing', route: '/data-sharing' },
-    { label: 'Sync Status', route: '/sync-status' },
+    { label: 'Adminstration', route: '/Adminstration_report' },
+    { label: 'Report', route: '/reports' },
     { label: 'Audit Logs', route: '/audit-logs' },
   ];
 

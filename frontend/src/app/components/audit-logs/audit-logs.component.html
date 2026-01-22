@@ -1,12 +1,43 @@
 <div class="audit-logs-container">
- <app-sidebar></app-sidebar>
+  <app-sidebar></app-sidebar>
 
-  <h1>Audit Logs & Security</h1>
-  <p class="subtitle">Monitor system activity and security events</p>
+  <div class="page-header">
+    <div>
+      <h1>Audit Logs & Security</h1>
+      <p class="subtitle">Monitor system activity and security events</p>
+    </div>
+    <button class="export-btn">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+        <polyline points="7 10 12 15 17 10"></polyline>
+        <line x1="12" y1="15" x2="12" y2="3"></line>
+      </svg>
+      Export Logs
+    </button>
+  </div>
 
   <div class="stats-row">
     <div class="stat-card" *ngFor="let stat of stats">
-      <div class="stat-icon {{stat.icon}}"></div>
+      <div class="stat-icon {{stat.icon}}">
+        <svg *ngIf="stat.icon === 'event'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+          <polyline points="14 2 14 8 20 8"></polyline>
+        </svg>
+        <svg *ngIf="stat.icon === 'failed'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3.05h16.94a2 2 0 0 0 1.71-3.05L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+          <line x1="12" y1="9" x2="12" y2="13"></line>
+          <line x1="12" y1="17" x2="12.01" y2="17"></line>
+        </svg>
+        <svg *ngIf="stat.icon === 'session'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+          <circle cx="12" cy="7" r="4"></circle>
+        </svg>
+        <svg *ngIf="stat.icon === 'export'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+          <polyline points="7 10 12 15 17 10"></polyline>
+          <line x1="12" y1="15" x2="12" y2="3"></line>
+        </svg>
+      </div>
       <div class="stat-value">{{stat.value}}</div>
       <div class="stat-label">{{stat.label}}</div>
     </div>
@@ -20,33 +51,186 @@
       <option>Warning</option>
       <option>Error</option>
     </select>
-    <button class="more-filters">More Filters</button>
-    <button class="export-btn">Export Logs</button>
+    <button class="more-filters">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+      </svg>
+      More Filters
+    </button>
   </div>
 
   <div class="tabs">
-    <button *ngFor="let tab of tabs" class="tab" [class.active]="tab.active">{{tab.label}}</button>
+    <button class="tab" [class.active]="activeTab === 'all'" (click)="switchTab('all')">All Events</button>
+    <button class="tab" [class.active]="activeTab === 'access'" (click)="switchTab('access')">Access Logs</button>
+    <button class="tab" [class.active]="activeTab === 'data'" (click)="switchTab('data')">Data Changes</button>
+    <button class="tab" [class.active]="activeTab === 'security'" (click)="switchTab('security')">Security Alerts</button>
   </div>
 
-  <div class="activity-log-card">
-    <h2>Activity Log</h2>
-    <p class="activity-desc">Complete audit trail of system activities</p>
-    <div class="log-list">
-      <div class="log-item" *ngFor="let log of logs">
-        <div class="log-icon {{log.type}}"></div>
-        <div class="log-main">
-          <div class="log-title">
-            {{log.title}}
-            <span *ngIf="log.role" class="log-role">{{log.role}}</span>
+  <div class="tab-content">
+    <!-- All Events Tab -->
+    <div class="content-section" *ngIf="activeTab === 'all'">
+      <div class="section-header">
+        <h2>Activity Log</h2>
+        <p>Complete audit trail of system activities</p>
+      </div>
+      <div class="log-list">
+        <div class="log-item" *ngFor="let log of allLogs">
+          <div class="log-icon {{log.type}}">
+            <svg *ngIf="log.type === 'view'" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+            <svg *ngIf="log.type === 'modify'" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+            <svg *ngIf="log.type === 'fail'" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3.05h16.94a2 2 0 0 0 1.71-3.05L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <svg *ngIf="log.type === 'consent'" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+            <svg *ngIf="log.type === 'user'" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <svg *ngIf="log.type === 'export'" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <svg *ngIf="log.type === 'deny'" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line>
+            </svg>
+            <svg *ngIf="log.type === 'success'" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 11l3 3L22 4"></path>
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+            </svg>
           </div>
-          <div class="log-desc">{{log.desc}}</div>
-          <div class="log-meta">
-            <span *ngIf="log.user">{{log.user}}</span>
-            <span *ngIf="log.time">• {{log.time}}</span>
-            <span *ngIf="log.ip">• IP: {{log.ip}}</span>
+          <div class="log-main">
+            <div class="log-title">
+              {{log.title}}
+              <span *ngIf="log.role" class="log-role">{{log.role}}</span>
+            </div>
+            <div class="log-desc">{{log.desc}}</div>
+            <div class="log-meta">
+              <span *ngIf="log.user">{{log.user}}</span>
+              <span *ngIf="log.time">• {{log.time}}</span>
+              <span *ngIf="log.ip">• IP: {{log.ip}}</span>
+            </div>
+          </div>
+          <div class="log-status" [ngClass]="log.level">{{log.level}}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Access Logs Tab -->
+    <div class="content-section" *ngIf="activeTab === 'access'">
+      <div class="section-header">
+        <h2>Access Logs</h2>
+        <p>Login and authentication events</p>
+      </div>
+      <div class="log-list">
+        <div class="access-log-item" *ngFor="let log of accessLogs">
+          <div class="access-icon" [class.failed]="log.status === 'failed'" [class.success]="log.status === 'success'">
+            <svg *ngIf="log.status === 'failed'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3.05h16.94a2 2 0 0 0 1.71-3.05L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <svg *ngIf="log.status === 'success'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+              <polyline points="10 17 15 12 10 7"></polyline>
+              <line x1="15" y1="12" x2="3" y2="12"></line>
+            </svg>
+          </div>
+          <div class="access-main">
+            <div class="access-title">{{log.title}}</div>
+            <div class="access-meta">{{log.user}} • {{log.time}} • IP: {{log.ip}}</div>
+          </div>
+          <div class="access-status" [class.failed]="log.status === 'failed'" [class.success]="log.status === 'success'">
+            <span class="status-dot"></span>
+            {{log.status === 'failed' ? 'Failed' : 'Success'}}
           </div>
         </div>
-        <div class="log-status" [ngClass]="log.level">{{log.level}}</div>
+      </div>
+    </div>
+
+    <!-- Data Changes Tab -->
+    <div class="content-section" *ngIf="activeTab === 'data'">
+      <div class="section-header">
+        <h2>Data Changes</h2>
+        <p>Record modifications and updates</p>
+      </div>
+      <div class="changes-list">
+        <div class="change-item" *ngFor="let change of dataChanges">
+          <div class="change-icon" [class.modify]="change.type === 'modify'" [class.consent]="change.type === 'consent'" [class.user]="change.type === 'user'">
+            <svg *ngIf="change.type === 'modify'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+            <svg *ngIf="change.type === 'consent'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+            <svg *ngIf="change.type === 'user'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="8.5" cy="7" r="4"></circle>
+              <line x1="20" y1="8" x2="20" y2="14"></line>
+              <line x1="23" y1="11" x2="17" y2="11"></line>
+            </svg>
+          </div>
+          <div class="change-main">
+            <div class="change-title">{{change.title}}</div>
+            <div class="change-meta">{{change.desc}} • {{change.user}} • {{change.time}}</div>
+          </div>
+          <button class="view-details-btn">View Details</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Security Alerts Tab -->
+    <div class="content-section" *ngIf="activeTab === 'security'">
+      <div class="section-header alert-header">
+        <div>
+          <h2 class="alert-title">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3.05h16.94a2 2 0 0 0 1.71-3.05L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            Security Alerts
+          </h2>
+          <p>Suspicious activities and security events</p>
+        </div>
+      </div>
+      <div class="alerts-list">
+        <div class="alert-item" [class.warning]="alert.severity === 'warning'" [class.error]="alert.severity === 'error'" *ngFor="let alert of securityAlerts">
+          <div class="alert-icon">
+            <svg *ngIf="alert.type === 'fail'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3.05h16.94a2 2 0 0 0 1.71-3.05L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+            <svg *ngIf="alert.type === 'export'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <svg *ngIf="alert.type === 'deny'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3.05h16.94a2 2 0 0 0 1.71-3.05L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+          </div>
+          <div class="alert-main">
+            <div class="alert-title-text">{{alert.title}}</div>
+            <div class="alert-meta">{{alert.desc}} • {{alert.time}} • IP: {{alert.ip}}</div>
+          </div>
+          <button class="investigate-btn">Investigate</button>
+        </div>
       </div>
     </div>
   </div>
