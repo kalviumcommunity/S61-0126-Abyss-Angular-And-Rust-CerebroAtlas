@@ -66,6 +66,13 @@
   justify-content: center;
 }
 
+.logo-image {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
 .logo-text h1 {
   margin: 0;
   font-size: 18px;
@@ -141,6 +148,8 @@
   flex: 1;
   padding: 4px 12px 12px;
   overflow-y: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .nav-item {
@@ -202,8 +211,11 @@
 }
 
 .sidebar-footer {
-  padding: 16px 12px 20px;
-  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 12px 12px 20px;
+  margin-top: auto;
+  border-top: 2px solid rgba(255, 255, 255, 0.15);
+  display: flex;
+  flex-direction: column;
 }
 
 .sign-out-btn {
@@ -219,6 +231,7 @@
   cursor: pointer;
   transition: all 0.18s ease;
   font-size: 14px;
+  font-weight: 500;
 }
 
 .sign-out-btn:hover {

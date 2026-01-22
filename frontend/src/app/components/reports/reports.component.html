@@ -1,0 +1,385 @@
+<app-sidebar [userStatus]="'Online'" [userName]="'Dr. Sarah'"></app-sidebar>
+
+<div class="reports-container">
+  <div class="page-header">
+    <div class="title-block">
+      <h1>Reports & Analytics</h1>
+      <p>Healthcare metrics and population health insights</p>
+    </div>
+    <div class="header-actions">
+      <button class="new-report-btn" (click)="openNewReportModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="5" x2="12" y2="19"></line>
+          <line x1="5" y1="12" x2="19" y2="12"></line>
+        </svg>
+        New Report
+      </button>
+      <button class="reports-list-btn" (click)="toggleReportsList()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2M9 5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2"></path>
+        </svg>
+        Reports ({{medicalReports.length}})
+      </button>
+      <select class="time-select">
+        <option>This Month</option>
+        <option>Last Month</option>
+        <option>Last Quarter</option>
+        <option>Last Year</option>
+      </select>
+      <button class="export-btn">
+        <span>📥</span>
+        Export
+      </button>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-row">
+    <div class="stat-card" *ngFor="let stat of stats">
+      <div class="stat-header">
+        <div class="stat-title">{{stat.label}}</div>
+        <div class="stat-icon {{stat.icon}}">
+          <svg *ngIf="stat.icon === 'patients'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          <svg *ngIf="stat.icon === 'consultations'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+          </svg>
+          <svg *ngIf="stat.icon === 'waittime'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          <svg *ngIf="stat.icon === 'completeness'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+      </div>
+      <div class="stat-value">{{stat.value}}</div>
+      <div class="stat-change" [ngClass]="stat.trend">{{stat.change}}</div>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab" [class.active]="activeTab === 'overview'" (click)="switchTab('overview')">Overview</button>
+    <button class="tab" [class.active]="activeTab === 'patient'" (click)="switchTab('patient')">Patient Analytics</button>
+    <button class="tab" [class.active]="activeTab === 'disease'" (click)="switchTab('disease')">Disease Trends</button>
+    <button class="tab" [class.active]="activeTab === 'geographic'" (click)="switchTab('geographic')">Geographic</button>
+  </div>
+
+  <!-- Overview Tab -->
+  <div class="tab-content" *ngIf="activeTab === 'overview'">
+    <!-- Charts Section -->
+    <div class="charts-grid">
+      <div class="chart-card">
+        <h3>Patient & Consultation Trends</h3>
+        <p>Monthly patient visits and consultations</p>
+        <div class="chart-placeholder">
+          <div class="bar-chart">
+            <div class="bar-group" *ngFor="let i of [1,2,3,4,5,6,7,8,9,10,11,12]">
+              <div class="bar bar-teal" [ngStyle]="{'height': (30 + i * 5) + '%'}"></div>
+              <div class="bar bar-cyan" [ngStyle]="{'height': (20 + i * 4) + '%'}"></div>
+              <span class="bar-label">{{['Jul','Aug','Sep','Oct','Nov','Dec','Jan'][i % 7]}}</span>
+            </div>
+          </div>
+        </div>
+        <div class="chart-legend">
+          <span class="legend-item">
+            <span class="legend-dot teal"></span>
+            Patients
+          </span>
+          <span class="legend-item">
+            <span class="legend-dot cyan"></span>
+            Consultations
+          </span>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <h3>Condition Distribution</h3>
+        <p>Most common diagnoses this month</p>
+        <div class="donut-chart-container">
+          <svg viewBox="0 0 200 200" class="donut-chart">
+            <circle cx="100" cy="100" r="80" fill="none" stroke="#d1f4f9" stroke-width="40" stroke-dasharray="176 251.2"></circle>
+            <circle cx="100" cy="100" r="80" fill="none" stroke="#f97316" stroke-width="40" stroke-dasharray="125.6 251.2" stroke-dashoffset="-176"></circle>
+            <circle cx="100" cy="100" r="80" fill="none" stroke="#3b82f6" stroke-width="40" stroke-dasharray="100.5 251.2" stroke-dashoffset="-301.6"></circle>
+            <circle cx="100" cy="100" r="80" fill="none" stroke="#8b5cf6" stroke-width="40" stroke-dasharray="60.3 251.2" stroke-dashoffset="-402.1"></circle>
+            <circle cx="100" cy="100" r="80" fill="none" stroke="#64748b" stroke-width="40" stroke-dasharray="20.1 251.2" stroke-dashoffset="-462.4"></circle>
+          </svg>
+        </div>
+        <div class="condition-legend">
+          <div class="legend-row" *ngFor="let cond of conditionData">
+            <span class="legend-dot" [style.background]="cond.color"></span>
+            <span class="legend-label">{{cond.condition}} ({{cond.percentage}}%)</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Village Distribution -->
+    <div class="village-section">
+      <div class="village-header">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+          <circle cx="12" cy="10" r="3"></circle>
+        </svg>
+        <h3>Patient Distribution by Village</h3>
+        <p>Geographic spread of patient population</p>
+      </div>
+      <div class="villages-list">
+        <div class="village-item" *ngFor="let village of villages">
+          <div class="village-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+          </div>
+          <div class="village-info">
+            <div class="village-name">{{village.name}}</div>
+            <div class="village-patients">{{village.patients}} registered patients</div>
+          </div>
+          <div class="village-growth" [ngClass]="village.growth.includes('+') ? 'positive' : 'negative'">{{village.growth}}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Patient Analytics Tab -->
+  <div class="tab-content" *ngIf="activeTab === 'patient'">
+    <div class="placeholder-section">
+      <div class="placeholder-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+        </svg>
+      </div>
+      <h3>Patient Demographics</h3>
+      <p class="placeholder-subtitle">Age and gender distribution of patient population</p>
+      <div class="placeholder-message">
+        <p><strong>Detailed patient analytics coming soon</strong></p>
+        <p>Age groups, gender distribution, new vs returning patients</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Disease Trends Tab -->
+  <div class="tab-content" *ngIf="activeTab === 'disease'">
+    <div class="trends-section">
+      <div class="section-header">
+        <h3>Disease Trends</h3>
+        <p>Track disease patterns over time</p>
+      </div>
+      <div class="line-chart-container">
+        <div class="chart-y-axis">
+          <span class="y-label">600</span>
+          <span class="y-label">450</span>
+          <span class="y-label">300</span>
+          <span class="y-label">150</span>
+          <span class="y-label">0</span>
+        </div>
+        <div class="line-chart">
+          <svg class="line-chart-svg" viewBox="0 0 700 300" preserveAspectRatio="none">
+            <!-- Grid lines -->
+            <line x1="0" y1="0" x2="700" y2="0" stroke="#e5e7eb" stroke-width="1"/>
+            <line x1="0" y1="75" x2="700" y2="75" stroke="#e5e7eb" stroke-width="1"/>
+            <line x1="0" y1="150" x2="700" y2="150" stroke="#e5e7eb" stroke-width="1"/>
+            <line x1="0" y1="225" x2="700" y2="225" stroke="#e5e7eb" stroke-width="1"/>
+            <line x1="0" y1="300" x2="700" y2="300" stroke="#e5e7eb" stroke-width="1"/>
+            
+            <!-- Line path -->
+            <polyline
+              fill="none"
+              stroke="#14b8a6"
+              stroke-width="3"
+              points="0,180 116,125 233,110 350,120 467,65 584,95 700,55"
+            />
+            
+            <!-- Data points -->
+            <circle cx="0" cy="180" r="5" fill="#14b8a6"/>
+            <circle cx="116" cy="125" r="5" fill="#14b8a6"/>
+            <circle cx="233" cy="110" r="5" fill="#14b8a6"/>
+            <circle cx="350" cy="120" r="5" fill="#14b8a6"/>
+            <circle cx="467" cy="65" r="5" fill="#14b8a6"/>
+            <circle cx="584" cy="95" r="5" fill="#14b8a6"/>
+            <circle cx="700" cy="55" r="5" fill="#14b8a6"/>
+          </svg>
+          <div class="chart-x-axis">
+            <span class="x-label">Jul</span>
+            <span class="x-label">Aug</span>
+            <span class="x-label">Sep</span>
+            <span class="x-label">Oct</span>
+            <span class="x-label">Nov</span>
+            <span class="x-label">Dec</span>
+            <span class="x-label">Jan</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Geographic Tab -->
+  <div class="tab-content" *ngIf="activeTab === 'geographic'">
+    <div class="placeholder-section">
+      <div class="placeholder-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+          <circle cx="12" cy="10" r="3"></circle>
+        </svg>
+      </div>
+      <h3>Geographic Analysis</h3>
+      <p class="placeholder-subtitle">Healthcare coverage by location</p>
+      <div class="placeholder-message">
+        <p><strong>Geographic map visualization coming soon</strong></p>
+        <p>Interactive maps showing patient distribution and healthcare access</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data Info -->
+  <div class="data-info">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="10"></circle>
+      <line x1="12" y1="16" x2="12" y2="12"></line>
+      <line x1="12" y1="8" x2="12.01" y2="8"></line>
+    </svg>
+    <p>Data includes offline records: Analytics incorporate both synced and pending offline records for complete reporting. Last data refresh: 5 minutes ago.</p>
+  </div>
+
+  <!-- Reports List Panel -->
+  <div class="reports-list-panel" *ngIf="showReportsList">
+    <div class="reports-list-header">
+      <h2>Medical Reports</h2>
+      <button class="close-btn" (click)="toggleReportsList()">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+    <div class="reports-table-container">
+      <table class="reports-table">
+        <thead>
+          <tr>
+            <th>Patient Name</th>
+            <th>Report Type</th>
+            <th>Date</th>
+            <th>Doctor</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let report of medicalReports" [class.draft]="report.status === 'Draft'">
+            <td>{{report.patientName}}</td>
+            <td>{{report.reportType}}</td>
+            <td>{{report.date}}</td>
+            <td>{{report.doctor}}</td>
+            <td>
+              <span class="status-badge" [style.background]="getStatusColor(report.status)" [style.color]="'white'">
+                {{report.status}}
+              </span>
+            </td>
+            <td class="action-buttons">
+              <button class="edit-btn" (click)="editReport(report)" title="Edit">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+              </button>
+              <button class="view-btn" title="View">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </button>
+              <button class="delete-btn" (click)="deleteReport(report.id)" title="Delete">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                  <line x1="10" y1="11" x2="10" y2="17"></line>
+                  <line x1="14" y1="11" x2="14" y2="17"></line>
+                </svg>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- New Report Modal -->
+  <div class="modal-overlay" *ngIf="showReportModal" (click)="closeReportModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{editingReport ? 'Edit Report' : 'Create New Report'}}</h2>
+        <button class="close-btn" (click)="closeReportModal()">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="patientName">Patient Name <span class="required">*</span></label>
+          <input 
+            type="text" 
+            id="patientName" 
+            class="form-input" 
+            [(ngModel)]="newReport.patientName"
+            placeholder="Enter patient name"
+          />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="reportType">Report Type <span class="required">*</span></label>
+            <select id="reportType" class="form-input" [(ngModel)]="newReport.reportType">
+              <option *ngFor="let type of reportTypes" [value]="type">{{type}}</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="doctor">Doctor <span class="required">*</span></label>
+            <select id="doctor" class="form-input" [(ngModel)]="newReport.doctor">
+              <option value="">Select a doctor</option>
+              <option *ngFor="let doc of doctors" [value]="doc">{{doc}}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="status">Status</label>
+            <select id="status" class="form-input" [(ngModel)]="newReport.status">
+              <option value="Draft">Draft</option>
+              <option value="Completed">Completed</option>
+              <option value="Submitted">Submitted</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea 
+            id="description" 
+            class="form-textarea" 
+            [(ngModel)]="newReport.description"
+            placeholder="Enter report description or notes"
+            rows="4"
+          ></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-cancel" (click)="closeReportModal()">Cancel</button>
+        <button class="btn-save" (click)="saveReport()">{{editingReport ? 'Update Report' : 'Create Report'}}</button>
+      </div>
+    </div>
+  </div>
+</div>
