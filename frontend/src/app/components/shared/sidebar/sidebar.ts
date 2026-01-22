@@ -1,6 +1,7 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '../../../services/auth.service';
 
 export interface NavItem {
   label: string;
@@ -17,6 +18,9 @@ export interface NavItem {
 export class Sidebar implements OnInit {
   @Input() userStatus: 'Online' | 'Away' | 'Offline' = 'Online';
   @Input() userName: string = 'Dr. Sarah';
+  
+  private readonly authService = inject(AuthService);
+  private readonly router = inject(Router);
   
   isCollapsed = false;
   private isBrowser = typeof document !== 'undefined' && typeof window !== 'undefined';
@@ -69,7 +73,7 @@ export class Sidebar implements OnInit {
   }
 
   onSignOut(): void {
-    console.log('User signed out');
-    // Add sign out logic here
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }
