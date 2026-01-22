@@ -72,6 +72,10 @@ export class AuthService {
 		return of(simulated).pipe(delay(750));
 	}
 
+	logout(): void {
+		// Clear any stored auth data if needed
+	}
+
 	private buildPayload(credentials: StaffCredentials, metadata: LoginMetadata): AuthPayload {
 		const trimmed = credentials.staffIdOrEmail.trim();
 		const identity = trimmed || '';
