@@ -1,329 +1,238 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Sidebar } from '../shared/sidebar/sidebar';
-
-interface MedicalRecord {
-	type: string;
-	title: string;
-	typeBadge: string;
-	desc: string;
-	patientInitials: string;
-	patientName: string;
-	provider: string;
-	date: string;
-	status: string;
-	secondaryStatus?: string;
-	dateObj?: Date;
-}
+import { ApiService, MedicalRecord, Patient } from '../../services/api.service';
 
 @Component({
-	selector: 'app-medical-records',
-	standalone: true,
-	imports: [CommonModule, FormsModule, RouterModule, Sidebar],
-	templateUrl: './medical-records.component.html',
-	styleUrls: ['./medical-records.component.css']
+  selector: 'app-medical-records',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterModule, Sidebar],
+  templateUrl: './medical-records.component.html',
+  styleUrls: ['./medical-records.component.css']
 })
-export class MedicalRecordsComponent {
-	activeTab = 'all';
-	searchQuery = '';
-	showNewRecordModal = false;
-	showDetailsModal = false;
-	selectedRecord: MedicalRecord | null = null;
-	dateRangeStart = '';
-	dateRangeEnd = '';
-	showFilters = false;
-	selectedStatuses: { [key: string]: boolean } = {
-		'completed': true,
-		'pending review': true,
-		'active': true,
-		'pending': true
-	};
+export class MedicalRecordsComponent implements OnInit {
+  activeTab = 'all';
+  searchQuery = '';
+  showNewRecordModal = false;
+  showDetailsModal = false;
+  showFilters = false;
+  dateRangeStart = '';
+  dateRangeEnd = '';
+  selectedRecord: MedicalRecord | null = null;
+  records: MedicalRecord[] = [];
+  filteredRecords: MedicalRecord[] = [];
+  patients: Patient[] = [];
+  loading: boolean = true;
+  error: string = '';
 
-	stats = [
-		{ label: 'Consultations', value: '156', icon: 'consultations' },
-		{ label: 'Lab Results', value: '89', icon: 'lab-results' },
-		{ label: 'Prescriptions', value: '234', icon: 'prescriptions' },
-		{ label: 'Imaging', value: '45', icon: 'imaging' },
-	];
+  selectedStatuses: { [key: string]: boolean } = {
+    'completed': true,
+    'pending': true,
+    'active': true
+  };
 
-	allRecords: MedicalRecord[] = [
-		{
-			type: 'consultation',
-			title: 'Follow-up Consultation',
-			typeBadge: 'Consultation',
-			desc: 'Blood sugar levels improving. Continued current medication regimen.',
-			patientInitials: 'AO',
-			patientName: 'Amara Okonkwo',
-			provider: 'Dr. Sarah Johnson',
-			date: '2024-01-15 at 10:30 AM',
-			status: 'completed',
-			secondaryStatus: undefined,
-			dateObj: new Date('2024-01-15')
-		},
-		{
-			type: 'lab-result',
-			title: 'Complete Blood Count',
-			typeBadge: 'Lab Result',
-			desc: 'Results ready for physician review.',
-			patientInitials: 'KM',
-			patientName: 'Kwame Mensah',
-			provider: 'Lab Technician',
-			date: '2024-01-14 at 2:15 PM',
-			status: 'pending review',
-			secondaryStatus: 'Pending sync',
-			dateObj: new Date('2024-01-14')
-		},
-		{
-			type: 'prescription',
-			title: 'Prenatal Vitamins',
-			typeBadge: 'Prescription',
-			desc: 'Folic acid, Iron supplements, Vitamin D - 3 month supply',
-			patientInitials: 'FH',
-			patientName: 'Fatima Hassan',
-			provider: 'Dr. James Adeyemi',
-			date: '2024-01-13 at 11:00 AM',
-			status: 'active',
-			secondaryStatus: undefined,
-			dateObj: new Date('2024-01-13')
-		},
-		{
-			type: 'imaging',
-			title: 'Chest X-Ray',
-			typeBadge: 'Imaging',
-			desc: 'Clear lungs, no abnormalities detected',
-			patientInitials: 'CE',
-			patientName: 'Chidi Eze',
-			provider: 'Dr. Sarah Johnson',
-			date: '2024-01-12 at 9:45 AM',
-			status: 'completed',
-			secondaryStatus: undefined,
-			dateObj: new Date('2024-01-12')
-		}
-	];
+  stats = [
+    { label: 'Total Records', value: '0', icon: 'consultations' },
+    { label: 'Completed', value: '0', icon: 'lab-results' },
+    { label: 'Pending', value: '0', icon: 'prescriptions' },
+    { label: 'Lab Results', value: '0', icon: 'imaging' },
+  ];
 
-	consultations: MedicalRecord[] = [
-		{
-			type: 'consultation',
-			title: 'Follow-up Consultation',
-			typeBadge: 'Consultation',
-			desc: 'Blood sugar levels improving. Continued current medication regimen.',
-			patientInitials: 'AO',
-			patientName: 'Amara Okonkwo',
-			provider: 'Dr. Sarah Johnson',
-			date: '2024-01-15 at 10:30 AM',
-			status: 'completed',
-			secondaryStatus: undefined,
-			dateObj: new Date('2024-01-15')
-		}
-	];
+  constructor(private apiService: ApiService) {}
 
-	labResults: MedicalRecord[] = [
-		{
-			type: 'lab-result',
-			title: 'Complete Blood Count',
-			typeBadge: 'Lab Result',
-			desc: 'Results ready for physician review.',
-			patientInitials: 'KM',
-			patientName: 'Kwame Mensah',
-			provider: 'Lab Technician',
-			date: '2024-01-14 at 2:15 PM',
-			status: 'pending review',
-			secondaryStatus: 'Pending sync',
-			dateObj: new Date('2024-01-14')
-		}
-	];
+  ngOnInit() {
+    this.loadRecords();
+    this.loadPatients();
+  }
 
-	prescriptions: MedicalRecord[] = [
-		{
-			type: 'prescription',
-			title: 'Prenatal Vitamins',
-			typeBadge: 'Prescription',
-			desc: 'Folic acid, Iron supplements, Vitamin D - 3 month supply',
-			patientInitials: 'FH',
-			patientName: 'Fatima Hassan',
-			provider: 'Dr. James Adeyemi',
-			date: '2024-01-13 at 11:00 AM',
-			status: 'active',
-			secondaryStatus: undefined,
-			dateObj: new Date('2024-01-13')
-		}
-	];
+  loadRecords() {
+    this.loading = true;
+    this.error = '';
+    this.apiService.getRecords().subscribe({
+      next: (data) => {
+        this.records = data;
+        this.filteredRecords = data;
+        this.updateStats();
+        this.loading = false;
+      },
+      error: (err) => {
+        this.error = 'Failed to load medical records';
+        this.loading = false;
+        console.error('Error loading records:', err);
+      }
+    });
+  }
 
-	pendingSync: MedicalRecord[] = [
-		{
-			type: 'lab-result',
-			title: 'Complete Blood Count',
-			typeBadge: 'Lab Result',
-			desc: 'Results ready for physician review.',
-			patientInitials: 'KM',
-			patientName: 'Kwame Mensah',
-			provider: 'Lab Technician',
-			date: '2024-01-14 at 2:15 PM',
-			status: 'pending review',
-			secondaryStatus: 'Pending sync',
-			dateObj: new Date('2024-01-14')
-		}
-	];
+  loadPatients() {
+    this.apiService.getPatients().subscribe({
+      next: (data) => {
+        this.patients = data;
+      },
+      error: (err) => {
+        console.error('Error loading patients:', err);
+      }
+    });
+  }
 
-	switchTab(tab: string) {
-		this.activeTab = tab;
-		this.searchQuery = '';
-		this.dateRangeStart = '';
-		this.dateRangeEnd = '';
-		this.showFilters = false;
-	}
+  updateStats() {
+    const total = this.records.length;
+    const completed = this.records.filter(r => r.status === 'completed').length;
+    const pending = this.records.filter(r => r.status === 'pending').length;
+    const labs = this.records.filter(r => r.record_type === 'lab').length;
 
-	getCurrentRecords(): MedicalRecord[] {
-		let records: MedicalRecord[] = [];
-		
-		switch (this.activeTab) {
-			case 'consultations':
-				records = [...this.consultations];
-				break;
-			case 'lab-results':
-				records = [...this.labResults];
-				break;
-			case 'prescriptions':
-				records = [...this.prescriptions];
-				break;
-			case 'pending-sync':
-				records = [...this.pendingSync];
-				break;
-			default:
-				records = [...this.allRecords];
-		}
+    this.stats = [
+      { label: 'Total Records', value: total.toString(), icon: 'consultations' },
+      { label: 'Completed', value: completed.toString(), icon: 'lab-results' },
+      { label: 'Pending', value: pending.toString(), icon: 'prescriptions' },
+      { label: 'Lab Results', value: labs.toString(), icon: 'imaging' },
+    ];
+  }
 
-		return this.filterAndSearch(records);
-	}
+  filterRecords() {
+    let filtered = this.records;
 
-	filterAndSearch(records: MedicalRecord[]): MedicalRecord[] {
-		return records.filter(record => {
-			// Search filter
-			if (this.searchQuery && this.searchQuery.trim()) {
-				const query = this.searchQuery.toLowerCase();
-				const matchesSearch = 
-					record.patientName.toLowerCase().includes(query) ||
-					record.provider.toLowerCase().includes(query) ||
-					record.typeBadge.toLowerCase().includes(query) ||
-					record.title.toLowerCase().includes(query);
-				if (!matchesSearch) return false;
-			}
+    if (this.searchQuery.trim()) {
+      const term = this.searchQuery.toLowerCase();
+      filtered = filtered.filter(r =>
+        r.title.toLowerCase().includes(term) ||
+        r.provider.toLowerCase().includes(term) ||
+        r.record_type.toLowerCase().includes(term)
+      );
+    }
 
-			// Date range filter
-			if (this.dateRangeStart || this.dateRangeEnd) {
-				const recordDate = record.dateObj || new Date(record.date);
-				
-				if (this.dateRangeStart) {
-					const startDate = new Date(this.dateRangeStart);
-					startDate.setHours(0, 0, 0, 0);
-					if (recordDate < startDate) return false;
-				}
+    if (this.activeTab === 'completed') {
+      filtered = filtered.filter(r => r.status === 'completed');
+    } else if (this.activeTab === 'pending') {
+      filtered = filtered.filter(r => r.status === 'pending');
+    }
 
-				if (this.dateRangeEnd) {
-					const endDate = new Date(this.dateRangeEnd);
-					endDate.setHours(23, 59, 59, 999);
-					if (recordDate > endDate) return false;
-				}
-			}
+    this.filteredRecords = filtered;
+  }
 
-			// Status filter
-			const statusKey = record.status.toLowerCase();
-			if (!this.selectedStatuses[statusKey]) {
-				return false;
-			}
+  setTab(tab: string) {
+    this.activeTab = tab;
+    this.filterRecords();
+  }
 
-			return true;
-		});
-	}
+  openNewRecordModal() {
+    this.showNewRecordModal = true;
+  }
 
-	onSearch(event: any): void {
-		this.searchQuery = event.target.value;
-	}
+  closeNewRecordModal() {
+    this.showNewRecordModal = false;
+  }
 
-	openNewRecordModal(): void {
-		this.showNewRecordModal = true;
-	}
+  openDetailsModal(record: MedicalRecord) {
+    this.selectedRecord = record;
+    this.showDetailsModal = true;
+  }
 
-	closeNewRecordModal(): void {
-		this.showNewRecordModal = false;
-	}
+  closeDetailsModal() {
+    this.showDetailsModal = false;
+    this.selectedRecord = null;
+  }
 
-	openDetailsModal(record: MedicalRecord): void {
-		this.selectedRecord = { ...record };
-		this.showDetailsModal = true;
-	}
+  deleteRecord(id: string) {
+    if (confirm('Are you sure you want to delete this record?')) {
+      this.apiService.deleteRecord(id).subscribe({
+        next: () => {
+          this.loadRecords();
+        },
+        error: (err) => {
+          this.error = 'Failed to delete record';
+          console.error('Error deleting record:', err);
+        }
+      });
+    }
+  }
 
-	closeDetailsModal(): void {
-		this.showDetailsModal = false;
-		this.selectedRecord = null;
-	}
+  getPatientName(patientId: string): string {
+    const patient = this.patients.find(p => p.id === patientId);
+    return patient ? `${patient.first_name} ${patient.last_name}` : 'Unknown';
+  }
 
-	toggleFilters(): void {
-		this.showFilters = !this.showFilters;
-	}
+  getCurrentRecords(): MedicalRecord[] {
+    return this.filteredRecords;
+  }
 
-	toggleStatusFilter(status: string): void {
-		if (this.selectedStatuses.hasOwnProperty(status)) {
-			this.selectedStatuses[status] = !this.selectedStatuses[status];
-		}
-	}
+  getStatusColor(status: string): string {
+    const statusLower = status.toLowerCase();
+    switch (statusLower) {
+      case 'completed':
+      case 'active':
+        return '#10b981';
+      case 'pending review':
+      case 'pending':
+        return '#f97316';
+      default:
+        return '#6b7280';
+    }
+  }
 
-	clearFilters(): void {
-		this.searchQuery = '';
-		this.dateRangeStart = '';
-		this.dateRangeEnd = '';
-		Object.keys(this.selectedStatuses).forEach(status => {
-			this.selectedStatuses[status] = true;
-		});
-	}
+  switchTab(tab: string): void {
+    this.activeTab = tab;
+    this.filterRecords();
+  }
 
-	exportRecords(): void {
-		const records = this.getCurrentRecords();
-		const csvContent = this.convertToCSV(records);
-		const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-		const link = document.createElement('a');
-		const url = URL.createObjectURL(blob);
-		link.setAttribute('href', url);
-		link.setAttribute('download', `medical-records-${new Date().toISOString().split('T')[0]}.csv`);
-		link.style.visibility = 'hidden';
-		document.body.appendChild(link);
-		link.click();
-		document.body.removeChild(link);
-	}
+  getPatientInitials(patientId: string): string {
+    const name = this.getPatientName(patientId);
+    return name.split(' ').map(w => w[0]).join('').toUpperCase();
+  }
 
-	convertToCSV(records: MedicalRecord[]): string {
-		const headers = ['Title', 'Type', 'Patient', 'Provider', 'Date', 'Status', 'Description'];
-		const rows = records.map(r => [
-			`"${r.title}"`,
-			`"${r.typeBadge}"`,
-			`"${r.patientName}"`,
-			`"${r.provider}"`,
-			`"${r.date}"`,
-			`"${r.status}${r.secondaryStatus ? `, ${r.secondaryStatus}` : ''}"`,
-			`"${r.desc}"`
-		]);
+  toggleFilters(): void {
+    this.showFilters = !this.showFilters;
+  }
 
-		const csvRows = [
-			headers.join(','),
-			...rows.map(row => row.join(','))
-		];
+  toggleStatusFilter(status: string): void {
+    if (this.selectedStatuses.hasOwnProperty(status)) {
+      this.selectedStatuses[status] = !this.selectedStatuses[status];
+    }
+  }
 
-		return csvRows.join('\n');
-	}
+  clearFilters(): void {
+    this.searchQuery = '';
+    this.dateRangeStart = '';
+    this.dateRangeEnd = '';
+    Object.keys(this.selectedStatuses).forEach(status => {
+      this.selectedStatuses[status] = true;
+    });
+    this.filterRecords();
+  }
 
-	getStatusColor(status: string): string {
-		const statusLower = status.toLowerCase();
-		switch (statusLower) {
-			case 'completed':
-			case 'active':
-				return '#10b981';
-			case 'pending review':
-			case 'pending':
-				return '#f97316';
-			default:
-				return '#6b7280';
-		}
-	}
+  onSearch(event: any): void {
+    this.searchQuery = event.target.value;
+    this.filterRecords();
+  }
+
+  exportRecords(): void {
+    const records = this.filteredRecords;
+    const headers = ['Title', 'Type', 'Patient', 'Provider', 'Date', 'Status', 'Description'];
+    const rows = records.map(r => [
+      `"${r.title}"`,
+      `"${r.record_type}"`,
+      `"${this.getPatientName(r.patient_id)}"`,
+      `"${r.provider}"`,
+      `"${r.date}"`,
+      `"${r.status}"`,
+      `"${r.description || ''}"`
+    ]);
+
+    const csvRows = [
+      headers.join(','),
+      ...rows.map(row => row.join(','))
+    ];
+
+    const csvContent = csvRows.join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `medical-records-${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
 }

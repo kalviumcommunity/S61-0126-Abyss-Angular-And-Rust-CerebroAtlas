@@ -7,8 +7,8 @@
       <p>Add a new patient to the system</p>
     </div>
     <div class="header-actions">
-      <button class="ghost">Cancel</button>
-      <button class="primary" (click)="save()">
+      <button class="ghost" (click)="cancel()" [disabled]="saving">Cancel</button>
+      <button class="primary" (click)="save()" [disabled]="saving">
         <span class="icon" aria-hidden="true">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9l7 7v9a2 2 0 0 1-2 2Z"/>
@@ -18,19 +18,21 @@
             <path d="M10 14h4"/>
           </svg>
         </span>
-        Register Patient
+        {{ saving ? 'Saving...' : 'Register Patient' }}
       </button>
     </div>
   </header>
 
+  <div *ngIf="error" class="error-banner">{{ error }}</div>
+
   <div class="card">
     <h2>Personal Information</h2>
     <div class="grid three">
-      <label>First Name *<input [(ngModel)]="patient.firstName" placeholder="Enter first name" /></label>
-      <label>Last Name *<input [(ngModel)]="patient.lastName" placeholder="Enter last name" /></label>
-      <label>Date of Birth *<input [(ngModel)]="patient.dob" type="date" placeholder="dd-mm-yyyy" /></label>
+      <label>First Name *<input [(ngModel)]="patient.firstName" placeholder="Enter first name" [disabled]="saving" /></label>
+      <label>Last Name *<input [(ngModel)]="patient.lastName" placeholder="Enter last name" [disabled]="saving" /></label>
+      <label>Date of Birth *<input [(ngModel)]="patient.dob" type="date" placeholder="dd-mm-yyyy" [disabled]="saving" /></label>
       <label>Gender *
-        <select [(ngModel)]="patient.gender">
+        <select [(ngModel)]="patient.gender" [disabled]="saving">
           <option value="">Select gender</option>
           <option>Female</option>
           <option>Male</option>
@@ -38,7 +40,7 @@
         </select>
       </label>
       <label>Blood Type
-        <select [(ngModel)]="patient.bloodType">
+        <select [(ngModel)]="patient.bloodType" [disabled]="saving">
           <option value="">Select blood type</option>
           <option>A+</option><option>A-</option>
           <option>B+</option><option>B-</option>
@@ -46,27 +48,27 @@
           <option>O+</option><option>O-</option>
         </select>
       </label>
-      <label>Phone Number *<input [(ngModel)]="patient.phone" placeholder="+234 800 000 0000" /></label>
-      <label>Email Address<input [(ngModel)]="patient.email" type="email" placeholder="patient@example.com" /></label>
+      <label>Phone Number *<input [(ngModel)]="patient.phone" placeholder="+234 800 000 0000" [disabled]="saving" /></label>
+      <label>Email Address<input [(ngModel)]="patient.email" type="email" placeholder="patient@example.com" [disabled]="saving" /></label>
     </div>
   </div>
 
   <div class="card">
     <h2>Address Information</h2>
     <div class="grid two">
-      <label>Street Address<input [(ngModel)]="patient.address" placeholder="Enter street address" /></label>
-      <label>City/Town<input [(ngModel)]="patient.city" placeholder="Enter city" /></label>
-      <label>State/Region<input [(ngModel)]="patient.state" placeholder="Enter state" /></label>
+      <label>Street Address<input [(ngModel)]="patient.address" placeholder="Enter street address" [disabled]="saving" /></label>
+      <label>City/Town<input [(ngModel)]="patient.city" placeholder="Enter city" [disabled]="saving" /></label>
+      <label>State/Region<input [(ngModel)]="patient.state" placeholder="Enter state" [disabled]="saving" /></label>
     </div>
   </div>
 
   <div class="card">
     <h2>Emergency Contact</h2>
     <div class="grid three">
-      <label>Contact Name<input [(ngModel)]="patient.contactName" placeholder="Full name" /></label>
-      <label>Contact Phone<input [(ngModel)]="patient.contactPhone" placeholder="+234 800 000 0000" /></label>
+      <label>Contact Name<input [(ngModel)]="patient.contactName" placeholder="Full name" [disabled]="saving" /></label>
+      <label>Contact Phone<input [(ngModel)]="patient.contactPhone" placeholder="+234 800 000 0000" [disabled]="saving" /></label>
       <label>Relationship
-        <select [(ngModel)]="patient.contactRelationship">
+        <select [(ngModel)]="patient.contactRelationship" [disabled]="saving">
           <option value="">Select relationship</option>
           <option>Parent</option>
           <option>Sibling</option>
@@ -82,13 +84,13 @@
     <h2>Medical Information</h2>
     <div class="stack">
       <label>Active Conditions
-        <input [(ngModel)]="patient.conditions" placeholder="Add a condition (e.g., Diabetes Type 2)" />
+        <input [(ngModel)]="patient.conditions" placeholder="Add a condition (e.g., Diabetes Type 2)" [disabled]="saving" />
       </label>
       <label>Known Allergies
-        <input [(ngModel)]="patient.allergies" placeholder="Add an allergy (e.g., Penicillin)" />
+        <input [(ngModel)]="patient.allergies" placeholder="Add an allergy (e.g., Penicillin)" [disabled]="saving" />
       </label>
       <label>Additional Notes
-        <textarea [(ngModel)]="patient.notes" rows="3" placeholder="Any additional medical notes or observations..."></textarea>
+        <textarea [(ngModel)]="patient.notes" rows="3" placeholder="Any additional medical notes or observations..." [disabled]="saving"></textarea>
       </label>
     </div>
   </div>
