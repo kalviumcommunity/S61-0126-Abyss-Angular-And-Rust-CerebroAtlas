@@ -1,44 +1,51 @@
 <app-sidebar [userStatus]="'Online'" [userName]="'Dr. Sarah'"></app-sidebar>
 
 <div class="patients-container">
-<div class="patients-header">
-  <h1>Patients</h1>
-  <p>Manage patient registrations and profiles</p>
-  <button class="register-btn" [routerLink]="'/patients/new'">+ Register Patient</button>
-</div>
+  <div class="patients-header">
+    <h1>Patients</h1>
+    <p>Manage patient registrations and profiles</p>
+    <button class="register-btn" [routerLink]="'/patients/new'">+ Register Patient</button>
+  </div>
 
-<div class="search-filter-bar">
-  <input type="text" placeholder="Search by name, village, or condition..." [(ngModel)]="searchTerm" (input)="filterPatients()" />
-  <button class="filter-btn">Filters</button>
-  <button class="export-btn">Export</button>
-</div>
+  <div *ngIf="error" class="error-message">{{ error }}</div>
 
-<div class="tabs">
-  <button [class.active]="activeTab === 'all'" (click)="setTab('all')">All Patients ({{patients.length}})</button>
-  <button [class.active]="activeTab === 'active'" (click)="setTab('active')">Active</button>
-  <button [class.active]="activeTab === 'pending'" (click)="setTab('pending')">Pending Sync</button>
-  <button [class.active]="activeTab === 'critical'" (click)="setTab('critical')">Critical</button>
-</div>
-
-<div class="patients-list">
-  <div class="patient-card" *ngFor="let patient of filteredPatients">
-    <div class="avatar">{{ getInitials(patient.name) }}</div>
-    <div class="patient-info">
-      <div class="name">{{ patient.name }}</div>
-      <div class="details">{{ patient.age }} yrs • {{ patient.gender }}</div>
-      <div class="location"><span class="icon">📍</span>{{ patient.location }}</div>
-      <div class="phone"><span class="icon">📞</span>{{ patient.phone }}</div>
-      <div class="next"><span class="icon">📅</span>Next: {{ patient.nextVisit | date:'M/d/yyyy' }}</div>
-      <div class="tags">
-        <span class="tag" *ngFor="let tag of patient.conditions">{{ tag }}</span>
-      </div>
-      <div class="status-bar">
-        <span class="status" *ngFor="let status of patient.statuses" [ngClass]="status.toLowerCase()">{{ status }}</span>
-      </div>
+  <div>
+    <div class="search-filter-bar">
+      <input type="text" placeholder="Search by name, village, or condition..." [(ngModel)]="searchTerm" (input)="filterPatients()" />
+      <button class="filter-btn">Filters</button>
+      <button class="export-btn">Export</button>
     </div>
-    <div class="view-link">
-      <a href="#">View</a>
+
+    <div class="tabs">
+      <button [class.active]="activeTab === 'all'" (click)="setTab('all')">All Patients ({{filteredPatients.length}})</button>
+      <button [class.active]="activeTab === 'active'" (click)="setTab('active')">Active</button>
+      <button [class.active]="activeTab === 'pending'" (click)="setTab('pending')">Pending Sync</button>
+      <button [class.active]="activeTab === 'critical'" (click)="setTab('critical')">Critical</button>
+    </div>
+
+    <div class="patients-list">
+      <div *ngIf="filteredPatients.length === 0" class="no-data">{{ loading ? 'Loading patients...' : 'No patients found' }}</div>
+      <div class="patient-card" *ngFor="let patient of filteredPatients">
+        <div class="avatar">{{ getInitials(patient) }}</div>
+        <div class="patient-info">
+          <div class="name">{{ patient.first_name }} {{ patient.last_name }}</div>
+          <div class="details">{{ patient.gender }}</div>
+          <div class="location"><span class="icon">📍</span>{{ patient.village || 'N/A' }}</div>
+          <div class="phone"><span class="icon">📞</span>{{ patient.phone_number }}</div>
+          <div class="next"><span class="icon">📅</span>Next: {{ (patient.next_visit ? (patient.next_visit | date:'M/d/yyyy') : 'Not scheduled') }}</div>
+          <div class="tags">
+            <span class="tag" *ngFor="let condition of patient.active_conditions">{{ condition }}</span>
+          </div>
+          <div class="status-bar">
+            <span class="status" [ngClass]="patient.status.toLowerCase() || 'active'">{{ patient.status }}</span>
+            <span class="status" *ngIf="patient.critical_flag" [ngClass]="'critical'">Critical</span>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn-view" (click)="viewPatient(patient.id)">View</button>
+          <button class="btn-delete" (click)="deletePatient(patient.id)">Delete</button>
+        </div>
+      </div>
     </div>
   </div>
-</div>
 </div>

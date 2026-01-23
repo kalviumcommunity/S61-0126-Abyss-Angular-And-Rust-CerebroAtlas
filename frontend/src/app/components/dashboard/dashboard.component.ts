@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { Sidebar } from '../shared/sidebar/sidebar';
+import { ApiService, Patient, MedicalRecord } from '../../services/api.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -10,26 +11,95 @@ import { Sidebar } from '../shared/sidebar/sidebar';
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
-export class DashboardComponent {
-  notifications = [
-    { message: 'Patient consent expiring: Amara Okonkwo (3 days)', time: '10 min ago', type: 'warning' },
-    { message: 'New lab results available for 5 patients', time: '1 hour ago', type: 'info' },
-    { message: 'Data sync completed successfully', time: '2 hours ago', type: 'success' }
-  ];
-
-  recentPatients = [
-    { initials: 'AO', name: 'Amara Okonkwo', age: 34, lastVisit: '2 hours ago', status: 'active' },
-    { initials: 'KM', name: 'Kwame Mensah', age: 52, lastVisit: '4 hours ago', status: 'follow-up' },
-    { initials: 'FH', name: 'Fatima Hassan', age: 29, lastVisit: '6 hours ago', status: 'new' }
-  ];
+export class DashboardComponent implements OnInit {
+  notifications: any[] = [];
+  recentPatients: Patient[] = [];
+  recentRecords: MedicalRecord[] = [];
+  loading: boolean = true;
+  error: string = '';
 
   stats = {
-    totalPatients: 2847,
-    patientsChange: 12,
-    recordsToday: 48,
-    recordsChange: 5,
-    appointments: 23,
-    appointmentsChange: -2,
-    pendingSyncs: 7
+    totalPatients: 0,
+    patientsChange: 0,
+    recordsToday: 0,
+    recordsChange: 0,
+    appointments: 0,
+    appointmentsChange: 0,
+    pendingSyncs: 0
   };
+
+  constructor(private apiService: ApiService) {}
+
+  ngOnInit() {
+    this.loadDashboardData();
+  }
+
+  loadDashboardData() {
+    this.loading = true;
+    this.error = '';
+
+    this.apiService.getPatients().subscribe({
+      next: (patients) => {
+        this.stats.totalPatients = patients.length;
+        this.recentPatients = patients.slice(0, 3);
+        this.updateNotifications(patients);
+      },
+      error: (err) => {
+        this.error = 'Failed to load dashboard data';
+        this.loading = false;
+        console.error('Error loading patients:', err);
+      }
+    });
+
+    this.apiService.getRecords().subscribe({
+      next: (records) => {
+        this.stats.recordsToday = records.length;
+        this.recentRecords = records.slice(0, 3);
+        this.loading = false;
+      },
+      error: (err) => {
+        this.loading = false;
+        console.error('Error loading records:', err);
+      }
+    });
+  }
+
+  updateNotifications(patients: Patient[]) {
+    this.notifications = [
+      {
+        message: `Total Patients: ${patients.length}`,
+        time: 'Just now',
+        type: 'info'
+      },
+      {
+        message: `Active Patients: ${patients.filter(p => p.status === 'active').length}`,
+        time: '1 min ago',
+        type: 'success'
+      },
+      {
+        message: `Critical Flags: ${patients.filter(p => p.critical_flag).length}`,
+        time: '5 min ago',
+        type: 'warning'
+      }
+    ];
+  }
+
+  getInitials(patient: Patient): string {
+    return (patient.first_name.charAt(0) + patient.last_name.charAt(0)).toUpperCase();
+  }
+
+  getPatientInitials(firstName: string, lastName: string): string {
+    return (firstName.charAt(0) + lastName.charAt(0)).toUpperCase();
+  }
+
+  getPatientAge(dateOfBirth: string): number {
+    const birthDate = new Date(dateOfBirth);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+    return age;
+  }
 }

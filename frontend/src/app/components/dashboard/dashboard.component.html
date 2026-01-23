@@ -159,10 +159,10 @@
       <p class="subtitle">Patients you've seen recently</p>
       <ul class="patients-list">
         <li *ngFor="let patient of recentPatients">
-          <span class="avatar" [class]="patient.status">{{ patient.initials }}</span>
+          <span class="avatar" [class]="patient.status">{{ getPatientInitials(patient.first_name, patient.last_name) }}</span>
           <span class="patient-info">
-            <span class="name">{{ patient.name }}</span>
-            <span class="details">{{ patient.age }} years • Last visit: {{ patient.lastVisit }}</span>
+            <span class="name">{{ patient.first_name }} {{ patient.last_name }}</span>
+            <span class="details">{{ getPatientAge(patient.date_of_birth) }} years • Last visit: {{ patient.next_visit | date:'M/d/yyyy' }}</span>
           </span>
           <span class="status-badge" [class]="patient.status">
             <span class="status-dot"></span>
