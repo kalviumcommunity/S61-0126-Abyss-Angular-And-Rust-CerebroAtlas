@@ -2004,3 +2004,80 @@ By completing this assignment, I am able to:
 - All changes are focused on frontend presentation and layout, not backend logic.
 
 ---
+
+# Backend Data Model Update – Kalvium Sprint 3.24 (Date: )
+
+## Overview
+This backend update implements robust, production-ready Rust data models for the CereBroAtlas project, following Kalvium's lesson 3.24: "Defining Structs, Enums, and Data Models in Rust". These models ensure type safety, data consistency, and future-proof API design for all major entities in the system.
+
+## Why Data Models Matter
+- Prevent invalid states and runtime errors
+- Enable safe request/response handling
+- Make APIs self-documenting and maintainable
+- Catch errors at compile time, not in production
+
+## What Was Changed
+- All major entities (Patient, MedicalRecord, MedicalReport, User, Role, Consent, AuditLog) now use clear, well-typed Rust structs
+- Added nested objects, enums, and audit fields for real-world usage
+- Improved field naming, consistency, and optionality
+- Added missing fields for analytics, reporting, and auditability
+- Models are ready for use with Axum/Actix, Serde, and database integration
+
+## Key Models
+### Patient
+- Full name (first, middle, last), contact info, address, emergency contact
+- Medical info: conditions, allergies, notes, status, sync/critical flags
+- Audit fields: created_at, updated_at
+
+### MedicalRecord & MedicalReport
+- Linked to patient, provider, type/category, status, attachments
+- Audit fields, export/review tracking
+
+### User
+- Full profile, role, department, status, activity, avatar
+
+### Role & Permissions
+- Granular permissions, audit fields
+
+### Consent
+- History of changes, expiry, audit
+
+### AuditLog
+- Event/action/resource, user/patient, success/severity, details
+
+## Example: Patient Model
+```
+rust
+#[derive(Serialize, Deserialize, Debug, Clone)]
+pub struct Patient {
+    pub id: String,
+    pub first_name: String,
+    pub middle_name: Option<String>,
+    pub last_name: String,
+    pub date_of_birth: String,
+    pub gender: String,
+    pub blood_type: Option<String>,
+    pub phone_number: String,
+    pub email: Option<String>,
+    pub address: Option<Address>,
+    pub village: Option<String>,
+    pub emergency_contact: Option<EmergencyContact>,
+    pub active_conditions: Vec<String>,
+    pub known_allergies: Vec<String>,
+    pub additional_notes: Option<String>,
+    pub status: String,
+    pub sync_status: Option<String>,
+    pub critical_flag: Option<bool>,
+    pub profile_picture_url: Option<String>,
+    pub next_visit: Option<String>,
+    pub created_at: String,
+    pub updated_at: String,
+}
+```
+
+## Best Practices Applied
+- Used enums for fixed values (status, roles, types)
+- Kept structs focused and meaningful
+- Used descriptive, industry-standard field names
+- Added audit fields for all entities
+- Avoided optional fields unless truly optional
