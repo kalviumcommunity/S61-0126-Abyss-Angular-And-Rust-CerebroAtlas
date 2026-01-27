@@ -358,6 +358,24 @@ Understanding routes, handlers, structs, and async workflows enables scalable an
 
 ---
 
+## [2026-01-27] Strong Serde-based JSON Handling in Rust Backend
+
+### What Was Implemented
+
+- Added and verified `serde` and `serde_json` dependencies in Cargo.toml for robust JSON serialization/deserialization.
+- Ensured all request and response structs in the backend derive the correct Serde traits (`Serialize`, `Deserialize`).
+- Used strongly typed extractors (`axum::Json<T>`) for all incoming and outgoing JSON in handlers.
+- Ensured that malformed JSON is automatically rejected and that all API responses are consistently structured and type-safe.
+
+### Why This Matters
+
+- Guarantees that all API data is validated and structured, reducing runtime errors and improving maintainability.
+- Makes the backend safer, more predictable, and easier to integrate with frontend clients.
+
+**This work was completed and reviewed on 2026-01-27.**
+
+---
+
 ## **1. Explanation of Angular Components & Services**
 
 ### **Angular Components**
@@ -1028,8 +1046,7 @@ Angular Component
 
 ![Angular audit-logs page](assets/screenshots/audit-logs.png)
 
-![Angular consent management page](assets/screenshots/consent-management.png)
----
+## ![Angular consent management page](assets/screenshots/consent-management.png)
 
 # Implementation: Reusable Collapsible Sidebar Component (January 20, 2026)
 
@@ -1144,12 +1161,12 @@ imports: [CommonModule, FormsModule, DatePipe, Sidebar],
 
 ## Benefits
 
- **Reusability**: Same component used across multiple pages
- **Consistency**: Unified navigation experience throughout app
- **Professional**: Custom SVG icons matching healthcare app aesthetic
- **Responsive**: Collapsible design saves screen space
- **Accessibility**: Proper ARIA labels and semantic HTML
- **Performance**: Smooth CSS transitions with hardware acceleration
+**Reusability**: Same component used across multiple pages
+**Consistency**: Unified navigation experience throughout app
+**Professional**: Custom SVG icons matching healthcare app aesthetic
+**Responsive**: Collapsible design saves screen space
+**Accessibility**: Proper ARIA labels and semantic HTML
+**Performance**: Smooth CSS transitions with hardware acceleration
 
 ## Future Enhancements
 
@@ -1819,7 +1836,6 @@ A dedicated route was added for the Patients page. Navigating to /patients loads
 
 Through this assignment, I gained hands-on experience with Angular data binding techniques and learned how to build responsive and interactive user interfaces using Angular components.
 
-
 ## Using Angular Services for State and Data Management - (Date: 21-01-2026)
 
 ---
@@ -1834,11 +1850,11 @@ The Medical Records page uses Angular services to manage consultations, lab resu
 
 ## Objective
 
-* Understand why Angular services are needed
-* Use services as a single source of truth
-* Apply dependency injection
-* Manage shared state across components
-* Separate UI logic from data logic
+- Understand why Angular services are needed
+- Use services as a single source of truth
+- Apply dependency injection
+- Manage shared state across components
+- Separate UI logic from data logic
 
 ---
 
@@ -1862,21 +1878,21 @@ src/
 
 Components should:
 
-* Display UI
-* Handle user interactions
+- Display UI
+- Handle user interactions
 
 Components should not:
 
-* Store global state
-* Handle shared data
-* Contain business logic
+- Store global state
+- Handle shared data
+- Contain business logic
 
 Angular services are used to:
 
-* Centralize data
-* Share state across components
-* Persist data during navigation
-* Improve maintainability and testing
+- Centralize data
+- Share state across components
+- Persist data during navigation
+- Improve maintainability and testing
 
 ---
 
@@ -1911,23 +1927,23 @@ This allows multiple components to access and update the same data without dupli
 
 The service manages:
 
-* Consultations
-* Lab results
-* Prescriptions
-* Imaging records
+- Consultations
+- Lab results
+- Prescriptions
+- Imaging records
 
 The state persists across:
 
-* Component reloads
-* UI interactions
-* Navigation changes
+- Component reloads
+- UI interactions
+- Navigation changes
 
 ---
 
 ## UI Responsibility
 
-* Components handle layout and user interaction
-* Services handle data and logic
+- Components handle layout and user interaction
+- Services handle data and logic
 
 This follows the principle:
 Components display data. Services manage data.
@@ -1938,10 +1954,10 @@ Components display data. Services manage data.
 
 The Medical Records UI was updated to:
 
-* Use a clean card-based layout
-* Display record type and status clearly
-* Improve spacing and alignment
-* Match the provided reference design
+- Use a clean card-based layout
+- Display record type and status clearly
+- Improve spacing and alignment
+- Match the provided reference design
 
 All UI changes were implemented using component HTML and CSS without mixing business logic.
 
@@ -1962,11 +1978,11 @@ getRecords() {
 
 ## Best Practices Followed
 
-* Single responsibility per service
-* No UI logic inside services
-* Centralized shared state
-* Clean component architecture
-* Scalable and maintainable code
+- Single responsibility per service
+- No UI logic inside services
+- Centralized shared state
+- Clean component architecture
+- Scalable and maintainable code
 
 ---
 
@@ -1974,10 +1990,10 @@ getRecords() {
 
 By completing this assignment, I am able to:
 
-* Use Angular services correctly
-* Apply dependency injection confidently
-* Manage shared application state
-* Build scalable frontend architecture
+- Use Angular services correctly
+- Apply dependency injection confidently
+- Manage shared application state
+- Build scalable frontend architecture
 
 ---
 
@@ -2008,15 +2024,18 @@ By completing this assignment, I am able to:
 # Backend Data Model Update – Kalvium Sprint 3.24 (Date: )
 
 ## Overview
+
 This backend update implements robust, production-ready Rust data models for the CereBroAtlas project, following Kalvium's lesson 3.24: "Defining Structs, Enums, and Data Models in Rust". These models ensure type safety, data consistency, and future-proof API design for all major entities in the system.
 
 ## Why Data Models Matter
+
 - Prevent invalid states and runtime errors
 - Enable safe request/response handling
 - Make APIs self-documenting and maintainable
 - Catch errors at compile time, not in production
 
 ## What Was Changed
+
 - All major entities (Patient, MedicalRecord, MedicalReport, User, Role, Consent, AuditLog) now use clear, well-typed Rust structs
 - Added nested objects, enums, and audit fields for real-world usage
 - Improved field naming, consistency, and optionality
@@ -2024,28 +2043,36 @@ This backend update implements robust, production-ready Rust data models for the
 - Models are ready for use with Axum/Actix, Serde, and database integration
 
 ## Key Models
+
 ### Patient
+
 - Full name (first, middle, last), contact info, address, emergency contact
 - Medical info: conditions, allergies, notes, status, sync/critical flags
 - Audit fields: created_at, updated_at
 
 ### MedicalRecord & MedicalReport
+
 - Linked to patient, provider, type/category, status, attachments
 - Audit fields, export/review tracking
 
 ### User
+
 - Full profile, role, department, status, activity, avatar
 
 ### Role & Permissions
+
 - Granular permissions, audit fields
 
 ### Consent
+
 - History of changes, expiry, audit
 
 ### AuditLog
+
 - Event/action/resource, user/patient, success/severity, details
 
 ## Example: Patient Model
+
 ```
 rust
 #[derive(Serialize, Deserialize, Debug, Clone)]
@@ -2076,6 +2103,7 @@ pub struct Patient {
 ```
 
 ## Best Practices Applied
+
 - Used enums for fixed values (status, roles, types)
 - Kept structs focused and meaningful
 - Used descriptive, industry-standard field names
