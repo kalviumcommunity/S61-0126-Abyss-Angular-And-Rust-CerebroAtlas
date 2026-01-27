@@ -5,3 +5,4 @@ pub mod role;
 pub mod consent;
 pub mod report;
 pub mod audit_log;
+pub mod error;

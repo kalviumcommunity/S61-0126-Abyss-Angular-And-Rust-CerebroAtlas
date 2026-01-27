@@ -2109,3 +2109,84 @@ pub struct Patient {
 - Used descriptive, industry-standard field names
 - Added audit fields for all entities
 - Avoided optional fields unless truly optional
+
+# Error Handling Example – Axum Backend
+
+This project demonstrates structured error handling in a Rust backend using Axum.
+
+## Features
+
+- Centralized error type (`ServiceError`) with custom HTTP responses
+- Consistent error responses in JSON format
+- Proper propagation of errors from handlers to routes
+- Logging of requests and responses using `tower-http` and `tracing-subscriber`
+
+## Getting Started
+
+### Installation
+
+1. Clone the repository:
+    ```sh
+    git clone <your-repo-url>
+    cd backend
+    ```
+
+2. Install dependencies:
+    ```
+    sh
+    cargo build
+    ```
+
+### Running the Server
+
+```
+sh
+cargo run
+```
+
+The server will start at [http://127.0.0.1:8080](http://127.0.0.1:8080).
+
+### API Endpoints
+
+- `GET /health` – Health check
+- `POST /login` – Login (use JSON body: `{"username": "admin", "password": "password"}`)
+- `GET /patients` – List patients
+- `GET /records` – List records
+
+### Error Handling
+
+All errors are returned in a consistent JSON format, for example:
+```json
+{
+  "error": "Unauthorized"
+}
+```
+
+### Testing
+
+You can test endpoints using [curl](https://curl.se/), [Postman](https://www.postman.com/), or [Insomnia](https://insomnia.rest/).
+
+**Example:**
+```sh
+curl -X POST http://127.0.0.1:8080/login \
+  -H "Content-Type: application/json" \
+  -d '{"username":"admin","password":"password"}'
+```
+
+### Logging
+
+Requests and responses are logged to the console using `tower-http`'s `TraceLayer` and `tracing-subscriber`.
+
+---
+
+## Project Structure
+
+```
+src/
+  handlers/      # Request handlers (business logic)
+  models/        # Data models and error types
+  routes/        # Route definitions
+  config/        # App state and configuration
+  main.rs        # Application entry point
+```
+
