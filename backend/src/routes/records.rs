@@ -1,11 +1,11 @@
-use axum::{routing::get, Router};
-
+use axum::{routing::{get, post, put, delete}, Router};
+use crate::handlers::records_handler::{
+    list_records, get_record, create_record, update_record, delete_record,
+};
 use crate::config::AppState;
-use crate::handlers::records_handler::{create_record, delete_record, get_record, list_records, update_record};
 
-pub fn router(state: AppState) -> Router {
-	Router::new()
-		.route("/records", get(list_records).post(create_record))
-		.route("/records/:id", get(get_record).put(update_record).delete(delete_record))
-		.with_state(state)
+pub fn routes() -> Router<AppState> {
+    Router::new()
+        .route("/records", get(list_records).post(create_record))
+        .route("/records/:id", get(get_record).put(update_record).delete(delete_record))
 }
