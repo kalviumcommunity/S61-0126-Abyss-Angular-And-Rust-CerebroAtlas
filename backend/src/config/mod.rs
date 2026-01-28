@@ -5,6 +5,8 @@ use tokio::sync::RwLock;
 
 use crate::models::{patient::Patient, record::MedicalRecord};
 
+pub mod db;
+
 #[derive(Clone, Default)]
 pub struct AppState {
 	pub patients: Arc<RwLock<HashMap<String, Patient>>>,
