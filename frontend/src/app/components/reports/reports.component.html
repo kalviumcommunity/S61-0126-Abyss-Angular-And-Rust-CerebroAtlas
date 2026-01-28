@@ -274,10 +274,12 @@
         </thead>
         <tbody>
           <tr *ngFor="let report of medicalReports" [class.draft]="report.status === 'Draft'">
-            <td>{{report.patientName}}</td>
-            <td>{{report.reportType}}</td>
+            <td>
+              {{ getPatientName(report.patient_id) }}
+            </td>
+            <td>{{report.record_type}}</td>
             <td>{{report.date}}</td>
-            <td>{{report.doctor}}</td>
+            <td>{{report.provider}}</td>
             <td>
               <span class="status-badge" [style.background]="getStatusColor(report.status)" [style.color]="'white'">
                 {{report.status}}
@@ -326,27 +328,24 @@
 
       <div class="modal-body">
         <div class="form-group">
-          <label for="patientName">Patient Name <span class="required">*</span></label>
-          <input 
-            type="text" 
-            id="patientName" 
-            class="form-input" 
-            [(ngModel)]="newReport.patientName"
-            placeholder="Enter patient name"
-          />
+          <label for="patientName">Patient <span class="required">*</span></label>
+          <select id="patientName" class="form-input" [(ngModel)]="newReport.patient_id" [ngModelOptions]="{standalone: true}" required>
+            <option value="">Select patient</option>
+            <option *ngFor="let p of patients" [value]="p.id">{{p.first_name}} {{p.last_name}}</option>
+          </select>
         </div>
 
         <div class="form-row">
           <div class="form-group">
             <label for="reportType">Report Type <span class="required">*</span></label>
-            <select id="reportType" class="form-input" [(ngModel)]="newReport.reportType">
+            <select id="reportType" class="form-input" [(ngModel)]="newReport.record_type" [ngModelOptions]="{standalone: true}">
               <option *ngFor="let type of reportTypes" [value]="type">{{type}}</option>
             </select>
           </div>
 
           <div class="form-group">
-            <label for="doctor">Doctor <span class="required">*</span></label>
-            <select id="doctor" class="form-input" [(ngModel)]="newReport.doctor">
+            <label for="provider">Doctor <span class="required">*</span></label>
+            <select id="provider" class="form-input" [(ngModel)]="newReport.provider" [ngModelOptions]="{standalone: true}">
               <option value="">Select a doctor</option>
               <option *ngFor="let doc of doctors" [value]="doc">{{doc}}</option>
             </select>
@@ -356,7 +355,7 @@
         <div class="form-row">
           <div class="form-group">
             <label for="status">Status</label>
-            <select id="status" class="form-input" [(ngModel)]="newReport.status">
+            <select id="status" class="form-input" [(ngModel)]="newReport.status" [ngModelOptions]="{standalone: true}">
               <option value="Draft">Draft</option>
               <option value="Completed">Completed</option>
               <option value="Submitted">Submitted</option>
@@ -370,6 +369,7 @@
             id="description" 
             class="form-textarea" 
             [(ngModel)]="newReport.description"
+            [ngModelOptions]="{standalone: true}"
             placeholder="Enter report description or notes"
             rows="4"
           ></textarea>
@@ -378,7 +378,12 @@
 
       <div class="modal-footer">
         <button class="btn-cancel" (click)="closeReportModal()">Cancel</button>
-        <button class="btn-save" (click)="saveReport()">{{editingReport ? 'Update Report' : 'Create Report'}}</button>
+        <button
+          class="btn-save"
+          [disabled]="isSaving"
+          (click)="saveReport()">
+          {{ isSaving ? 'Saving...' : (editingReport ? 'Update Report' : 'Create Report') }}
+        </button>
       </div>
     </div>
   </div>
