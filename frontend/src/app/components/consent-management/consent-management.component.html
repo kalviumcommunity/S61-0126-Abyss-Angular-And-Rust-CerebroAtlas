@@ -58,41 +58,6 @@
   <!-- Consent Categories Tab -->
   <div class="tab-content" *ngIf="activeTab === 'categories'">
     <div class="consent-grid">
-      <!-- Data Sharing -->
-      <div class="consent-card">
-        <div class="card-header">
-          <div class="icon data-sharing">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-              <circle cx="9" cy="7" r="4"></circle>
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-            </svg>
-          </div>
-          <div class="header-text">
-            <span class="card-title">Data Sharing</span>
-            <span class="card-desc">Share medical records with other healthcare providers</span>
-          </div>
-        </div>
-        <div class="card-body">
-          <div class="consent-row" *ngFor="let item of dataSharing">
-            <div class="consent-info">
-              <span class="consent-label">{{item.label}}</span>
-              <span class="consent-updated">Updated: 2024-01-10</span>
-            </div>
-            <div class="consent-controls">
-              <span class="status-badge" [ngClass]="{'granted': item.granted, 'denied': !item.granted}">
-                <span class="status-dot"></span>
-                {{item.granted ? 'Granted' : 'Denied'}}
-              </span>
-              <label class="switch">
-                <input type="checkbox" [(ngModel)]="item.granted">
-                <span class="slider"></span>
-              </label>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <!-- Research Use -->
       <div class="consent-card">

@@ -14,13 +14,6 @@ import { Sidebar } from '../shared/sidebar/sidebar';
 export class ConsentManagementComponent {
   activeTab = 'categories';
 
-  dataSharing = [
-    { label: 'Share with referral hospitals', granted: true },
-    { label: 'Share with specialist clinics', granted: true },
-    { label: 'Share with pharmacies', granted: false },
-    { label: 'Share with insurance providers', granted: false },
-  ];
-
   researchUse = [
     { label: 'Public health research', granted: false },
     { label: 'Disease outbreak tracking', granted: true },

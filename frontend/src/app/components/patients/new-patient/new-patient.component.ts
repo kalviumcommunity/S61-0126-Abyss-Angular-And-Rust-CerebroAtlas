@@ -73,11 +73,9 @@ export class NewPatientComponent {
       status: 'active'
     };
 
-    console.log('Saving patient:', patientData);
 
     this.apiService.createPatient(patientData).subscribe({
       next: (response) => {
-        console.log('Patient created successfully:', response);
         this.saving = false;
         // Navigate back to patients list
         this.router.navigate(['/patients']);
