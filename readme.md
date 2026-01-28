@@ -2190,3 +2190,95 @@ src/
   main.rs        # Application entry point
 ```
 
+# Login Feature Implementation
+
+## Overview
+
+This project implements a secure login system connecting the Angular frontend to the Rust backend. Users can log in with their credentials, which are authenticated by the backend. Upon successful login, a session token is stored and used for subsequent authenticated requests.
+
+---
+
+## How It Works
+
+### 1. **Frontend (Angular)**
+
+- **Login Form:**  
+  The login form collects the user's email and password.
+- **Service Call:**  
+  On form submission, the frontend calls the backend `/login` API using an Angular service (`ApiService` or `AuthService`).
+- **Token Handling:**  
+  If authentication is successful, the backend returns a token. The frontend stores this token (e.g., in `localStorage`) for future API requests.
+- **Error Handling:**  
+  If login fails, an error message is displayed to the user.
+
+**Example (login.component.ts):**
+```typescript
+onSubmit(): void {
+  this.api.login(email, password).subscribe({
+    next: (res) => {
+      // Save token and redirect
+      localStorage.setItem('token', res.token);
+      this.router.navigate(['/dashboard']);
+    },
+    error: (err) => {
+      this.errorMessage = 'Login failed: Invalid credentials';
+    }
+  });
+}
+```
+
+---
+
+### 2. **Backend (Rust)**
+
+- **Endpoint:**  
+  The backend exposes a `/login` endpoint that accepts email and password.
+- **Authentication:**  
+  The backend verifies the credentials and, if valid, returns a session token (e.g., JWT).
+- **Error Handling:**  
+  If credentials are invalid, an error response is sent.
+
+**Example (Rust handler):**
+```rust
+#[post("/login")]
+async fn login(payload: Json<LoginRequest>) -> Result<Json<LoginResponse>, ServiceError> {
+    // Authenticate user and return token
+}
+```
+
+---
+
+## Files Involved
+
+- **Frontend:**
+  - `src/app/components/login/login.component.ts`
+  - `src/app/services/api.service.ts` or `auth.service.ts`
+- **Backend:**
+  - `src/routes/auth.rs`
+  - `src/handlers/auth_handler.rs`
+
+---
+
+## Usage
+
+1. Start the backend server (`cargo run` or as per your setup).
+2. Start the Angular frontend (`ng serve`).
+3. Navigate to the login page.
+4. Enter your credentials and submit.
+5. On success, you are redirected to the dashboard; on failure, an error is shown.
+
+---
+
+## Security Notes
+
+- Passwords are never stored on the frontend.
+- Tokens are used for authenticated requests.
+- Ensure HTTPS is used in production.
+
+---
+
+## Next Steps
+
+- Implement logout functionality.
+- Protect routes using authentication guards.
+- Add user registration and password reset features.

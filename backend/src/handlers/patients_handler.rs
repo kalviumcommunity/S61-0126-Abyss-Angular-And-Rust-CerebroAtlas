@@ -30,7 +30,6 @@ pub struct CreatePatientRequest {
     pub known_allergies: Option<Vec<String>>,
     pub additional_notes: Option<String>,
     pub status: Option<String>,
-    pub sync_status: Option<String>,
     pub critical_flag: Option<bool>,
     pub profile_picture_url: Option<String>,
     pub next_visit: Option<String>,
@@ -53,7 +52,6 @@ pub struct UpdatePatientRequest {
     pub known_allergies: Option<Vec<String>>,
     pub additional_notes: Option<String>,
     pub status: Option<String>,
-    pub sync_status: Option<String>,
     pub critical_flag: Option<bool>,
     pub profile_picture_url: Option<String>,
     pub next_visit: Option<String>,
@@ -104,7 +102,6 @@ pub async fn create_patient(
         known_allergies: payload.known_allergies.unwrap_or_default(),
         additional_notes: payload.additional_notes,
         status: payload.status.unwrap_or_else(|| "active".to_string()),
-        sync_status: payload.sync_status,
         critical_flag: payload.critical_flag,
         profile_picture_url: payload.profile_picture_url,
         next_visit: payload.next_visit,
@@ -141,7 +138,6 @@ pub async fn update_patient(
     if let Some(value) = payload.known_allergies { patient.known_allergies = value; }
     if let Some(value) = payload.additional_notes { patient.additional_notes = Some(value); }
     if let Some(value) = payload.status { patient.status = value; }
-    if let Some(value) = payload.sync_status { patient.sync_status = Some(value); }
     if let Some(value) = payload.critical_flag { patient.critical_flag = Some(value); }
     if let Some(value) = payload.profile_picture_url { patient.profile_picture_url = Some(value); }
     if let Some(value) = payload.next_visit { patient.next_visit = Some(value); }

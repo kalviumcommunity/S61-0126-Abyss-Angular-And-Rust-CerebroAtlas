@@ -19,7 +19,6 @@
     <div class="tabs">
       <button [class.active]="activeTab === 'all'" (click)="setTab('all')">All Patients ({{filteredPatients.length}})</button>
       <button [class.active]="activeTab === 'active'" (click)="setTab('active')">Active</button>
-      <button [class.active]="activeTab === 'pending'" (click)="setTab('pending')">Pending Sync</button>
       <button [class.active]="activeTab === 'critical'" (click)="setTab('critical')">Critical</button>
     </div>
 

@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { ApiService } from '../../services/api.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -16,9 +18,9 @@ export class LoginComponent {
 
   loginForm: FormGroup;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private api: ApiService, private router: Router) {
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required]],
       password: ['', [Validators.required, Validators.minLength(6)]]
     });
   }
@@ -40,7 +42,17 @@ export class LoginComponent {
       return;
     }
 
-    console.log('Login success', this.loginForm.value);
-    this.errorMessage = null;
+    const { email, password } = this.loginForm.value;
+    this.api.login(email, password).subscribe({
+      next: (res) => {
+        // Save token, navigate, etc.
+        this.errorMessage = null;
+        // Example: localStorage.setItem('token', res.token);
+        this.router.navigate(['/dashboard']);
+      },
+      error: (err) => {
+        this.errorMessage = 'Login failed: Invalid credentials';
+      }
+    });
   }
 }
