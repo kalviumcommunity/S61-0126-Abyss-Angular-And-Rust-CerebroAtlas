@@ -40,6 +40,16 @@ export class MedicalRecordsComponent implements OnInit {
     { label: 'Lab Results', value: '0', icon: 'imaging' },
   ];
 
+  newRecord = {
+    title: '',
+    record_type: '',
+    patient_id: '',
+    provider: '',
+    description: '',
+    date: '',
+    status: 'pending'
+  };
+
   constructor(private apiService: ApiService) {}
 
   ngOnInit() {
@@ -234,5 +244,28 @@ export class MedicalRecordsComponent implements OnInit {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  }
+
+  createRecord() {
+    // Optionally validate required fields here
+    this.apiService.createRecord(this.newRecord).subscribe({
+      next: () => {
+        this.loadRecords();
+        this.newRecord = {
+          title: '',
+          record_type: '',
+          patient_id: '',
+          provider: '',
+          description: '',
+          date: '',
+          status: 'pending'
+        };
+        this.showNewRecordModal = false;
+      },
+      error: (err) => {
+        this.error = 'Failed to create record';
+        console.error('Error creating record:', err);
+      }
+    });
   }
 }

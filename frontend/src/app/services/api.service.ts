@@ -107,6 +107,11 @@ export class ApiService {
     return this.http.delete<void>(`${this.apiUrl}/records/${id}`);
   }
 
+  // Login API
+  login(username: string, password: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/login`, { username, password });
+  }
+
   // Health check
   health(): Observable<any> {
     return this.http.get(`${this.apiUrl}/health`);

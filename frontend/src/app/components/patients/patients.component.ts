@@ -97,4 +97,33 @@ export class PatientsComponent implements OnInit {
   viewPatient(id: string) {
     // Navigate to patient details if needed
   }
+
+  addPatient(newPatient: Partial<Patient>) {
+    this.apiService.createPatient(newPatient).subscribe({
+      next: (patient) => {
+        this.patients.push(patient);
+        this.filterPatients(); // Ensure filteredPatients is updated
+        this.error = '';
+      },
+      error: (err) => {
+        this.error = 'Failed to add patient: ' + (err.message || 'Unknown error');
+        console.error('Error adding patient:', err);
+      }
+    });
+  }
+
+  updatePatient(id: string, updatedData: Partial<Patient>) {
+    this.apiService.updatePatient(id, updatedData).subscribe({
+      next: (updatedPatient) => {
+        // Update the patient in local arrays
+        this.patients = this.patients.map(p => p.id === id ? updatedPatient : p);
+        this.filteredPatients = this.filteredPatients.map(p => p.id === id ? updatedPatient : p);
+        this.error = '';
+      },
+      error: (err) => {
+        this.error = 'Failed to update patient: ' + (err.message || 'Unknown error');
+        console.error('Error updating patient:', err);
+      }
+    });
+  }
 }
