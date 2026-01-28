@@ -3,7 +3,7 @@
   <div class="left-panel">
     <div class="brand">
       <div class="logo">
-        <img src="assets/screenshots/cerebro-atlas-logo.png" alt="CereBroAtlas Logo" class="logo-image"/>
+        <img src="assets/screenshots/cerebro-atlas-logo.png" alt="CereBroAtlas Logo" class="logo-image" />
       </div>
       <h2>CerebroAtlas</h2>
       <p>Digital Records System</p>
@@ -27,40 +27,29 @@
 
       <!-- Tabs -->
       <div class="tabs">
-        <button
-          type="button"
-          [class.active]="activeTab === 'password'"
-          (click)="setTab('password')">
+        <button type="button" [class.active]="activeTab === 'password'" (click)="setTab('password')">
           Password
         </button>
 
-        <button
-          type="button"
-          [class.active]="activeTab === 'biometric'"
-          (click)="setTab('biometric')">
+        <button type="button" [class.active]="activeTab === 'biometric'" (click)="setTab('biometric')">
           Biometric
         </button>
       </div>
 
       <!-- PASSWORD LOGIN -->
-      <form
-        *ngIf="activeTab === 'password'"
-        [formGroup]="loginForm"
-        (ngSubmit)="onSubmit()">
+      <form *ngIf="activeTab === 'password'" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
 
         <label>Email or Staff ID</label>
         <input type="email" formControlName="email" placeholder="Enter your email or staff ID">
 
-        <div class="error"
-          *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
+        <div class="error" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
           Valid email required
         </div>
 
         <label>Password</label>
         <input type="password" formControlName="password" placeholder="Enter your password">
 
-        <div class="error"
-          *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
+        <div class="error" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
           Minimum 6 characters
         </div>
 
@@ -75,11 +64,12 @@
       </div>
 
       <!-- STATUS MESSAGE -->
-      <div
-        class="status-message"
-        [ngClass]="{ error: errorMessage, success: !errorMessage && loginForm.valid }"
-        *ngIf="errorMessage || loginForm.valid">
-        {{ errorMessage || 'Sign in successful!' }}
+      <div class="status-message success" *ngIf="loginSuccess">
+        Sign in successful!
+      </div>
+
+      <div class="status-message error" *ngIf="errorMessage">
+        {{ errorMessage }}
       </div>
 
       <p class="help">

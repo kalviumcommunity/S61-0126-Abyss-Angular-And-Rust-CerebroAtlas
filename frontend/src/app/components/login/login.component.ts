@@ -29,30 +29,38 @@ export class LoginComponent {
     this.activeTab = tab;
     this.errorMessage = null;
   }
+  loginSuccess = false;
+  loginAttempted = false;
 
   onSubmit(): void {
-    if (this.activeTab === 'biometric') {
-      console.log('Biometric login success');
-      return;
-    }
+  this.loginAttempted = true;
+  this.loginSuccess = false;
+  this.errorMessage = null;
 
-    if (this.loginForm.invalid) {
-      this.loginForm.markAllAsTouched();
-      this.errorMessage = 'Invalid email or password';
-      return;
-    }
-
-    const { email, password } = this.loginForm.value;
-    this.api.login(email, password).subscribe({
-      next: (res) => {
-        // Save token, navigate, etc.
-        this.errorMessage = null;
-        // Example: localStorage.setItem('token', res.token);
-        this.router.navigate(['/dashboard']);
-      },
-      error: (err) => {
-        this.errorMessage = 'Login failed: Invalid credentials';
-      }
-    });
+  if (this.activeTab === 'biometric') {
+    this.loginSuccess = true;
+    return;
   }
+
+  if (this.loginForm.invalid) {
+    this.loginForm.markAllAsTouched();
+    this.errorMessage = 'Invalid email or password';
+    return;
+  }
+
+  const { email, password } = this.loginForm.value;
+
+  this.api.login(email, password).subscribe({
+    next: () => {
+      this.loginSuccess = true;
+      this.errorMessage = null;
+      this.router.navigate(['/dashboard']);
+    },
+    error: () => {
+      this.loginSuccess = false;
+      this.errorMessage = 'Login failed: Invalid credentials';
+    }
+  });
+}
+
 }
