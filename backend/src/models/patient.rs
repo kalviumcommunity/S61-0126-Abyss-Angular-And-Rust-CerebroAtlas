@@ -32,7 +32,7 @@ pub struct Patient {
 	pub known_allergies: Vec<String>,
 	pub additional_notes: Option<String>,
 	pub status: String,
-	pub sync_status: Option<String>,
+// ...removed sync_status field...
 	pub critical_flag: Option<bool>,
 	pub profile_picture_url: Option<String>,
 	pub next_visit: Option<String>,
