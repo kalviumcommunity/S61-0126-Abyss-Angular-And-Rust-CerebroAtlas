@@ -12,7 +12,7 @@ mod config;
 mod handlers;
 mod models;
 
-use crate::routes::{patients, records, auth};
+use crate::routes::{patients, records, auth, analytics, administration};
 use crate::config::AppState;
 
 #[tokio::main]
@@ -37,6 +37,8 @@ async fn main() {
         .merge(auth::routes().with_state(state.clone()))
         .merge(patients::routes().with_state(state.clone()))
         .merge(records::routes().with_state(state.clone()))
+        .merge(analytics::routes().with_state(state.clone()))
+        .merge(administration::routes().with_state(state.clone()))
         .layer(TraceLayer::new_for_http())
         .layer(cors);
 

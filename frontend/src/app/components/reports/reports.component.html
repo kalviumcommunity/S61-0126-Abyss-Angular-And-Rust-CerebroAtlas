@@ -35,29 +35,33 @@
 
   <!-- Stats Cards -->
   <div class="stats-row">
-    <div class="stat-card" *ngFor="let stat of stats">
+    <div class="stat-card">
       <div class="stat-header">
-        <div class="stat-title">{{stat.label}}</div>
-        <div class="stat-icon {{stat.icon}}">
-          <svg *ngIf="stat.icon === 'patients'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-            <circle cx="12" cy="7" r="4"></circle>
-          </svg>
-          <svg *ngIf="stat.icon === 'consultations'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-            <polyline points="14 2 14 8 20 8"></polyline>
-          </svg>
-          <svg *ngIf="stat.icon === 'waittime'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"></circle>
-            <polyline points="12 6 12 12 16 14"></polyline>
-          </svg>
-          <svg *ngIf="stat.icon === 'completeness'" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polyline points="20 6 9 17 4 12"></polyline>
-          </svg>
-        </div>
+        <div class="stat-title">Total Patients</div>
+        <div class="stat-icon patients"></div>
       </div>
-      <div class="stat-value">{{stat.value}}</div>
-      <div class="stat-change" [ngClass]="stat.trend">{{stat.change}}</div>
+      <div class="stat-value">{{stats?.total_patients || 0}}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-header">
+        <div class="stat-title">Consultations (MTD)</div>
+        <div class="stat-icon consultations"></div>
+      </div>
+      <div class="stat-value">{{stats?.consultations_mtd || 0}}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-header">
+        <div class="stat-title">Avg Wait Time</div>
+        <div class="stat-icon waittime"></div>
+      </div>
+      <div class="stat-value">{{stats?.avg_wait_time || '--'}}</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-header">
+        <div class="stat-title">Data Completeness</div>
+        <div class="stat-icon completeness"></div>
+      </div>
+      <div class="stat-value">{{stats?.data_completeness || '--'}}</div>
     </div>
   </div>
 
@@ -110,8 +114,8 @@
           </svg>
         </div>
         <div class="condition-legend">
-          <div class="legend-row" *ngFor="let cond of conditionData">
-            <span class="legend-dot" [style.background]="cond.color"></span>
+          <div class="legend-row" *ngFor="let cond of conditionData; let i = index">
+            <span class="legend-dot" [style.background]="getConditionColor(i)"></span>
             <span class="legend-label">{{cond.condition}} ({{cond.percentage}}%)</span>
           </div>
         </div>

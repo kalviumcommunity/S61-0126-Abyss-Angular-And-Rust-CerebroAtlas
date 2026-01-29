@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Location } from '@angular/common';
 import { Sidebar } from '../../shared/sidebar/sidebar';
 
 @Component({
@@ -44,7 +45,13 @@ export class AddUserComponent {
     'IT Department'
   ];
 
+  constructor(private location: Location) {}
+
   save(): void {
     console.log('Create user', this.user);
+  }
+
+  goBack() {
+    this.location.back();
   }
 }

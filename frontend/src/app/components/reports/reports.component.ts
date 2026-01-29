@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Sidebar } from '../shared/sidebar/sidebar';
-import { ApiService, MedicalRecord, Patient } from '../../services/api.service';
+import { ApiService, MedicalRecord, Patient, AnalyticsResponse, StatsResponse, VillageDistribution, ConditionDistribution, DiseaseTrend } from '../../services/api.service';
 
 @Component({
   selector: 'app-reports',
@@ -19,6 +19,12 @@ export class ReportsComponent {
   showReportModal = false;
   showReportsList = false;
   editingReport: MedicalRecord | null = null;
+
+  getConditionColor(index: number): string {
+    // Use a fixed palette for up to 5 conditions
+    const palette = ['#14b8a6', '#f97316', '#3b82f6', '#8b5cf6', '#64748b'];
+    return palette[index % palette.length];
+  }
 
   patients: Patient[] = [];
   selectedPatient: Patient | null = null;
@@ -38,47 +44,41 @@ export class ReportsComponent {
   reportTypes = ['General', 'Lab Results', 'Consultation', 'Diagnosis', 'Follow-up', 'Treatment Plan'];
   doctors = ['Dr. Sarah', 'Dr. Smith', 'Dr. Ahmed', 'Dr. Williams', 'Dr. Brown'];
 
-  stats = [
-    { label: 'Total Patients', value: '2,847', change: '+12% vs last month', icon: 'patients', trend: 'up' },
-    { label: 'Consultations (MTD)', value: '1,234', change: '+8% vs last month', icon: 'consultations', trend: 'up' },
-    { label: 'Avg Wait Time', value: '23 min', change: '-15% vs last month', icon: 'waittime', trend: 'down' },
-    { label: 'Data Completeness', value: '94%', change: '+2% vs last month', icon: 'completeness', trend: 'up' },
-  ];
-
-  diseaseTrendData = [
-    { month: 'Jul', value: 320 },
-    { month: 'Aug', value: 365 },
-    { month: 'Sep', value: 398 },
-    { month: 'Oct', value: 415 },
-    { month: 'Nov', value: 452 },
-    { month: 'Dec', value: 428 },
-    { month: 'Jan', value: 478 }
-  ];
-
-  villages = [
-    { name: 'Umuahia North', patients: 542, growth: '+12%' },
-    { name: 'Aba South', patients: 423, growth: '+8%' },
-    { name: 'Ikwuano', patients: 312, growth: '+15%' },
-    { name: 'Osisioma', patients: 287, growth: '+5%' },
-    { name: 'Umuahia South', patients: 256, growth: '+3%' },
-  ];
-
-  conditionData = [
-    { condition: 'Malaria', percentage: 35, color: '#14b8a6' },
-    { condition: 'Hypertension', percentage: 25, color: '#f97316' },
-    { condition: 'Diabetes', percentage: 20, color: '#3b82f6' },
-    { condition: 'Respiratory', percentage: 12, color: '#8b5cf6' },
-    { condition: 'Other', percentage: 8, color: '#64748b' },
-  ];
+  stats: StatsResponse | null = null;
+  villages: VillageDistribution[] = [];
+  conditionData: ConditionDistribution[] = [];
+  diseaseTrendData: DiseaseTrend[] = [];
+  analyticsLoading = true;
+  analyticsError = '';
 
   isSaving = false;
 
   constructor(
     private api: ApiService,
     private cdr: ChangeDetectorRef
+
   ) {
     this.loadRecords();
     this.loadPatients();
+    this.loadAnalytics();
+  }
+
+  loadAnalytics() {
+    this.analyticsLoading = true;
+    this.analyticsError = '';
+    this.api.getAnalytics().subscribe({
+      next: (data) => {
+        this.stats = data.stats;
+        this.villages = data.villages;
+        this.conditionData = data.conditions;
+        this.diseaseTrendData = data.disease_trend;
+        this.analyticsLoading = false;
+      },
+      error: (err) => {
+        this.analyticsError = 'Failed to load analytics';
+        this.analyticsLoading = false;
+      }
+    });
   }
 
 
@@ -196,3 +196,4 @@ export class ReportsComponent {
     return patient ? `${patient.first_name} ${patient.last_name}` : '';
   }
 }
+

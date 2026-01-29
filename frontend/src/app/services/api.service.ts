@@ -1,3 +1,101 @@
+// Administration API types
+export interface AdministrationStats {
+  total_users: number;
+  active_users: number;
+  inactive_users: number;
+  roles: number;
+}
+
+export interface User {
+  id: string;
+  first_name: string;
+  last_name: string;
+  email: string;
+  phone_number?: string;
+  username: string;
+  password: string;
+  role: string;
+  department?: string;
+  specialization?: string;
+  license_number?: string;
+  status: string;
+  last_login?: string;
+  last_activity?: string;
+  is_active: boolean;
+  profile_picture_url?: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Permission {
+  read: boolean;
+  write: boolean;
+  delete: boolean;
+}
+
+export interface RolePermissions {
+  patient_records: Permission;
+  medical_records: Permission;
+  prescriptions: Permission;
+  appointments: Permission;
+  lab_results: Permission;
+  reports: Permission;
+  user_management: Permission;
+  system_settings: Permission;
+}
+
+export interface Role {
+  name: string;
+  description?: string;
+  color?: string;
+  icon?: string;
+  permissions: RolePermissions;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface AdministrationResponse {
+  stats: AdministrationStats;
+  users: User[];
+  roles: Role[];
+}
+// ...existing code...
+
+// Administration API will be merged into the main ApiService class below.
+export interface StatsResponse {
+  total_patients: number;
+  total_records: number;
+  consultations_mtd: number;
+  completed: number;
+  pending: number;
+  lab_results: number;
+  avg_wait_time?: string;
+  data_completeness?: string;
+}
+
+export interface VillageDistribution {
+  name: string;
+  patients: number;
+  growth: string;
+}
+
+export interface ConditionDistribution {
+  condition: string;
+  percentage: number;
+}
+
+export interface DiseaseTrend {
+  month: string;
+  value: number;
+}
+
+export interface AnalyticsResponse {
+  stats: StatsResponse;
+  villages: VillageDistribution[];
+  conditions: ConditionDistribution[];
+  disease_trend: DiseaseTrend[];
+}
+
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -65,6 +163,11 @@ export class ApiService {
 
   constructor(private http: HttpClient) {}
 
+  // Administration API
+  getAdministration(): Observable<AdministrationResponse> {
+    return this.http.get<AdministrationResponse>(`${this.apiUrl}/administration`);
+  }
+
   // Patients API
   getPatients(): Observable<Patient[]> {
     return this.http.get<Patient[]>(`${this.apiUrl}/patients`);
@@ -110,6 +213,11 @@ export class ApiService {
   // Login API
   login(username: string, password: string): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/login`, { username, password });
+  }
+
+  // Analytics API
+  getAnalytics(): Observable<AnalyticsResponse> {
+    return this.http.get<AnalyticsResponse>(`${this.apiUrl}/analytics`);
   }
 
   // Health check

@@ -1,8 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Sidebar } from '../shared/sidebar/sidebar';
+import { ApiService } from '../../services/api.service';
+import type { AdministrationStats, User, Role } from '../../services/api.service';
+
 
 @Component({
   selector: 'app-administration',
@@ -11,9 +14,15 @@ import { Sidebar } from '../shared/sidebar/sidebar';
   templateUrl: './administration.component.html',
   styleUrls: ['./administration.component.css']
 })
-export class AdministrationComponent {
+export class AdministrationComponent implements OnInit {
   activeTab = 'users';
   showCreateRoleModal = false;
+
+  stats: AdministrationStats | null = null;
+  users: User[] = [];
+  roles: Role[] = [];
+  adminLoading = true;
+  adminError = '';
 
   newRole = {
     name: '',
@@ -32,102 +41,30 @@ export class AdministrationComponent {
     }
   };
 
-  stats = [
-    { label: 'Total Users', value: '52', icon: 'users' },
-    { label: 'Active Users', value: '48', icon: 'active' },
-    { label: 'Inactive Users', value: '4', icon: 'inactive' },
-    { label: 'Roles', value: '5', icon: 'roles' },
-  ];
-
-  roles = [
-    { 
-      name: 'Administrator', 
-      description: 'Full system access', 
-      users: 2,
-      color: 'red',
-      icon: 'shield'
-    },
-    { 
-      name: 'Physician', 
-      description: 'Patient records, prescriptions, consultations', 
-      users: 12,
-      color: 'teal',
-      icon: 'user'
-    },
-    { 
-      name: 'Nurse', 
-      description: 'Patient records (read), vitals, appointments', 
-      users: 24,
-      color: 'blue',
-      icon: 'heart'
-    },
-    { 
-      name: 'Lab Technician', 
-      description: 'Lab results, patient records (limited)', 
-      users: 8,
-      color: 'green',
-      icon: 'flask'
-    },
-    { 
-      name: 'Receptionist', 
-      description: 'Appointments, patient registration', 
-      users: 6,
-      color: 'amber',
-      icon: 'calendar'
-    }
-  ];
-
-  systemSettings = [
-    {
-      name: 'Auto Logout Timer',
-      description: 'Automatically log out inactive users',
-      type: 'select',
-      value: '30 minutes',
-      options: ['15 minutes', '30 minutes', '1 hour', '2 hours']
-    },
-    {
-      name: 'Two-Factor Authentication',
-      description: 'Require 2FA for all users',
-      type: 'toggle',
-      value: true
-    },
-    {
-      name: 'Audit Log Retention',
-      description: 'How long to keep audit logs',
-      type: 'select',
-      value: '1 year',
-      options: ['3 months', '6 months', '1 year', '2 years', 'Forever']
-    },
-    {
-      name: 'Password Expiry',
-      description: 'Force password change interval',
-      type: 'select',
-      value: '90 days',
-      options: ['30 days', '60 days', '90 days', '180 days', 'Never']
-    },
-    {
-      name: 'Offline Mode',
-      description: 'Allow offline data access',
-      type: 'toggle',
-      value: true
-    },
-    {
-      name: 'Data Encryption',
-      description: 'Encrypt all stored data',
-      type: 'toggle',
-      value: true
-    }
-  ];
-
-  users = [
-    { initials: 'SJ', name: 'Dr. Sarah Johnson', email: 'sarah.j@ruralhealth.org', role: 'Physician', department: 'General Medicine', lastLogin: '2 hours ago', status: 'active' },
-    { initials: 'JA', name: 'Dr. James Adeyemi', email: 'james.a@ruralhealth.org', role: 'Physician', department: 'Pediatrics', lastLogin: '1 day ago', status: 'active' },
-    { initials: 'MO', name: 'Nurse Mary Obi', email: 'mary.o@ruralhealth.org', role: 'Nurse', department: 'General Ward', lastLogin: '3 hours ago', status: 'active' },
-    { initials: 'AU', name: 'Admin User', email: 'admin@ruralhealth.org', role: 'Administrator', department: 'IT', lastLogin: '30 minutes ago', status: 'active' },
-    { initials: 'LP', name: 'Lab Tech Peter', email: 'peter.l@ruralhealth.org', role: 'Lab Technician', department: 'Laboratory', lastLogin: '1 week ago', status: 'inactive' },
-  ];
-
   searchQuery = '';
+
+  constructor(private api: ApiService) {}
+
+  ngOnInit() {
+    this.loadAdministration();
+  }
+
+  loadAdministration() {
+    this.adminLoading = true;
+    this.adminError = '';
+    this.api.getAdministration().subscribe({
+      next: (data: { stats: AdministrationStats; users: User[]; roles: Role[] }) => {
+        this.stats = data.stats;
+        this.users = data.users;
+        this.roles = data.roles;
+        this.adminLoading = false;
+      },
+      error: (err: any) => {
+        this.adminError = 'Failed to load administration data';
+        this.adminLoading = false;
+      }
+    });
+  }
 
   switchTab(tab: string) {
     this.activeTab = tab;
@@ -160,30 +97,38 @@ export class AdministrationComponent {
 
   createRole() {
     if (this.newRole.name && this.newRole.description) {
-      // Add new role to the list
+      // Map camelCase permissions to snake_case for backend compatibility
+      const permissions = {
+        patient_records: this.newRole.permissions.patientRecords,
+        medical_records: this.newRole.permissions.medicalRecords,
+        prescriptions: this.newRole.permissions.prescriptions,
+        appointments: this.newRole.permissions.appointments,
+        lab_results: this.newRole.permissions.labResults,
+        reports: this.newRole.permissions.reports,
+        user_management: this.newRole.permissions.userManagement,
+        system_settings: this.newRole.permissions.systemSettings
+      };
       this.roles.push({
         name: this.newRole.name,
         description: this.newRole.description,
-        users: 0,
         color: this.newRole.color,
-        icon: this.newRole.icon
+        icon: this.newRole.icon,
+        permissions
       });
-      
-      // Update stats
-      this.stats[3].value = String(this.roles.length);
-      
+      // Optionally update stats if needed
       // Close modal
       this.closeCreateRoleModal();
-      
       // Show success message (you can implement a toast notification here)
       alert('Role created successfully!');
     }
   }
 
   get filteredUsers() {
-    return this.users.filter(user => 
-      user.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
-      user.email.toLowerCase().includes(this.searchQuery.toLowerCase())
-    );
+    if (!this.users) return [];
+    return this.users.filter(user => {
+      const name = (user.first_name && user.last_name) ? `${user.first_name} ${user.last_name}`.toLowerCase() : '';
+      const email = user.email ? user.email.toLowerCase() : '';
+      return name.includes(this.searchQuery.toLowerCase()) || email.includes(this.searchQuery.toLowerCase());
+    });
   }
 }
