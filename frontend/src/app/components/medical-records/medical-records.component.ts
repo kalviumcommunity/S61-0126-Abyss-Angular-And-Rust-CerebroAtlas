@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Sidebar } from '../shared/sidebar/sidebar';
-import { ApiService, MedicalRecord, Patient } from '../../services/api.service';
+import { ApiService, MedicalRecord, Patient, AnalyticsResponse, StatsResponse } from '../../services/api.service';
 
 @Component({
   selector: 'app-medical-records',
@@ -33,12 +33,9 @@ export class MedicalRecordsComponent implements OnInit {
     'active': true
   };
 
-  stats = [
-    { label: 'Total Records', value: '0', icon: 'consultations' },
-    { label: 'Completed', value: '0', icon: 'lab-results' },
-    { label: 'Pending', value: '0', icon: 'prescriptions' },
-    { label: 'Lab Results', value: '0', icon: 'imaging' },
-  ];
+  stats: StatsResponse | null = null;
+  statsLoading = true;
+  statsError = '';
 
   newRecord = {
     title: '',
@@ -55,6 +52,22 @@ export class MedicalRecordsComponent implements OnInit {
   ngOnInit() {
     this.loadRecords();
     this.loadPatients();
+    this.loadStats();
+  }
+
+  loadStats() {
+    this.statsLoading = true;
+    this.statsError = '';
+    this.apiService.getAnalytics().subscribe({
+      next: (data: AnalyticsResponse) => {
+        this.stats = data.stats;
+        this.statsLoading = false;
+      },
+      error: (err) => {
+        this.statsError = 'Failed to load stats';
+        this.statsLoading = false;
+      }
+    });
   }
 
   loadRecords() {
@@ -64,10 +77,9 @@ export class MedicalRecordsComponent implements OnInit {
       next: (data) => {
         this.records = data;
         this.filteredRecords = data;
-        this.updateStats();
         this.loading = false;
       },
-      error: (err) => {
+      error: (err: any) => {
         this.error = 'Failed to load medical records';
         this.loading = false;
         console.error('Error loading records:', err);
@@ -86,19 +98,7 @@ export class MedicalRecordsComponent implements OnInit {
     });
   }
 
-  updateStats() {
-    const total = this.records.length;
-    const completed = this.records.filter(r => r.status === 'completed').length;
-    const pending = this.records.filter(r => r.status === 'pending').length;
-    const labs = this.records.filter(r => r.record_type === 'lab').length;
-
-    this.stats = [
-      { label: 'Total Records', value: total.toString(), icon: 'consultations' },
-      { label: 'Completed', value: completed.toString(), icon: 'lab-results' },
-      { label: 'Pending', value: pending.toString(), icon: 'prescriptions' },
-      { label: 'Lab Results', value: labs.toString(), icon: 'imaging' },
-    ];
-  }
+  // updateStats() removed: now stats come from backend
 
   filterRecords() {
     let filtered = this.records;
