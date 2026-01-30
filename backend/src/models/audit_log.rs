@@ -2,17 +2,13 @@
 
 use serde::{Serialize, Deserialize};
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+use chrono::NaiveDateTime;
+use sqlx::FromRow;
+
+#[derive(Serialize, Deserialize, Debug, Clone, FromRow)]
 pub struct AuditLog {
-    pub id: String,
-    pub event_type: String,
+    pub id: i32,
+    pub user_id: Option<i32>,
     pub action: String,
-    pub resource: String,
-    pub user_id: String,
-    pub patient_id: Option<String>,
-    pub timestamp: String,
-    pub ip_address: Option<String>,
-    pub details: Option<String>,
-    pub success: bool,
-    pub severity: Option<String>,
+    pub created_at: Option<NaiveDateTime>,
 }
