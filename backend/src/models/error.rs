@@ -13,7 +13,6 @@ pub struct ErrorResponse {
 #[derive(Debug)]
 pub enum ServiceError {
     InternalServerError,
-    BadRequest(String),
     Unauthorized,
     NotFound,
 }

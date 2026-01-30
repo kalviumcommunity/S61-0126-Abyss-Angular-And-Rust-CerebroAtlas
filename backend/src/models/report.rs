@@ -2,18 +2,13 @@
 
 use serde::{Serialize, Deserialize};
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+use chrono::NaiveDateTime;
+use sqlx::FromRow;
+
+#[derive(Serialize, Deserialize, Debug, Clone, FromRow)]
 pub struct MedicalReport {
-    pub id: String,
-    pub patient_id: String,
-    pub report_type: String,
-    pub report_category: Option<String>,
-    pub doctor: String,
-    pub date: String,
-    pub status: String,
-    pub description: Option<String>,
-    pub attachments: Option<Vec<String>>,
-    pub is_exported: Option<bool>,
-    pub created_at: String,
-    pub updated_at: String,
+    pub id: i32,
+    pub record_id: i32,
+    pub report_url: String,
+    pub created_at: Option<NaiveDateTime>,
 }

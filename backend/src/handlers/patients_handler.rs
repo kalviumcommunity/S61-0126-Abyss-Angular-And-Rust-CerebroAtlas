@@ -3,27 +3,29 @@ use axum::{
     http::StatusCode,
     Json,
 };
-use chrono::Utc;
-use serde::Deserialize;
-use uuid::Uuid;
+use sqlx::PgPool;
+use serde_json;
 
-use crate::config::AppState;
-use crate::models::patient::{Address, EmergencyContact, Patient};
+use crate::models::patient::Patient;
 use crate::models::error::ServiceError;
+
+use chrono::NaiveDate;
+use serde::Deserialize;
+use serde_json::Value;
 
 #[derive(Deserialize)]
 pub struct CreatePatientRequest {
     pub first_name: String,
     pub last_name: String,
-    pub date_of_birth: String,
+    pub date_of_birth: NaiveDate,
     pub gender: String,
     pub phone_number: String,
     pub middle_name: Option<String>,
     pub blood_type: Option<String>,
     pub email: Option<String>,
-    pub address: Option<Address>,
+    pub address: Option<Value>,
     pub village: Option<String>,
-    pub emergency_contact: Option<EmergencyContact>,
+    pub emergency_contact: Option<Value>,
     #[serde(default)]
     pub active_conditions: Option<Vec<String>>,
     #[serde(default)]
@@ -32,130 +34,184 @@ pub struct CreatePatientRequest {
     pub status: Option<String>,
     pub critical_flag: Option<bool>,
     pub profile_picture_url: Option<String>,
-    pub next_visit: Option<String>,
+    pub next_visit: Option<NaiveDate>,
 }
 
 #[derive(Deserialize)]
 pub struct UpdatePatientRequest {
     pub first_name: Option<String>,
     pub last_name: Option<String>,
-    pub date_of_birth: Option<String>,
+    pub date_of_birth: Option<NaiveDate>,
     pub gender: Option<String>,
     pub phone_number: Option<String>,
     pub middle_name: Option<String>,
     pub blood_type: Option<String>,
     pub email: Option<String>,
-    pub address: Option<Address>,
+    pub address: Option<Value>,
     pub village: Option<String>,
-    pub emergency_contact: Option<EmergencyContact>,
+    pub emergency_contact: Option<Value>,
     pub active_conditions: Option<Vec<String>>,
     pub known_allergies: Option<Vec<String>>,
     pub additional_notes: Option<String>,
     pub status: Option<String>,
     pub critical_flag: Option<bool>,
     pub profile_picture_url: Option<String>,
-    pub next_visit: Option<String>,
+    pub next_visit: Option<NaiveDate>,
 }
 
 pub async fn list_patients(
-    State(state): State<AppState>,
+    State(pool): State<PgPool>,
 ) -> Result<Json<Vec<Patient>>, ServiceError> {
-    let patients = state.patients.read().await;
-    let result = patients.values().cloned().collect();
-    Ok(Json(result))
+    let patients = sqlx::query_as!(Patient,
+        r#"SELECT * FROM patients"#
+    )
+    .fetch_all(&pool)
+    .await
+    .map_err(|_| ServiceError::InternalServerError)?;
+    Ok(Json(patients))
 }
 
 pub async fn get_patient(
-    Path(id): Path<String>,
-    State(state): State<AppState>,
+    Path(id): Path<i32>,
+    State(pool): State<PgPool>,
 ) -> Result<Json<Patient>, ServiceError> {
-    let patients = state.patients.read().await;
-    if let Some(patient) = patients.get(&id) {
-        Ok(Json(patient.clone()))
+    let patient = sqlx::query_as!(Patient,
+        r#"SELECT * FROM patients WHERE id = $1"#,
+        id
+    )
+    .fetch_optional(&pool)
+    .await
+    .map_err(|_| ServiceError::InternalServerError)?;
+    if let Some(patient) = patient {
+        Ok(Json(patient))
     } else {
         Err(ServiceError::NotFound)
     }
 }
 
 pub async fn create_patient(
-    State(state): State<AppState>,
+    State(pool): State<PgPool>,
     Json(payload): Json<CreatePatientRequest>,
 ) -> Result<(StatusCode, Json<Patient>), ServiceError> {
-    let mut patients = state.patients.write().await;
-    let now = Utc::now().to_rfc3339();
-    let id = Uuid::new_v4().to_string();
+    let now = chrono::Utc::now().naive_utc();
+    let status = payload.status.unwrap_or_else(|| "active".to_string());
+    let active_conditions_ref = payload.active_conditions.as_ref().map(Vec::as_slice);
+    let known_allergies_ref = payload.known_allergies.as_ref().map(Vec::as_slice);
+    let address = payload.address;
+    let emergency_contact = payload.emergency_contact;
 
-    let patient = Patient {
-        id: id.clone(),
-        first_name: payload.first_name,
-        middle_name: payload.middle_name,
-        last_name: payload.last_name,
-        date_of_birth: payload.date_of_birth,
-        gender: payload.gender,
-        blood_type: payload.blood_type,
-        phone_number: payload.phone_number,
-        email: payload.email,
-        address: payload.address,
-        village: payload.village,
-        emergency_contact: payload.emergency_contact,
-        active_conditions: payload.active_conditions.unwrap_or_default(),
-        known_allergies: payload.known_allergies.unwrap_or_default(),
-        additional_notes: payload.additional_notes,
-        status: payload.status.unwrap_or_else(|| "active".to_string()),
-        critical_flag: payload.critical_flag,
-        profile_picture_url: payload.profile_picture_url,
-        next_visit: payload.next_visit,
-        created_at: now.clone(),
-        updated_at: now,
-    };
-
-    patients.insert(id.clone(), patient.clone());
-
-    Ok((StatusCode::CREATED, Json(patient)))
+    let rec = sqlx::query_as!(Patient,
+        r#"
+        INSERT INTO patients (
+            first_name, middle_name, last_name, date_of_birth, gender, blood_type, phone_number, email, address, village, emergency_contact, active_conditions, known_allergies, additional_notes, status, critical_flag, profile_picture_url, next_visit, created_at, updated_at
+        ) VALUES (
+            $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20
+        ) RETURNING *
+        "#,
+        payload.first_name,
+        payload.middle_name,
+        payload.last_name,
+        payload.date_of_birth,
+        payload.gender,
+        payload.blood_type,
+        payload.phone_number,
+        payload.email,
+        address,
+        payload.village,
+        emergency_contact,
+        active_conditions_ref,
+        known_allergies_ref,
+        payload.additional_notes,
+        status,
+        payload.critical_flag,
+        payload.profile_picture_url,
+        payload.next_visit,
+        Some(now),
+        Some(now)
+    )
+    .fetch_one(&pool)
+    .await
+    .map_err(|_| ServiceError::InternalServerError)?;
+    Ok((StatusCode::CREATED, Json(rec)))
 }
 
 pub async fn update_patient(
-    Path(id): Path<String>,
-    State(state): State<AppState>,
+    Path(id): Path<i32>,
+    State(pool): State<PgPool>,
     Json(payload): Json<UpdatePatientRequest>,
 ) -> Result<Json<Patient>, ServiceError> {
-    let mut patients = state.patients.write().await;
-
-    let patient = patients.get_mut(&id).ok_or(ServiceError::NotFound)?;
-
-    if let Some(value) = payload.first_name { patient.first_name = value; }
-    if let Some(value) = payload.last_name { patient.last_name = value; }
-    if let Some(value) = payload.date_of_birth { patient.date_of_birth = value; }
-    if let Some(value) = payload.gender { patient.gender = value; }
-    if let Some(value) = payload.phone_number { patient.phone_number = value; }
-    if let Some(value) = payload.middle_name { patient.middle_name = Some(value); }
-    if let Some(value) = payload.blood_type { patient.blood_type = Some(value); }
-    if let Some(value) = payload.email { patient.email = Some(value); }
-    if let Some(value) = payload.address { patient.address = Some(value); }
-    if let Some(value) = payload.village { patient.village = Some(value); }
-    if let Some(value) = payload.emergency_contact { patient.emergency_contact = Some(value); }
-    if let Some(value) = payload.active_conditions { patient.active_conditions = value; }
-    if let Some(value) = payload.known_allergies { patient.known_allergies = value; }
-    if let Some(value) = payload.additional_notes { patient.additional_notes = Some(value); }
-    if let Some(value) = payload.status { patient.status = value; }
-    if let Some(value) = payload.critical_flag { patient.critical_flag = Some(value); }
-    if let Some(value) = payload.profile_picture_url { patient.profile_picture_url = Some(value); }
-    if let Some(value) = payload.next_visit { patient.next_visit = Some(value); }
-
-    patient.updated_at = Utc::now().to_rfc3339();
-
-    Ok(Json(patient.clone()))
+    let now = chrono::Utc::now().naive_utc();
+    // Build dynamic SQL for only provided fields (for brevity, here is a simple version)
+    let patient = sqlx::query_as!(Patient,
+        r#"
+        UPDATE patients SET
+            first_name = COALESCE($1, first_name),
+            middle_name = COALESCE($2, middle_name),
+            last_name = COALESCE($3, last_name),
+            date_of_birth = COALESCE($4, date_of_birth),
+            gender = COALESCE($5, gender),
+            blood_type = COALESCE($6, blood_type),
+            phone_number = COALESCE($7, phone_number),
+            email = COALESCE($8, email),
+            address = COALESCE($9, address),
+            village = COALESCE($10, village),
+            emergency_contact = COALESCE($11, emergency_contact),
+            active_conditions = COALESCE($12, active_conditions),
+            known_allergies = COALESCE($13, known_allergies),
+            additional_notes = COALESCE($14, additional_notes),
+            status = COALESCE($15, status),
+            critical_flag = COALESCE($16, critical_flag),
+            profile_picture_url = COALESCE($17, profile_picture_url),
+            next_visit = COALESCE($18, next_visit),
+            updated_at = $19
+        WHERE id = $20
+        RETURNING *
+        "#,
+        payload.first_name,
+        payload.middle_name,
+        payload.last_name,
+        payload.date_of_birth,
+        payload.gender,
+        payload.blood_type,
+        payload.phone_number,
+        payload.email,
+        payload.address,
+        payload.village,
+        payload.emergency_contact,
+        payload.active_conditions.as_deref(),
+        payload.known_allergies.as_deref(),
+        payload.additional_notes,
+        payload.status,
+        payload.critical_flag,
+        payload.profile_picture_url,
+        payload.next_visit,
+        Some(now),
+        id
+    )
+    .fetch_optional(&pool)
+    .await
+    .map_err(|_| ServiceError::InternalServerError)?;
+    if let Some(patient) = patient {
+        Ok(Json(patient))
+    } else {
+        Err(ServiceError::NotFound)
+    }
 }
 
 pub async fn delete_patient(
-    Path(id): Path<String>,
-    State(state): State<AppState>,
+    Path(id): Path<i32>,
+    State(pool): State<PgPool>,
 ) -> Result<StatusCode, ServiceError> {
-    let mut patients = state.patients.write().await;
-    let removed = patients.remove(&id);
-
-    match removed {
-        Some(_) => Ok(StatusCode::NO_CONTENT),
-        None => Err(ServiceError::NotFound),
+    let result = sqlx::query!(
+        "DELETE FROM patients WHERE id = $1",
+        id
+    )
+    .execute(&pool)
+    .await
+    .map_err(|_| ServiceError::InternalServerError)?;
+    if result.rows_affected() > 0 {
+        Ok(StatusCode::NO_CONTENT)
+    } else {
+        Err(ServiceError::NotFound)
     }
 }

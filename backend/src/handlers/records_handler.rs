@@ -3,21 +3,21 @@ use axum::{
     http::StatusCode,
     Json,
 };
-use chrono::Utc;
+use chrono::{Utc, NaiveDate, NaiveDateTime};
 use serde::Deserialize;
-use uuid::Uuid;
+use sqlx::PgPool;
+use serde_json;
 
-use crate::config::AppState;
 use crate::models::record::MedicalRecord;
 use crate::models::error::ServiceError;
 
 #[derive(Deserialize)]
 pub struct CreateRecordRequest {
-    pub patient_id: String,
+    pub patient_id: i32,
     pub record_type: String,
     pub title: String,
     pub provider: String,
-    pub date: String,
+    pub date: NaiveDate,
     pub status: String,
     pub record_category: Option<String>,
     pub description: Option<String>,
@@ -32,7 +32,7 @@ pub struct UpdateRecordRequest {
     pub record_type: Option<String>,
     pub title: Option<String>,
     pub provider: Option<String>,
-    pub date: Option<String>,
+    pub date: Option<NaiveDate>,
     pub status: Option<String>,
     pub record_category: Option<String>,
     pub description: Option<String>,
@@ -43,97 +43,131 @@ pub struct UpdateRecordRequest {
 }
 
 pub async fn list_records(
-    State(state): State<AppState>,
+    State(pool): State<PgPool>,
 ) -> Result<Json<Vec<MedicalRecord>>, ServiceError> {
-    let records = state.records.read().await;
-    let result: Vec<MedicalRecord> = records.values().cloned().collect();
-    Ok(Json(result))
+    let records = sqlx::query_as!(MedicalRecord,
+        r#"SELECT * FROM medical_records"#
+    )
+    .fetch_all(&pool)
+    .await
+    .map_err(|_| ServiceError::InternalServerError)?;
+    Ok(Json(records))
 }
 
 pub async fn get_record(
-    Path(id): Path<String>,
-    State(state): State<AppState>,
+    Path(id): Path<i32>,
+    State(pool): State<PgPool>,
 ) -> Result<Json<MedicalRecord>, ServiceError> {
-    let records = state.records.read().await;
-    if let Some(record) = records.get(&id) {
-        Ok(Json(record.clone()))
+    let record = sqlx::query_as!(MedicalRecord,
+        r#"SELECT * FROM medical_records WHERE id = $1"#,
+        id
+    )
+    .fetch_optional(&pool)
+    .await
+    .map_err(|_| ServiceError::InternalServerError)?;
+    if let Some(record) = record {
+        Ok(Json(record))
     } else {
         Err(ServiceError::NotFound)
     }
 }
 
 pub async fn create_record(
-    State(state): State<AppState>,
+    State(pool): State<PgPool>,
     Json(payload): Json<CreateRecordRequest>,
 ) -> Result<(StatusCode, Json<MedicalRecord>), ServiceError> {
-    let patients = state.patients.read().await;
-    if !patients.contains_key(&payload.patient_id) {
-        return Err(ServiceError::BadRequest("Patient does not exist".to_string()));
-    }
-    drop(patients);
-
-    let mut records = state.records.write().await;
-    let now = Utc::now().to_rfc3339();
-    let id = Uuid::new_v4().to_string();
-
-    let record = MedicalRecord {
-        id: id.clone(),
-        patient_id: payload.patient_id.clone(),
-        record_type: payload.record_type.clone(),
-        record_category: payload.record_category.clone(),
-        title: payload.title.clone(),
-        provider: payload.provider.clone(),
-        date: payload.date.clone(),
-        status: payload.status.clone(),
-        description: payload.description.clone(),
-        secondary_status: payload.secondary_status.clone(),
-        reviewed_by: payload.reviewed_by.clone(),
-        attachments: payload.attachments.clone(),
-        is_exported: payload.is_exported,
-        created_at: now.clone(),
-        updated_at: now,
-    };
-
-    records.insert(id.clone(), record.clone());
-
-    Ok((StatusCode::CREATED, Json(record)))
+    let now = Utc::now().naive_utc();
+    let rec = sqlx::query_as!(MedicalRecord,
+        r#"
+        INSERT INTO medical_records (
+            patient_id, record_type, record_category, title, provider, date, status, description, secondary_status, reviewed_by, attachments, is_exported, created_at, updated_at
+        ) VALUES (
+            $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14
+        ) RETURNING *
+        "#,
+        payload.patient_id,
+        payload.record_type,
+        payload.record_category,
+        payload.title,
+        payload.provider,
+        payload.date,
+        payload.status,
+        payload.description,
+        payload.secondary_status,
+        payload.reviewed_by,
+        payload.attachments.as_deref(),
+        payload.is_exported,
+        Some(now),
+        Some(now)
+    )
+    .fetch_one(&pool)
+    .await
+    .map_err(|_| ServiceError::InternalServerError)?;
+    Ok((StatusCode::CREATED, Json(rec)))
 }
 
 pub async fn update_record(
-    Path(id): Path<String>,
-    State(state): State<AppState>,
+    Path(id): Path<i32>,
+    State(pool): State<PgPool>,
     Json(payload): Json<UpdateRecordRequest>,
 ) -> Result<Json<MedicalRecord>, ServiceError> {
-    let mut records = state.records.write().await;
-
-    let record = records.get_mut(&id).ok_or(ServiceError::NotFound)?;
-
-    if let Some(value) = payload.record_type.clone() { record.record_type = value; }
-    if let Some(value) = payload.title.clone() { record.title = value; }
-    if let Some(value) = payload.provider.clone() { record.provider = value; }
-    if let Some(value) = payload.date.clone() { record.date = value; }
-    if let Some(value) = payload.status.clone() { record.status = value; }
-    if let Some(value) = payload.record_category.clone() { record.record_category = Some(value); }
-    if let Some(value) = payload.description.clone() { record.description = Some(value); }
-    if let Some(value) = payload.secondary_status.clone() { record.secondary_status = Some(value); }
-    if let Some(value) = payload.reviewed_by.clone() { record.reviewed_by = Some(value); }
-    if let Some(value) = payload.attachments.clone() { record.attachments = Some(value); }
-    if let Some(value) = payload.is_exported { record.is_exported = Some(value); }
-
-    record.updated_at = Utc::now().to_rfc3339();
-
-    Ok(Json(record.clone()))
+    let now = Utc::now().naive_utc();
+    let record = sqlx::query_as!(MedicalRecord,
+        r#"
+        UPDATE medical_records SET
+            record_type = COALESCE($1, record_type),
+            title = COALESCE($2, title),
+            provider = COALESCE($3, provider),
+            date = COALESCE($4, date),
+            status = COALESCE($5, status),
+            record_category = COALESCE($6, record_category),
+            description = COALESCE($7, description),
+            secondary_status = COALESCE($8, secondary_status),
+            reviewed_by = COALESCE($9, reviewed_by),
+            attachments = COALESCE($10, attachments),
+            is_exported = COALESCE($11, is_exported),
+            updated_at = $12
+        WHERE id = $13
+        RETURNING *
+        "#,
+        payload.record_type,
+        payload.title,
+        payload.provider,
+        payload.date,
+        payload.status,
+        payload.record_category,
+        payload.description,
+        payload.secondary_status,
+        payload.reviewed_by,
+        payload.attachments.as_deref(),
+        payload.is_exported,
+        Some(now),
+        id
+    )
+    .fetch_optional(&pool)
+    .await
+    .map_err(|_| ServiceError::InternalServerError)?;
+    if let Some(record) = record {
+        Ok(Json(record))
+    } else {
+        Err(ServiceError::NotFound)
+    }
 }
 
 pub async fn delete_record(
-    Path(id): Path<String>,
-    State(state): State<AppState>,
+    Path(id): Path<i32>,
+    State(pool): State<PgPool>,
 ) -> Result<StatusCode, ServiceError> {
-    let mut records = state.records.write().await;
-    let removed = records.remove(&id);
-
-    match removed {
-        Some(_) => Ok(StatusCode::NO_CONTENT),
-        None => Err(ServiceError::NotFound),
+    let result = sqlx::query!(
+        "DELETE FROM medical_records WHERE id = $1",
+        id
+    )
+    .execute(&pool)
+    .await
+    .map_err(|_| ServiceError::InternalServerError)?;
+    if result.rows_affected() > 0 {
+        Ok(StatusCode::NO_CONTENT)
+    } else {
+        Err(ServiceError::NotFound)
     }
 }

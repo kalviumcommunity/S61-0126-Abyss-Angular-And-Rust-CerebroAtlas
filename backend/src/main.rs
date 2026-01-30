@@ -1,6 +1,5 @@
 use axum::{routing::get, Router};
 use dotenvy::dotenv;
-use crate::config::db::DbConfig;
 use sqlx::PgPool;
 use std::net::SocketAddr;
 use tower_http::trace::TraceLayer;
@@ -13,7 +12,6 @@ mod handlers;
 mod models;
 
 use crate::routes::{patients, records, auth, analytics, administration};
-use crate::config::AppState;
 
 #[tokio::main]
 async fn main() {
@@ -21,11 +19,8 @@ async fn main() {
     dotenv().ok();
 
     // Load DB config and connect
-    let db_config = DbConfig::from_env();
-    let db_url = db_config.to_url();
+    let db_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
     let pool = PgPool::connect(&db_url).await.expect("Failed to connect to DB");
-
-    let state = AppState::default();
 
     let cors = CorsLayer::new()
         .allow_origin(Any)
@@ -34,15 +29,13 @@ async fn main() {
 
     let app = Router::new()
         .route("/health", get(health))
-        .merge(auth::routes().with_state(state.clone()))
-        .merge(patients::routes().with_state(state.clone()))
-        .merge(records::routes().with_state(state.clone()))
-        .merge(analytics::routes().with_state(state.clone()))
-        .merge(administration::routes().with_state(state.clone()))
+        .merge(auth::routes().with_state(pool.clone()))
+        .merge(patients::routes().with_state(pool.clone()))
+        .merge(records::routes().with_state(pool.clone()))
+        .merge(analytics::routes().with_state(pool.clone()))
+        .merge(administration::routes().with_state(pool.clone()))
         .layer(TraceLayer::new_for_http())
         .layer(cors);
-
-    // Optionally: pass pool to state or app if needed
 
     let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
     println!("Server running on http://{}", addr);

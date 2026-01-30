@@ -2,21 +2,14 @@
 
 use serde::{Serialize, Deserialize};
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
-pub struct ConsentChange {
-    pub changed_at: String,
-    pub previous_value: bool,
-    pub new_value: bool,
-    pub changed_by: String,
-}
+use chrono::NaiveDateTime;
+use sqlx::FromRow;
 
-#[derive(Serialize, Deserialize, Debug, Clone)]
+#[derive(Serialize, Deserialize, Debug, Clone, FromRow)]
 pub struct Consent {
-    pub id: String,
-    pub patient_id: String,
-    pub category: String,
+    pub id: i32,
+    pub patient_id: i32,
+    pub consent_type: String,
     pub granted: bool,
-    pub expires_at: Option<String>,
-    pub updated_at: String,
-    pub history: Option<Vec<ConsentChange>>,
+    pub created_at: Option<NaiveDateTime>,
 }
