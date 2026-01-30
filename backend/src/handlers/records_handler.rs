@@ -49,7 +49,7 @@ pub async fn list_records(
     )
     .fetch_all(&pool)
     .await
-    .map_err(|_| ServiceError::InternalServerError)?;
+    .map_err(|_| ServiceError::Unauthorized)?;
     Ok(Json(records))
 }
 
@@ -101,7 +101,7 @@ pub async fn create_record(
     )
     .fetch_one(&pool)
     .await
-    .map_err(|_| ServiceError::InternalServerError)?;
+    .map_err(|_| ServiceError::Unauthorized)?;
     Ok((StatusCode::CREATED, Json(rec)))
 }
 
