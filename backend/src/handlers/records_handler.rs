@@ -6,7 +6,6 @@ use axum::{
 use chrono::{Utc, NaiveDate};
 use serde::Deserialize;
 use sqlx::PgPool;
-use serde_json;
 
 use crate::models::record::MedicalRecord;
 use crate::models::error::ServiceError;
