@@ -23,7 +23,7 @@ pub async fn login(
     )
     .fetch_optional(&pool)
     .await
-    .map_err(|_| ServiceError::InternalServerError)?;
+    .map_err(|_| ServiceError::Unauthorized)?;
 
     if user.is_none() {
         return Err(ServiceError::Unauthorized);

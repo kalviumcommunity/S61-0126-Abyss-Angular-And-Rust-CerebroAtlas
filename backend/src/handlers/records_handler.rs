@@ -3,7 +3,7 @@ use axum::{
     http::StatusCode,
     Json,
 };
-use chrono::{Utc, NaiveDate, NaiveDateTime};
+use chrono::{Utc, NaiveDate};
 use serde::Deserialize;
 use sqlx::PgPool;
 use serde_json;
@@ -64,7 +64,7 @@ pub async fn get_record(
     )
     .fetch_optional(&pool)
     .await
-    .map_err(|_| ServiceError::InternalServerError)?;
+    .map_err(|_| ServiceError::Unauthorized)?;
     if let Some(record) = record {
         Ok(Json(record))
     } else {
@@ -146,7 +146,7 @@ pub async fn update_record(
     )
     .fetch_optional(&pool)
     .await
-    .map_err(|_| ServiceError::InternalServerError)?;
+    .map_err(|_| ServiceError::Unauthorized)?;
     if let Some(record) = record {
         Ok(Json(record))
     } else {
@@ -164,7 +164,7 @@ pub async fn delete_record(
     )
     .execute(&pool)
     .await
-    .map_err(|_| ServiceError::InternalServerError)?;
+    .map_err(|_| ServiceError::Unauthorized)?;
     if result.rows_affected() > 0 {
         Ok(StatusCode::NO_CONTENT)
     } else {

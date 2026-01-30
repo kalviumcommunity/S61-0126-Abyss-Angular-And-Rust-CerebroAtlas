@@ -67,7 +67,7 @@ pub async fn list_patients(
     )
     .fetch_all(&pool)
     .await
-    .map_err(|_| ServiceError::InternalServerError)?;
+    .map_err(|_| ServiceError::Unauthorized)?;
     Ok(Json(patients))
 }
 
@@ -81,7 +81,7 @@ pub async fn get_patient(
     )
     .fetch_optional(&pool)
     .await
-    .map_err(|_| ServiceError::InternalServerError)?;
+    .map_err(|_| ServiceError::Unauthorized)?;
     if let Some(patient) = patient {
         Ok(Json(patient))
     } else {
@@ -131,7 +131,7 @@ pub async fn create_patient(
     )
     .fetch_one(&pool)
     .await
-    .map_err(|_| ServiceError::InternalServerError)?;
+    .map_err(|_| ServiceError::Unauthorized)?;
     Ok((StatusCode::CREATED, Json(rec)))
 }
 
@@ -190,7 +190,7 @@ pub async fn update_patient(
     )
     .fetch_optional(&pool)
     .await
-    .map_err(|_| ServiceError::InternalServerError)?;
+    .map_err(|_| ServiceError::Unauthorized)?;
     if let Some(patient) = patient {
         Ok(Json(patient))
     } else {
@@ -208,7 +208,7 @@ pub async fn delete_patient(
     )
     .execute(&pool)
     .await
-    .map_err(|_| ServiceError::InternalServerError)?;
+    .map_err(|_| ServiceError::Unauthorized)?;
     if result.rows_affected() > 0 {
         Ok(StatusCode::NO_CONTENT)
     } else {

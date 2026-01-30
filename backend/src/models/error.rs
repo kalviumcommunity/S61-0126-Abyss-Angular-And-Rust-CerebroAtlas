@@ -18,7 +18,6 @@ pub enum ServiceError {    Unauthorized,
 impl IntoResponse for ServiceError {
     fn into_response(self) -> Response {
         let (status, error_message) = match self {
-            ServiceError::InternalServerError => (StatusCode::INTERNAL_SERVER_ERROR, "Internal Server Error".to_string()),
             ServiceError::Unauthorized => (StatusCode::UNAUTHORIZED, "Unauthorized".to_string()),
             ServiceError::NotFound => (StatusCode::NOT_FOUND, "Not Found".to_string()),
         };
