@@ -32,7 +32,7 @@
       </div>
       New Patient
     </button>
-    <button class="action-btn new-consultation">
+    <button class="action-btn new-consultation" [routerLink]="'/medical-records'">
       <div class="action-icon blue">
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
@@ -138,7 +138,7 @@
     <div class="recent-patients">
       <div class="section-header">
         <h2>Recent Patients</h2>
-        <a class="view-all" href="#">
+        <a class="view-all" [routerLink]="'/patients'">
           View All
           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="9 18 15 12 9 6"></polyline>
