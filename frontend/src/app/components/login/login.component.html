@@ -3,7 +3,7 @@
   <div class="left-panel">
     <div class="brand">
       <div class="logo">
-        <img src="assets/screenshots/cerebro-atlas-logo.png" alt="CereBroAtlas Logo" class="logo-image" />
+        <img src="/assets/heart-logo.svg" alt="RuralHealth Logo" class="logo-image" />
       </div>
       <h2>CerebroAtlas</h2>
       <p>Digital Records System</p>
@@ -12,17 +12,34 @@
     <h1>Secure, Interoperable Healthcare for Every Community</h1>
 
     <ul class="features">
-      <li>🔒 Privacy-First Design</li>
-      <li>📶 Offline-Ready</li>
-      <li>🧬 Biometric Security</li>
+      <li>
+        <span class="icon"><i class="fa fa-shield"></i></span>
+        <div>
+          <strong>Privacy-First Design</strong><br />
+          <span class="feature-desc">Patient data protected with end-to-end encryption</span>
+        </div>
+      </li>
+      <li>
+        <span class="icon"><i class="fa fa-wifi"></i></span>
+        <div>
+          <strong>Offline-Ready</strong><br />
+          <span class="feature-desc">Full functionality even without internet connection</span>
+        </div>
+      </li>
+      <li>
+        <span class="icon"><i class="fa fa-fingerprint"></i></span>
+        <div>
+          <strong>Biometric Security</strong><br />
+          <span class="feature-desc">Quick and secure authentication options</span>
+        </div>
+      </li>
     </ul>
   </div>
 
   <!-- RIGHT SECTION -->
   <div class="right-panel">
-
     <div class="login-card">
-      <h2 style="color: black;">Welcome Back</h2>
+      <h2>Welcome Back</h2>
       <p class="subtitle">Sign in to access patient records securely</p>
 
       <!-- Tabs -->
@@ -30,7 +47,6 @@
         <button type="button" [class.active]="activeTab === 'password'" (click)="setTab('password')">
           Password
         </button>
-
         <button type="button" [class.active]="activeTab === 'biometric'" (click)="setTab('biometric')">
           Biometric
         </button>
@@ -38,21 +54,16 @@
 
       <!-- PASSWORD LOGIN -->
       <form *ngIf="activeTab === 'password'" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-
         <label>Email or Staff ID</label>
         <input type="email" formControlName="email" placeholder="Enter your email or staff ID">
-
         <div class="error" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
           Valid email required
         </div>
-
         <label>Password</label>
         <input type="password" formControlName="password" placeholder="Enter your password">
-
         <div class="error" *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
           Minimum 6 characters
         </div>
-
         <button class="primary-btn" type="submit">Sign In</button>
       </form>
 
@@ -67,15 +78,16 @@
       <div class="status-message success" *ngIf="loginSuccess">
         Sign in successful!
       </div>
-
       <div class="status-message error" *ngIf="errorMessage">
         {{ errorMessage }}
       </div>
-
       <p class="help">
         Having trouble signing in?
         <span>Contact Support</span>
       </p>
+      <div class="footer-note">
+        Protected by end-to-end encryption. Your data never leaves your control.
+      </div>
     </div>
   </div>
 </div>
