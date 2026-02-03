@@ -7,24 +7,25 @@
     <button class="register-btn" [routerLink]="'/patients/new'">+ Register Patient</button>
   </div>
 
-  <div *ngIf="error" class="error-message">{{ error }}</div>
+  <div *ngIf="(error$ | async) as errorMsg" class="error-message" [hidden]="!errorMsg">{{ errorMsg }}</div>
 
   <div>
     <div class="search-filter-bar">
-      <input type="text" placeholder="Search by name, village, or condition..." [(ngModel)]="searchTerm" (input)="filterPatients()" />
+      <input type="text" placeholder="Search by name, village, or condition..." [ngModel]="searchTerm" (ngModelChange)="searchTerm = $event" />
       <button class="filter-btn">Filters</button>
       <button class="export-btn">Export</button>
     </div>
 
     <div class="tabs">
-      <button [class.active]="activeTab === 'all'" (click)="setTab('all')">All Patients ({{filteredPatients.length}})</button>
-      <button [class.active]="activeTab === 'active'" (click)="setTab('active')">Active</button>
-      <button [class.active]="activeTab === 'critical'" (click)="setTab('critical')">Critical</button>
+      <button [class.active]="(activeTab$ | async) === 'all'" (click)="setTab('all')">All Patients ({{ (filteredPatients$ | async)?.length || 0 }})</button>
+      <button [class.active]="(activeTab$ | async) === 'active'" (click)="setTab('active')">Active</button>
+      <button [class.active]="(activeTab$ | async) === 'critical'" (click)="setTab('critical')">Critical</button>
     </div>
 
     <div class="patients-list">
-      <div *ngIf="filteredPatients.length === 0" class="no-data">{{ loading ? 'Loading patients...' : 'No patients found' }}</div>
-      <div class="patient-card" *ngFor="let patient of filteredPatients">
+      <ng-container *ngIf="filteredPatients$ | async as filteredPatients">
+        <div *ngIf="filteredPatients.length === 0" class="no-data">{{ (loading$ | async) ? 'Loading patients...' : 'No patients found' }}</div>
+        <div class="patient-card" *ngFor="let patient of filteredPatients">
         <div class="avatar">{{ getInitials(patient) }}</div>
         <div class="patient-info">
           <div class="name">{{ patient.first_name }} {{ patient.last_name }}</div>
@@ -44,7 +45,8 @@
           <button class="btn-view" (click)="viewPatient(patient.id)">View</button>
           <button class="btn-delete" (click)="deletePatient(patient.id)">Delete</button>
         </div>
-      </div>
+        </div>
+      </ng-container>
     </div>
   </div>
 </div>
