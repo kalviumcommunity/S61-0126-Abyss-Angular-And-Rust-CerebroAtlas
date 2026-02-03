@@ -243,6 +243,7 @@ input:focus {
   color: #6b7280;
 }
 
+.help:hover {
   color: #1fa295;
   cursor: pointer;
   font-weight: 600;
