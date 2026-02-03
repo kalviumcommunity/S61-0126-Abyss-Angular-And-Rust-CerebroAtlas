@@ -4,6 +4,14 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { ApiService } from '../../services/api.service';
 import { Router } from '@angular/router';
 
+// Simple SHA-256 hash function using Web Crypto API
+async function sha256(str: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(str);
+  const hashBuffer = await window.crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -50,16 +58,18 @@ export class LoginComponent {
 
   const { email, password } = this.loginForm.value;
 
-  this.api.login(email, password).subscribe({
-    next: () => {
-      this.loginSuccess = true;
-      this.errorMessage = null;
-      this.router.navigate(['/dashboard']);
-    },
-    error: () => {
-      this.loginSuccess = false;
-      this.errorMessage = 'Login failed: Invalid credentials';
-    }
+  sha256(password).then(password_hash => {
+    this.api.login(email, password_hash).subscribe({
+      next: () => {
+        this.loginSuccess = true;
+        this.errorMessage = null;
+        this.router.navigate(['/dashboard']);
+      },
+      error: () => {
+        this.loginSuccess = false;
+        this.errorMessage = 'Invalid credentials';
+      }
+    });
   });
 }
 

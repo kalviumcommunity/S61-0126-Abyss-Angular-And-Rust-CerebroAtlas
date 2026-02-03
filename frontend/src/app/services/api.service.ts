@@ -59,7 +59,6 @@ export interface AdministrationResponse {
   users: User[];
   roles: Role[];
 }
-// ...existing code...
 
 // Administration API will be merged into the main ApiService class below.
 export interface StatsResponse {
@@ -161,7 +160,7 @@ export interface MedicalRecord {
 export class ApiService {
   private apiUrl = 'http://127.0.0.1:8080';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // Administration API
   getAdministration(): Observable<AdministrationResponse> {
@@ -199,8 +198,24 @@ export class ApiService {
   }
 
   createRecord(record: Partial<MedicalRecord>): Observable<MedicalRecord> {
-    return this.http.post<MedicalRecord>(`${this.apiUrl}/records`, record);
+    const payload = {
+      patient_id: Number(record.patient_id),
+      record_type: record.record_type?.toLowerCase().replace(' ', '_'),
+      title: record.title?.trim(),
+      provider: record.provider?.trim(),
+      date: this.toISODate(record.date),
+      status: record.status?.toLowerCase(),
+      record_category: record.record_category || null,
+      description: record.description || null,
+      secondary_status: record.secondary_status || null,
+      reviewed_by: record.reviewed_by || null,
+      attachments: record.attachments?.length ? record.attachments : null,
+      is_exported: record.is_exported ?? false
+    };
+    console.log('FINAL Payload:', payload);
+    return this.http.post<MedicalRecord>(`${this.apiUrl}/records`, payload);
   }
+
 
   updateRecord(id: string, record: Partial<MedicalRecord>): Observable<MedicalRecord> {
     return this.http.put<MedicalRecord>(`${this.apiUrl}/records/${id}`, record);
@@ -211,8 +226,8 @@ export class ApiService {
   }
 
   // Login API
-  login(username: string, password: string): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/login`, { username, password });
+  login(email: string, password_hash: string): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/login`, { email, password_hash });
   }
 
   // Analytics API
@@ -223,5 +238,15 @@ export class ApiService {
   // Health check
   health(): Observable<any> {
     return this.http.get(`${this.apiUrl}/health`);
+  }
+
+  private toISODate(dateStr?: string): string {
+    if (!dateStr) return new Date().toISOString().slice(0, 10);
+    if (dateStr.includes('-') && dateStr.length === 10) {
+      // Already yyyy-mm-dd
+      return dateStr;
+    }
+    const [day, month, year] = dateStr.split('-');
+    return `${year}-${month}-${day}`;
   }
 }

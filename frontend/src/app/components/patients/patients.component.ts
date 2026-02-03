@@ -1,9 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+// (removed stray top-level comment)
+import { Component } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { Sidebar } from '../shared/sidebar/sidebar';
 import { ApiService, Patient } from '../../services/api.service';
+import { Observable, BehaviorSubject, combineLatest, of, OperatorFunction } from 'rxjs';
+import { map, catchError, startWith, tap, mergeMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-patients',
@@ -12,66 +15,76 @@ import { ApiService, Patient } from '../../services/api.service';
   templateUrl: './patients.component.html',
   styleUrls: ['./patients.component.css']
 })
-export class PatientsComponent implements OnInit {
-  patients: Patient[] = [];
-  filteredPatients: Patient[] = [];
-  searchTerm: string = '';
-  activeTab: string = 'all';
-  loading: boolean = true;
-  error: string = '';
+export class PatientsComponent {
+  // State subjects
+  private searchTermSubject = new BehaviorSubject<string>('');
+  private activeTabSubject = new BehaviorSubject<string>('all');
+  readonly activeTab$ = this.activeTabSubject.asObservable();
+  private reloadSubject = new BehaviorSubject<void>(undefined);
 
-  constructor(private apiService: ApiService) {}
+  // Expose as Observable for async pipe
+  patients$: Observable<Patient[]>;
+  filteredPatients$: Observable<Patient[]>;
+  loading$ = new BehaviorSubject<boolean>(true);
+  error$ = new BehaviorSubject<string>('');
 
-  ngOnInit() {
-    this.loadPatients();
+  constructor(private apiService: ApiService) {
+    // Fetch patients, handle loading and error
+    this.patients$ = this.reloadSubject.pipe(
+      tap(() => {
+        this.loading$.next(true);
+        this.error$.next('');
+      }),
+      // Switch to API call
+      switchMap(() => this.apiService.getPatients().pipe(
+        tap(() => this.loading$.next(false)),
+        catchError(err => {
+          this.error$.next('Failed to load patients: ' + (err.message || 'Unknown error'));
+          this.loading$.next(false);
+          return of([]);
+        })
+      )),
+      startWith([])
+    );
+
+    // Combine patients, search, and tab filters
+    this.filteredPatients$ = combineLatest([
+      this.patients$,
+      this.searchTermSubject.asObservable(),
+      this.activeTabSubject.asObservable()
+    ]).pipe(
+      map(([patients, searchTerm, activeTab]: [Patient[], string, string]) => {
+        let filtered = patients;
+        if (searchTerm && searchTerm.trim()) {
+          const term = searchTerm.toLowerCase();
+          filtered = filtered.filter((p: Patient) =>
+            p.first_name.toLowerCase().includes(term) ||
+            p.last_name.toLowerCase().includes(term) ||
+            (p.village?.toLowerCase().includes(term) ?? false) ||
+            (p.active_conditions?.some((c: string) => c.toLowerCase().includes(term)) || false)
+          );
+        }
+        if (activeTab === 'active') {
+          filtered = filtered.filter((p: Patient) => p.status === 'active');
+        } else if (activeTab === 'pending') {
+          filtered = filtered.filter((p: Patient) => p.sync_status === 'pending');
+        } else if (activeTab === 'critical') {
+          filtered = filtered.filter((p: Patient) => p.critical_flag === true);
+        }
+        return filtered;
+      })
+    );
   }
 
-  loadPatients() {
-    this.loading = true;
-    this.error = '';
-    this.apiService.getPatients().subscribe({
-      next: (data) => {
-        this.patients = data;
-        this.filteredPatients = data;
-        this.loading = false;
-      },
-      error: (err) => {
-        this.error = 'Failed to load patients: ' + (err.message || 'Unknown error');
-        this.loading = false;
-        console.error('Error loading patients:', err);
-      }
-    });
+  set searchTerm(val: string) {
+    this.searchTermSubject.next(val);
   }
-
-  filterPatients() {
-    let filtered = this.patients;
-
-    // Apply search filter
-    if (this.searchTerm.trim()) {
-      const term = this.searchTerm.toLowerCase();
-      filtered = filtered.filter(p =>
-        p.first_name.toLowerCase().includes(term) ||
-        p.last_name.toLowerCase().includes(term) ||
-        p.village?.toLowerCase().includes(term) ||
-        (p.active_conditions?.some(c => c.toLowerCase().includes(term)) || false)
-      );
-    }
-
-    // Apply tab filter
-    if (this.activeTab === 'active') {
-      filtered = filtered.filter(p => p.status === 'active');
-    } else if (this.activeTab === 'pending') {
-      filtered = filtered.filter(p => p.sync_status === 'pending');
-    } else if (this.activeTab === 'critical') {
-      filtered = filtered.filter(p => p.critical_flag === true);
-    }
-
-    this.filteredPatients = filtered;
+  get searchTerm() {
+    return this.searchTermSubject.value;
   }
 
   setTab(tab: string) {
-    this.activeTab = tab;
-    this.filterPatients();
+    this.activeTabSubject.next(tab);
   }
 
   getInitials(patient: Patient): string {
@@ -80,17 +93,17 @@ export class PatientsComponent implements OnInit {
 
   deletePatient(id: string) {
     if (confirm('Are you sure you want to delete this patient?')) {
-      this.apiService.deletePatient(id).subscribe({
-        next: () => {
-          // Remove from local arrays without reloading
-          this.patients = this.patients.filter(p => p.id !== id);
-          this.filteredPatients = this.filteredPatients.filter(p => p.id !== id);
-        },
-        error: (err) => {
-          this.error = 'Failed to delete patient';
-          console.error('Error deleting patient:', err);
-        }
-      });
+      this.apiService.deletePatient(id).pipe(
+        tap({
+          next: () => {
+            this.reloadSubject.next();
+          },
+          error: (err) => {
+            this.error$.next('Failed to delete patient');
+            console.error('Error deleting patient:', err);
+          }
+        })
+      ).subscribe();
     }
   }
 
@@ -99,31 +112,78 @@ export class PatientsComponent implements OnInit {
   }
 
   addPatient(newPatient: Partial<Patient>) {
-    this.apiService.createPatient(newPatient).subscribe({
-      next: (patient) => {
-        this.patients.push(patient);
-        this.filterPatients(); // Ensure filteredPatients is updated
-        this.error = '';
-      },
-      error: (err) => {
-        this.error = 'Failed to add patient: ' + (err.message || 'Unknown error');
-        console.error('Error adding patient:', err);
-      }
-    });
+    this.apiService.createPatient(newPatient).pipe(
+      tap({
+        next: () => {
+          this.reloadSubject.next();
+          this.error$.next('');
+        },
+        error: (err) => {
+          this.error$.next('Failed to add patient: ' + (err.message || 'Unknown error'));
+          console.error('Error adding patient:', err);
+        }
+      })
+    ).subscribe();
   }
 
   updatePatient(id: string, updatedData: Partial<Patient>) {
-    this.apiService.updatePatient(id, updatedData).subscribe({
-      next: (updatedPatient) => {
-        // Update the patient in local arrays
-        this.patients = this.patients.map(p => p.id === id ? updatedPatient : p);
-        this.filteredPatients = this.filteredPatients.map(p => p.id === id ? updatedPatient : p);
-        this.error = '';
-      },
-      error: (err) => {
-        this.error = 'Failed to update patient: ' + (err.message || 'Unknown error');
-        console.error('Error updating patient:', err);
-      }
-    });
+    this.apiService.updatePatient(id, updatedData).pipe(
+      tap({
+        next: () => {
+          this.reloadSubject.next();
+          this.error$.next('');
+        },
+        error: (err) => {
+          this.error$.next('Failed to update patient: ' + (err.message || 'Unknown error'));
+          console.error('Error updating patient:', err);
+        }
+      })
+    ).subscribe();
   }
 }
+/**
+ * Implementation of switchMap for the context above.
+ * This is a simplified version for demonstration purposes.
+ */
+function switchMap<T, R>(project: (value: T, index: number) => Observable<R>): OperatorFunction<T, R> {
+  return (source: Observable<T>) =>
+    new Observable<R>(subscriber => {
+      let innerSubscription: any;
+      let index = 0;
+      const outerSubscription = source.subscribe({
+        next(value) {
+          if (innerSubscription) {
+            innerSubscription.unsubscribe();
+          }
+          let innerObservable: Observable<R>;
+          try {
+            innerObservable = project(value, index++);
+          } catch (err) {
+            subscriber.error(err);
+            return;
+          }
+          innerSubscription = innerObservable.subscribe({
+            next: val => subscriber.next(val),
+            error: err => subscriber.error(err),
+            complete: () => { /* do nothing */ }
+          });
+        },
+        error(err) {
+          subscriber.error(err);
+        },
+        complete() {
+          if (innerSubscription) {
+            innerSubscription.unsubscribe();
+          }
+          subscriber.complete();
+        }
+      });
+      return () => {
+        outerSubscription.unsubscribe();
+        if (innerSubscription) {
+          innerSubscription.unsubscribe();
+        }
+      };
+    });
+}
+

@@ -57,7 +57,7 @@
         <label>Email or Staff ID</label>
         <input type="email" formControlName="email" placeholder="Enter your email or staff ID">
         <div class="error" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
-          Valid email required
+          Email is required
         </div>
         <label>Password</label>
         <input type="password" formControlName="password" placeholder="Enter your password">
