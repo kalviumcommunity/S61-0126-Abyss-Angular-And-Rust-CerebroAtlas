@@ -1,8 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule, DecimalPipe } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRoute } from '@angular/router';
 import { Sidebar } from '../shared/sidebar/sidebar';
 import { ApiService, Patient, MedicalRecord } from '../../services/api.service';
+import { Router, NavigationEnd } from '@angular/router';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -11,7 +13,7 @@ import { ApiService, Patient, MedicalRecord } from '../../services/api.service';
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit, OnDestroy {
   notifications: any[] = [];
   recentPatients: Patient[] = [];
   recentRecords: MedicalRecord[] = [];
@@ -28,10 +30,36 @@ export class DashboardComponent implements OnInit {
     pendingSyncs: 0
   };
 
-  constructor(private apiService: ApiService) {}
+  private routerEventsSub: Subscription | null = null;
+
+  constructor(private apiService: ApiService, private router: Router, private route: ActivatedRoute) {}
 
   ngOnInit() {
-    this.loadDashboardData();
+    // Use resolver data for initial load
+    this.route.data.subscribe((data: any) => {
+      if (data.dashboardData) {
+        this.stats.totalPatients = data.dashboardData.patients.length;
+        this.recentPatients = data.dashboardData.patients.slice(0, 3);
+        this.updateNotifications(data.dashboardData.patients);
+        this.stats.recordsToday = data.dashboardData.records.length;
+        this.recentRecords = data.dashboardData.records.slice(0, 3);
+        this.loading = false;
+      } else {
+        this.loadDashboardData();
+      }
+    });
+    // Subscribe to router events to reload data when navigating to dashboard
+    this.routerEventsSub = this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd && event.urlAfterRedirects.includes('/dashboard')) {
+        this.loadDashboardData();
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.routerEventsSub) {
+      this.routerEventsSub.unsubscribe();
+    }
   }
 
   loadDashboardData() {

@@ -60,7 +60,16 @@ export class LoginComponent {
 
   sha256(password).then(password_hash => {
     this.api.login(email, password_hash).subscribe({
-      next: () => {
+      next: (response: any) => {
+        // Save token to localStorage
+        if (response && response.token) {
+          localStorage.setItem('token', response.token);
+          console.log('Token saved:', response.token);
+        } else {
+          console.warn('No token found in response:', response);
+        }
+        // Debug: Check token in localStorage
+        console.log('Token in localStorage:', this.api.getToken());
         this.loginSuccess = true;
         this.errorMessage = null;
         this.router.navigate(['/dashboard']);
