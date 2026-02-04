@@ -1,0 +1,118 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        UPDATE medical_records SET\n            record_type = COALESCE($1, record_type),\n            title = COALESCE($2, title),\n            provider = COALESCE($3, provider),\n            date = COALESCE($4, date),\n            status = COALESCE($5, status),\n            record_category = COALESCE($6, record_category),\n            description = COALESCE($7, description),\n            secondary_status = COALESCE($8, secondary_status),\n            reviewed_by = COALESCE($9, reviewed_by),\n            attachments = COALESCE($10, attachments),\n            is_exported = COALESCE($11, is_exported),\n            updated_at = $12\n        WHERE id = $13\n        RETURNING *\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "patient_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 2,
+        "name": "record_type",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "record_category",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "title",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 5,
+        "name": "provider",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 6,
+        "name": "date",
+        "type_info": "Date"
+      },
+      {
+        "ordinal": 7,
+        "name": "status",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 8,
+        "name": "description",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 9,
+        "name": "secondary_status",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 10,
+        "name": "reviewed_by",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 11,
+        "name": "attachments",
+        "type_info": "TextArray"
+      },
+      {
+        "ordinal": 12,
+        "name": "is_exported",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 13,
+        "name": "created_at",
+        "type_info": "Timestamp"
+      },
+      {
+        "ordinal": 14,
+        "name": "updated_at",
+        "type_info": "Timestamp"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Text",
+        "Date",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "TextArray",
+        "Bool",
+        "Timestamp",
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      true,
+      false,
+      false,
+      false,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ]
+  },
+  "hash": "6ec22b245e271e8c5136a4779ea6482de79ff7a7424f0dedceaa789e83adaa07"
+}

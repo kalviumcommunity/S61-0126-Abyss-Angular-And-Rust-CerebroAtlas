@@ -1,0 +1,161 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        UPDATE patients SET\n            first_name = COALESCE($1, first_name),\n            middle_name = COALESCE($2, middle_name),\n            last_name = COALESCE($3, last_name),\n            date_of_birth = COALESCE($4, date_of_birth),\n            gender = COALESCE($5, gender),\n            blood_type = COALESCE($6, blood_type),\n            phone_number = COALESCE($7, phone_number),\n            email = COALESCE($8, email),\n            address = COALESCE($9, address),\n            village = COALESCE($10, village),\n            emergency_contact = COALESCE($11, emergency_contact),\n            active_conditions = COALESCE($12, active_conditions),\n            known_allergies = COALESCE($13, known_allergies),\n            additional_notes = COALESCE($14, additional_notes),\n            status = COALESCE($15, status),\n            critical_flag = COALESCE($16, critical_flag),\n            profile_picture_url = COALESCE($17, profile_picture_url),\n            next_visit = COALESCE($18, next_visit),\n            updated_at = $19\n        WHERE id = $20\n        RETURNING *\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "first_name",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "middle_name",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "last_name",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "date_of_birth",
+        "type_info": "Date"
+      },
+      {
+        "ordinal": 5,
+        "name": "gender",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 6,
+        "name": "blood_type",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 7,
+        "name": "phone_number",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 8,
+        "name": "email",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 9,
+        "name": "address",
+        "type_info": "Jsonb"
+      },
+      {
+        "ordinal": 10,
+        "name": "village",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 11,
+        "name": "emergency_contact",
+        "type_info": "Jsonb"
+      },
+      {
+        "ordinal": 12,
+        "name": "active_conditions",
+        "type_info": "TextArray"
+      },
+      {
+        "ordinal": 13,
+        "name": "known_allergies",
+        "type_info": "TextArray"
+      },
+      {
+        "ordinal": 14,
+        "name": "additional_notes",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 15,
+        "name": "status",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 16,
+        "name": "critical_flag",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 17,
+        "name": "profile_picture_url",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 18,
+        "name": "next_visit",
+        "type_info": "Date"
+      },
+      {
+        "ordinal": 19,
+        "name": "created_at",
+        "type_info": "Timestamp"
+      },
+      {
+        "ordinal": 20,
+        "name": "updated_at",
+        "type_info": "Timestamp"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text",
+        "Text",
+        "Text",
+        "Date",
+        "Text",
+        "Text",
+        "Text",
+        "Text",
+        "Jsonb",
+        "Text",
+        "Jsonb",
+        "TextArray",
+        "TextArray",
+        "Text",
+        "Text",
+        "Bool",
+        "Text",
+        "Date",
+        "Timestamp",
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      true,
+      false,
+      false,
+      false,
+      true,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true
+    ]
+  },
+  "hash": "c3c41eee4a4d41da08d2dda839a48f6deb91ce0abc859ce91897abe8d6a8a6c6"
+}

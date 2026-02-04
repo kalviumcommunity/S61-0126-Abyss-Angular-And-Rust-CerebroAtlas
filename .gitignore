@@ -12,3 +12,7 @@ frontend/dist/
 # OS
 .DS_Store
 Thumbs.db
+
+# Sensitive environment files
+backend/.env
+backend/.env.local
