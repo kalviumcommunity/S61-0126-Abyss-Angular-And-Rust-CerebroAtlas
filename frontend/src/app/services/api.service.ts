@@ -230,6 +230,14 @@ export class ApiService {
     return this.http.post<any>(`${this.apiUrl}/login`, { email, password_hash });
   }
 
+  // Utility for debugging: Check token in localStorage
+  getToken(): string | null {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      return localStorage.getItem('token');
+    }
+    return null;
+  }
+
   // Analytics API
   getAnalytics(): Observable<AnalyticsResponse> {
     return this.http.get<AnalyticsResponse>(`${this.apiUrl}/analytics`);

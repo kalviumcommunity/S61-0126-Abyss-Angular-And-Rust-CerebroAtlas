@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRoute } from '@angular/router';
 import { Sidebar } from '../shared/sidebar/sidebar';
 import { ApiService, MedicalRecord, Patient, AnalyticsResponse, StatsResponse } from '../../services/api.service';
 
@@ -47,12 +47,35 @@ export class MedicalRecordsComponent implements OnInit {
     status: 'pending'
   };
 
-  constructor(private apiService: ApiService) {}
+  constructor(private apiService: ApiService, private route: ActivatedRoute) {}
 
   ngOnInit() {
-    this.loadRecords();
-    this.loadPatients();
-    this.loadStats();
+    // Use resolver data for initial load
+    this.route.data.subscribe((data: any) => {
+      if (data.medicalRecordsData) {
+        this.records = data.medicalRecordsData.records;
+        this.filteredRecords = data.medicalRecordsData.records;
+        this.patients = data.medicalRecordsData.patients;
+        this.loading = false;
+        // Set stats immediately for total_records
+        if (!this.stats) {
+          this.stats = {
+            total_patients: this.patients.length,
+            total_records: this.records.length,
+            consultations_mtd: 0,
+            completed: 0,
+            pending: 0,
+            lab_results: 0
+          };
+        } else {
+          this.stats.total_records = this.records.length;
+        }
+      } else {
+        this.loadRecords();
+        this.loadPatients();
+      }
+      this.loadStats();
+    });
   }
 
   loadStats() {
