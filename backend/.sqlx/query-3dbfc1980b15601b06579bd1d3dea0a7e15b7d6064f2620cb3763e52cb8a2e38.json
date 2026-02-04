@@ -1,0 +1,26 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT village as name, COUNT(*) as patients FROM patients WHERE village IS NOT NULL GROUP BY village",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "name",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 1,
+        "name": "patients",
+        "type_info": "Int8"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      true,
+      null
+    ]
+  },
+  "hash": "3dbfc1980b15601b06579bd1d3dea0a7e15b7d6064f2620cb3763e52cb8a2e38"
+}

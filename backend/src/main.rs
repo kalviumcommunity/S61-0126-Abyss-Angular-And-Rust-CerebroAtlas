@@ -1,5 +1,4 @@
 use axum::{routing::get, Router};
-use dotenvy::dotenv;
 use sqlx::PgPool;
 use std::net::SocketAddr;
 use tower_http::trace::TraceLayer;
@@ -16,7 +15,9 @@ use crate::routes::{patients, records, auth, analytics, administration};
 #[tokio::main]
 async fn main() {
     tracing_subscriber::fmt::init();
-    dotenv().ok();
+    // Load .env.local first (for local dev), then .env (for Docker)
+    dotenvy::from_path_override(".env.local").ok();
+    dotenvy::from_path_override(".env").ok();
 
     // Load DB config and connect
     let db_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");

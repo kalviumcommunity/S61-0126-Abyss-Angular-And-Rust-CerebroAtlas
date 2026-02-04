@@ -1,0 +1,140 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT * FROM patients",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "first_name",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 2,
+        "name": "middle_name",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "last_name",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 4,
+        "name": "date_of_birth",
+        "type_info": "Date"
+      },
+      {
+        "ordinal": 5,
+        "name": "gender",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 6,
+        "name": "blood_type",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 7,
+        "name": "phone_number",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 8,
+        "name": "email",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 9,
+        "name": "address",
+        "type_info": "Jsonb"
+      },
+      {
+        "ordinal": 10,
+        "name": "village",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 11,
+        "name": "emergency_contact",
+        "type_info": "Jsonb"
+      },
+      {
+        "ordinal": 12,
+        "name": "active_conditions",
+        "type_info": "TextArray"
+      },
+      {
+        "ordinal": 13,
+        "name": "known_allergies",
+        "type_info": "TextArray"
+      },
+      {
+        "ordinal": 14,
+        "name": "additional_notes",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 15,
+        "name": "status",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 16,
+        "name": "critical_flag",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 17,
+        "name": "profile_picture_url",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 18,
+        "name": "next_visit",
+        "type_info": "Date"
+      },
+      {
+        "ordinal": 19,
+        "name": "created_at",
+        "type_info": "Timestamp"
+      },
+      {
+        "ordinal": 20,
+        "name": "updated_at",
+        "type_info": "Timestamp"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      false,
+      false,
+      true,
+      false,
+      false,
+      false,
+      true,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      false,
+      true,
+      true,
+      true,
+      true,
+      true
+    ]
+  },
+  "hash": "945b50316a2325e313e80464659e7f5b1d955e14cebe5a0e5315cd6839e14037"
+}

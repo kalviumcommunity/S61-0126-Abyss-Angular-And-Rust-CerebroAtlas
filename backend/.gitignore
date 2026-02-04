@@ -1,3 +1,6 @@
 target/
 .env
 \env
+
+backend/.env
+backend/.env.local
