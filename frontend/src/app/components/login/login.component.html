@@ -43,17 +43,8 @@
       <p class="subtitle">Sign in to access patient records securely</p>
 
       <!-- Tabs -->
-      <div class="tabs">
-        <button type="button" [class.active]="activeTab === 'password'" (click)="setTab('password')">
-          Password
-        </button>
-        <button type="button" [class.active]="activeTab === 'biometric'" (click)="setTab('biometric')">
-          Biometric
-        </button>
-      </div>
-
-      <!-- PASSWORD LOGIN -->
-      <form *ngIf="activeTab === 'password'" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      <!-- PASSWORD LOGIN ONLY -->
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
         <label>Email or Staff ID</label>
         <input type="email" formControlName="email" placeholder="Enter your email or staff ID">
         <div class="error" *ngIf="loginForm.get('email')?.invalid && loginForm.get('email')?.touched">
@@ -66,13 +57,6 @@
         </div>
         <button class="primary-btn" type="submit">Sign In</button>
       </form>
-
-      <!-- BIOMETRIC LOGIN -->
-      <div *ngIf="activeTab === 'biometric'" class="biometric">
-        <button class="primary-btn" type="button" (click)="onSubmit()">
-          Sign in with Biometric
-        </button>
-      </div>
 
       <!-- STATUS MESSAGE -->
       <div class="status-message success" *ngIf="loginSuccess">
