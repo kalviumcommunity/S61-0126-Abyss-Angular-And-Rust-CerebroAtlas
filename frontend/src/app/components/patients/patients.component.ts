@@ -1,8 +1,7 @@
-// (removed stray top-level comment)
 import { Component } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 import { Sidebar } from '../shared/sidebar/sidebar';
 import { ApiService, Patient } from '../../services/api.service';
 import { Observable, BehaviorSubject, combineLatest, of, OperatorFunction } from 'rxjs';
@@ -16,6 +15,38 @@ import { map, catchError, startWith, tap, mergeMap } from 'rxjs/operators';
   styleUrls: ['./patients.component.css']
 })
 export class PatientsComponent {
+  showFilterDropdown = false;
+  private genderFilterSubject = new BehaviorSubject<string>('');
+  private statusFilterSubject = new BehaviorSubject<string>('');
+  genderFilter: string = '';
+  statusFilter: string = '';
+  tempGenderFilter: string = '';
+  tempStatusFilter: string = '';
+
+  toggleFilterDropdown() {
+    this.tempGenderFilter = this.genderFilter;
+    this.tempStatusFilter = this.statusFilter;
+    this.showFilterDropdown = !this.showFilterDropdown;
+  }
+
+  setGenderFilter(val: string) {
+    this.tempGenderFilter = val;
+  }
+  setStatusFilter(val: string) {
+    this.tempStatusFilter = val;
+  }
+  clearFilters() {
+    this.tempGenderFilter = '';
+    this.tempStatusFilter = '';
+  }
+  applyFilters() {
+    this.genderFilter = this.tempGenderFilter;
+    this.statusFilter = this.tempStatusFilter;
+    this.genderFilterSubject.next(this.genderFilter);
+    this.statusFilterSubject.next(this.statusFilter);
+    this.showFilterDropdown = false;
+  }
+
   // State subjects
   private searchTermSubject = new BehaviorSubject<string>('');
   private activeTabSubject = new BehaviorSubject<string>('all');
@@ -28,7 +59,7 @@ export class PatientsComponent {
   loading$ = new BehaviorSubject<boolean>(true);
   error$ = new BehaviorSubject<string>('');
 
-  constructor(private apiService: ApiService) {
+  constructor(private apiService: ApiService, private router: Router) {
     // Fetch patients, handle loading and error
     this.patients$ = this.reloadSubject.pipe(
       tap(() => {
@@ -51,9 +82,11 @@ export class PatientsComponent {
     this.filteredPatients$ = combineLatest([
       this.patients$,
       this.searchTermSubject.asObservable(),
-      this.activeTabSubject.asObservable()
+      this.activeTabSubject.asObservable(),
+      this.genderFilterSubject.asObservable(),
+      this.statusFilterSubject.asObservable(),
     ]).pipe(
-      map(([patients, searchTerm, activeTab]: [Patient[], string, string]) => {
+      map(([patients, searchTerm, activeTab, genderFilter, statusFilter]: [Patient[], string, string, string, string]) => {
         let filtered = patients;
         if (searchTerm && searchTerm.trim()) {
           const term = searchTerm.toLowerCase();
@@ -63,6 +96,16 @@ export class PatientsComponent {
             (p.village?.toLowerCase().includes(term) ?? false) ||
             (p.active_conditions?.some((c: string) => c.toLowerCase().includes(term)) || false)
           );
+        }
+        if (genderFilter) {
+          filtered = filtered.filter((p: Patient) => p.gender?.toLowerCase() === genderFilter);
+        }
+        if (statusFilter) {
+          if (statusFilter === 'critical') {
+            filtered = filtered.filter((p: Patient) => p.critical_flag === true);
+          } else {
+            filtered = filtered.filter((p: Patient) => p.status?.toLowerCase() === statusFilter);
+          }
         }
         if (activeTab === 'active') {
           filtered = filtered.filter((p: Patient) => p.status === 'active');
@@ -107,8 +150,61 @@ export class PatientsComponent {
     }
   }
 
+  selectedPatient: Patient | null = null;
+  showDetailsModal = false;
+  showDeleteModal = false;
+  patientToDelete: Patient | null = null;
+
   viewPatient(id: string) {
-    // Navigate to patient details if needed
+    this.patients$.pipe(
+      map(patients => patients.find(p => p.id === id)),
+      tap(patient => {
+        if (patient) {
+          this.selectedPatient = patient;
+          this.showDetailsModal = true;
+        }
+      })
+    ).subscribe();
+  }
+
+  closeDetailsModal() {
+    this.showDetailsModal = false;
+    this.selectedPatient = null;
+  }
+
+  confirmDeletePatient(id: string) {
+    this.patients$.pipe(
+      map(patients => patients.find(p => p.id === id)),
+      tap(patient => {
+        if (patient) {
+          this.patientToDelete = patient;
+          this.showDeleteModal = true;
+        }
+      })
+    ).subscribe();
+  }
+
+  cancelDeletePatient() {
+    this.showDeleteModal = false;
+    this.patientToDelete = null;
+  }
+
+  deletePatientConfirmed() {
+    if (this.patientToDelete) {
+      this.apiService.deletePatient(this.patientToDelete.id).pipe(
+        tap({
+          next: () => {
+            this.reloadSubject.next();
+            this.showDeleteModal = false;
+            this.patientToDelete = null;
+          },
+          error: (err) => {
+            this.error$.next('Failed to delete patient');
+            console.error('Error deleting patient:', err);
+          }
+        })
+      ).subscribe();
+    }
   }
 
   addPatient(newPatient: Partial<Patient>) {
