@@ -3,3 +3,4 @@ pub mod patients;
 pub mod records;
 pub mod analytics;
 pub mod administration;
+pub mod consents;

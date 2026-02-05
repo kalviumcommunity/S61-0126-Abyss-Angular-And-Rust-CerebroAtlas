@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { ConsentService, Consent } from '../../services/consent.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
@@ -11,85 +12,32 @@ import { Sidebar } from '../shared/sidebar/sidebar';
   templateUrl: './consent-management.component.html',
   styleUrls: ['./consent-management.component.css']
 })
-export class ConsentManagementComponent {
+export class ConsentManagementComponent implements OnInit {
   activeTab = 'categories';
 
-  researchUse = [
-    { label: 'Public health research', granted: false },
-    { label: 'Disease outbreak tracking', granted: true },
-    { label: 'Academic studies', granted: false },
-  ];
+  consents: Consent[] = [];
+  grantedCount = 0;
+  deniedCount = 0;
+  complianceRate = '0%';
 
-  emergencyAccess = [
-    { label: 'Emergency room access', granted: true },
-    { label: 'Ambulance services access', granted: true },
-    { label: 'Community health workers', granted: true },
-  ];
+  constructor(private consentService: ConsentService) {}
 
-  governmentReporting = [
-    { label: 'National health registry', granted: true },
-    { label: 'Immunization records', granted: true },
-    { label: 'Notifiable diseases', granted: true },
-  ];
+  ngOnInit() {
+    this.loadConsents();
+  }
 
-  patients = [
-    {
-      id: 'AO',
-      name: 'Amara Okonkwo',
-      granted: 8,
-      denied: 5,
-      expiring: 1
-    },
-    {
-      id: 'KM',
-      name: 'Kwame Mensah',
-      granted: 6,
-      denied: 7,
-      expiring: 0
-    },
-    {
-      id: 'FH',
-      name: 'Fatima Hassan',
-      granted: 10,
-      denied: 3,
-      expiring: 2
-    }
-  ];
+  loadConsents() {
+    this.consentService.getConsents().subscribe(data => {
+      this.consents = data;
+      this.updateStats();
+    });
+  }
 
-  consentHistory = [
-    {
-      icon: 'checkmark',
-      action: 'Granted',
-      description: 'Share with referral hospitals',
-      date: '2024-01-10',
-      time: '10:30 AM',
-      actor: 'Patient'
-    },
-    {
-      icon: 'denied',
-      action: 'Revoked',
-      description: 'Share with pharmacies',
-      date: '2024-01-05',
-      time: '2:15 PM',
-      actor: 'Patient'
-    },
-    {
-      icon: 'checkmark',
-      action: 'Granted',
-      description: 'Emergency room access',
-      date: '2024-01-03',
-      time: '9:00 AM',
-      actor: 'Patient'
-    },
-    {
-      icon: 'checkmark',
-      action: 'Granted',
-      description: 'Disease outbreak tracking',
-      date: '2024-01-02',
-      time: '11:45 AM',
-      actor: 'Healthcare Provider'
-    }
-  ];
+  updateStats() {
+    this.grantedCount = this.consents.filter(c => c.granted).length;
+    this.deniedCount = this.consents.filter(c => !c.granted).length;
+    this.complianceRate = this.consents.length > 0 ? '100%' : '0%';
+  }
 
   switchTab(tab: string) {
     this.activeTab = tab;
