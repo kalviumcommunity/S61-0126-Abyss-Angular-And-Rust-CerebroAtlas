@@ -4,7 +4,6 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angula
 import { ApiService } from '../../services/api.service';
 import { Router } from '@angular/router';
 
-// Simple SHA-256 hash function using Web Crypto API
 async function sha256(str: string): Promise<string> {
   const encoder = new TextEncoder();
   const data = encoder.encode(str);
@@ -19,12 +18,12 @@ async function sha256(str: string): Promise<string> {
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
+
 export class LoginComponent {
-
-  activeTab: 'password' | 'biometric' = 'password';
   errorMessage: string | null = null;
-
   loginForm: FormGroup;
+  loginSuccess = false;
+  loginAttempted = false;
 
   constructor(private fb: FormBuilder, private api: ApiService, private router: Router) {
     this.loginForm = this.fb.group({
@@ -33,53 +32,40 @@ export class LoginComponent {
     });
   }
 
-  setTab(tab: 'password' | 'biometric'): void {
-    this.activeTab = tab;
-    this.errorMessage = null;
-  }
-  loginSuccess = false;
-  loginAttempted = false;
-
   onSubmit(): void {
-  this.loginAttempted = true;
-  this.loginSuccess = false;
-  this.errorMessage = null;
+    this.loginAttempted = true;
+    this.loginSuccess = false;
+    this.errorMessage = null;
 
-  if (this.activeTab === 'biometric') {
-    this.loginSuccess = true;
-    return;
-  }
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
+      this.errorMessage = 'Invalid email or password';
+      return;
+    }
 
-  if (this.loginForm.invalid) {
-    this.loginForm.markAllAsTouched();
-    this.errorMessage = 'Invalid email or password';
-    return;
-  }
+    const { email, password } = this.loginForm.value;
 
-  const { email, password } = this.loginForm.value;
-
-  sha256(password).then(password_hash => {
-    this.api.login(email, password_hash).subscribe({
-      next: (response: any) => {
-        // Save token to localStorage
-        if (response && response.token) {
-          localStorage.setItem('token', response.token);
-          console.log('Token saved:', response.token);
-        } else {
-          console.warn('No token found in response:', response);
+    sha256(password).then(password_hash => {
+      this.api.login(email, password_hash).subscribe({
+        next: (response: any) => {
+          // Save token to localStorage
+          if (response && response.token) {
+            localStorage.setItem('token', response.token);
+            console.log('Token saved:', response.token);
+          } else {
+            console.warn('No token found in response:', response);
+          }
+          console.log('Token in localStorage:', this.api.getToken());
+          this.loginSuccess = true;
+          this.errorMessage = null;
+          this.router.navigate(['/dashboard']);
+        },
+        error: () => {
+          this.loginSuccess = false;
+          this.errorMessage = 'Invalid credentials';
         }
-        // Debug: Check token in localStorage
-        console.log('Token in localStorage:', this.api.getToken());
-        this.loginSuccess = true;
-        this.errorMessage = null;
-        this.router.navigate(['/dashboard']);
-      },
-      error: () => {
-        this.loginSuccess = false;
-        this.errorMessage = 'Invalid credentials';
-      }
+      });
     });
-  });
+  }
 }
 
-}

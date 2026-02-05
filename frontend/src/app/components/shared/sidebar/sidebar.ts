@@ -32,7 +32,7 @@ export class Sidebar implements OnInit {
     { label: 'Consent Management', route: '/consent-management' },
     { label: 'Adminstration', route: '/Adminstration_report' },
     { label: 'Report', route: '/reports' },
-    { label: 'Audit Logs', route: '/audit-logs' },
+    // Audit Logs removed
   ];
 
   ngOnInit(): void {
