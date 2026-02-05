@@ -12,8 +12,33 @@
   <div>
     <div class="search-filter-bar">
       <input type="text" placeholder="Search by name, village, or condition..." [ngModel]="searchTerm" (ngModelChange)="searchTerm = $event" />
-      <button class="filter-btn">Filters</button>
-      <button class="export-btn">Export</button>
+      <button class="filter-btn" (click)="toggleFilterDropdown()">Filters</button>
+      <div class="filter-dropdown" *ngIf="showFilterDropdown">
+        <div class="filter-header">Filter Options</div>
+        <div class="filter-fields">
+          <div class="filter-field">
+            <label for="gender-select">Gender</label>
+            <select id="gender-select" [ngModel]="tempGenderFilter" (ngModelChange)="setGenderFilter($event)">
+              <option value="">All</option>
+              <option value="male">Male</option>
+              <option value="female">Female</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div class="filter-field">
+            <label for="status-select">Status</label>
+            <select id="status-select" [ngModel]="tempStatusFilter" (ngModelChange)="setStatusFilter($event)">
+              <option value="">All</option>
+              <option value="active">Active</option>
+              <option value="critical">Critical</option>
+            </select>
+          </div>
+        </div>
+         <div class="filter-actions">
+           <button class="clear-btn" (click)="clearFilters()">Clear</button>
+           <button class="apply-btn" (click)="applyFilters()">Apply</button>
+         </div>
+      </div>
     </div>
 
     <div class="tabs">
@@ -26,24 +51,69 @@
       <ng-container *ngIf="filteredPatients$ | async as filteredPatients">
         <div *ngIf="filteredPatients.length === 0" class="no-data">{{ (loading$ | async) ? 'Loading patients...' : 'No patients found' }}</div>
         <div class="patient-card" *ngFor="let patient of filteredPatients">
-        <div class="avatar">{{ getInitials(patient) }}</div>
+        <div class="patient-header-row">
+          <div class="avatar">{{ getInitials(patient) }}</div>
+          <div class="status-bar">
+            <span class="status" [ngClass]="patient.status.toLowerCase() || 'active'">
+              <span *ngIf="patient.status.toLowerCase() === 'active'" class="material-icons icon" style="color:#16a34a; font-size:1.1rem; vertical-align:middle;">check_circle</span>
+              <span *ngIf="patient.status.toLowerCase() === 'active'" style="margin-left:0.2rem; color:#16a34a; font-weight:500;">Active</span>
+              <ng-container *ngIf="patient.status.toLowerCase() !== 'active'">{{ patient.status }}</ng-container>
+            </span>
+            <span class="status" *ngIf="patient.critical_flag" [ngClass]="'critical'">Critical</span>
+          </div>
+        </div>
         <div class="patient-info">
           <div class="name">{{ patient.first_name }} {{ patient.last_name }}</div>
           <div class="details">{{ patient.gender }}</div>
-          <div class="location"><span class="icon">📍</span>{{ patient.village || 'N/A' }}</div>
-          <div class="phone"><span class="icon">📞</span>{{ patient.phone_number }}</div>
-          <div class="next"><span class="icon">📅</span>Next: {{ (patient.next_visit ? (patient.next_visit | date:'M/d/yyyy') : 'Not scheduled') }}</div>
+          <div class="location"><span class="material-icons icon">location_on</span>{{ patient.village || 'N/A' }}</div>
+          <div class="phone"><span class="material-icons icon">phone</span>{{ patient.phone_number }}</div>
+          <div class="next"><span class="material-icons icon">event</span>Next: {{ (patient.next_visit ? (patient.next_visit | date:'M/d/yyyy') : 'Not scheduled') }}</div>
           <div class="tags">
             <span class="tag" *ngFor="let condition of patient.active_conditions">{{ condition }}</span>
-          </div>
-          <div class="status-bar">
-            <span class="status" [ngClass]="patient.status.toLowerCase() || 'active'">{{ patient.status }}</span>
-            <span class="status" *ngIf="patient.critical_flag" [ngClass]="'critical'">Critical</span>
           </div>
         </div>
         <div class="actions">
           <button class="btn-view" (click)="viewPatient(patient.id)">View</button>
-          <button class="btn-delete" (click)="deletePatient(patient.id)">Delete</button>
+          <button class="btn-delete" (click)="confirmDeletePatient(patient.id)">Delete</button>
+        <!-- Patient Details Modal -->
+        <div class="modal-overlay" *ngIf="showDetailsModal">
+          <div class="modal">
+            <div class="modal-header">
+              <h2>Patient Details</h2>
+              <button class="close-btn" (click)="closeDetailsModal()">&times;</button>
+            </div>
+            <div class="modal-body" *ngIf="selectedPatient">
+              <div><strong>Name:</strong> {{ selectedPatient.first_name }} {{ selectedPatient.last_name }}</div>
+              <div><strong>Gender:</strong> {{ selectedPatient.gender }}</div>
+              <div><strong>Status:</strong> {{ selectedPatient.status }}</div>
+              <div><strong>Critical:</strong> {{ selectedPatient.critical_flag ? 'Yes' : 'No' }}</div>
+              <div><strong>Village:</strong> {{ selectedPatient.village || 'N/A' }}</div>
+              <div><strong>Phone:</strong> {{ selectedPatient.phone_number }}</div>
+              <div><strong>Next Visit:</strong> {{ selectedPatient.next_visit ? (selectedPatient.next_visit | date:'M/d/yyyy') : 'Not scheduled' }}</div>
+              <div><strong>Active Conditions:</strong>
+                <span *ngFor="let condition of selectedPatient.active_conditions" class="tag">{{ condition }}</span>
+              </div>
+              <!-- Add more fields as needed -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Delete Confirmation Modal -->
+        <div class="modal-overlay" *ngIf="showDeleteModal">
+          <div class="modal">
+            <div class="modal-header">
+              <h2>Confirm Deletion</h2>
+              <button class="close-btn" (click)="cancelDeletePatient()">&times;</button>
+            </div>
+            <div class="modal-body" *ngIf="patientToDelete">
+              <p>Are you sure you want to delete <strong>{{ patientToDelete.first_name }} {{ patientToDelete.last_name }}</strong>?</p>
+              <div class="modal-actions">
+                <button class="apply-btn" (click)="deletePatientConfirmed()">Delete</button>
+                <button class="clear-btn" (click)="cancelDeletePatient()">Cancel</button>
+              </div>
+            </div>
+          </div>
+        </div>
         </div>
         </div>
       </ng-container>
