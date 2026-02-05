@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router';
+import { RouterModule, ActivatedRoute } from '@angular/router';
 import { Sidebar } from '../shared/sidebar/sidebar';
 import { ApiService } from '../../services/api.service';
 import type { AdministrationStats, User, Role } from '../../services/api.service';
@@ -43,10 +43,32 @@ export class AdministrationComponent implements OnInit {
 
   searchQuery = '';
 
-  constructor(private api: ApiService) {}
+  constructor(private api: ApiService, private route: ActivatedRoute) {}
 
   ngOnInit() {
-    this.loadAdministration();
+    this.route.data.subscribe((data: any) => {
+      if (data.administrationData) {
+        this.stats = data.administrationData.stats || {
+          total_users: 0,
+          active_users: 0,
+          inactive_users: 0,
+          roles: 0
+        };
+        this.users = data.administrationData.users || [];
+        this.roles = data.administrationData.roles || [];
+        this.adminLoading = false;
+      } else {
+        this.stats = {
+          total_users: 0,
+          active_users: 0,
+          inactive_users: 0,
+          roles: 0
+        };
+        this.users = [];
+        this.roles = [];
+        this.loadAdministration();
+      }
+    });
   }
 
   loadAdministration() {
