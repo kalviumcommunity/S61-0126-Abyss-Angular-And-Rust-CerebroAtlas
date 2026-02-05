@@ -1,4 +1,5 @@
 import { Component, ChangeDetectorRef } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -55,12 +56,26 @@ export class ReportsComponent {
 
   constructor(
     private api: ApiService,
-    private cdr: ChangeDetectorRef
-
+    private cdr: ChangeDetectorRef,
+    private route: ActivatedRoute
   ) {
-    this.loadRecords();
-    this.loadPatients();
-    this.loadAnalytics();
+    this.route.data.subscribe((data: any) => {
+      if (data.reportsData) {
+        // Analytics
+        this.stats = data.reportsData.analytics.stats;
+        this.villages = data.reportsData.analytics.villages;
+        this.conditionData = data.reportsData.analytics.conditions;
+        this.diseaseTrendData = data.reportsData.analytics.disease_trend;
+        this.analyticsLoading = false;
+        // Records and Patients
+        this.medicalReports = data.reportsData.records;
+        this.patients = data.reportsData.patients;
+      } else {
+        this.loadRecords();
+        this.loadPatients();
+        this.loadAnalytics();
+      }
+    });
   }
 
   loadAnalytics() {
