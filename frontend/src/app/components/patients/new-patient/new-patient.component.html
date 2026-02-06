@@ -54,11 +54,11 @@
   </div>
 
   <div class="card">
-    <h2>Address Information</h2>
-    <div class="grid two">
-      <label>Street Address<input [(ngModel)]="patient.address" placeholder="Enter street address" [disabled]="saving" /></label>
-      <label>City/Town<input [(ngModel)]="patient.city" placeholder="Enter city" [disabled]="saving" /></label>
-      <label>State/Region<input [(ngModel)]="patient.state" placeholder="Enter state" [disabled]="saving" /></label>
+    <h2>Address Information <span style="color:#ef4444">*</span></h2>
+    <div class="grid two address-required">
+      <label>Street Address *<input [(ngModel)]="patient.address" placeholder="Enter street address" [disabled]="saving" required /></label>
+      <label>City/Town *<input [(ngModel)]="patient.city" placeholder="Enter city" [disabled]="saving" required /></label>
+      <label>State/Region *<input [(ngModel)]="patient.state" placeholder="Enter state" [disabled]="saving" required /></label>
     </div>
   </div>
 
@@ -81,16 +81,46 @@
   </div>
 
   <div class="card">
-    <h2>Medical Information</h2>
-    <div class="stack">
-      <label>Active Conditions
-        <input [(ngModel)]="patient.conditions" placeholder="Add a condition (e.g., Diabetes Type 2)" [disabled]="saving" />
+    <h2>Medical Information <span style="color:#ef4444">*</span></h2>
+    <div class="stack medical-required">
+      <label>Active Conditions *
+        <input [(ngModel)]="patient.conditions" placeholder="Add a condition (e.g., Diabetes Type 2)" [disabled]="saving" required />
       </label>
-      <label>Known Allergies
-        <input [(ngModel)]="patient.allergies" placeholder="Add an allergy (e.g., Penicillin)" [disabled]="saving" />
+      <label>Known Allergies *
+        <input [(ngModel)]="patient.allergies" placeholder="Add an allergy (e.g., Penicillin)" [disabled]="saving" required />
       </label>
-      <label>Additional Notes
-        <textarea [(ngModel)]="patient.notes" rows="3" placeholder="Any additional medical notes or observations..." [disabled]="saving"></textarea>
+      <label>Additional Notes *
+        <textarea [(ngModel)]="patient.notes" rows="3" placeholder="Any additional medical notes or observations..." [disabled]="saving" required></textarea>
+      </label>
+    </div>
+  </div>
+
+  <div class="card consent-card">
+    <h2>Consent Management</h2>
+    <div class="consent-section">
+      <label class="consent-checkbox modern">
+        <input type="checkbox" [(ngModel)]="patient.consentResearch" [disabled]="saving" />
+        <span>
+          <span class="consent-label-main">Consent for Research</span>
+          <span class="consent-desc">Allow use of anonymized data for research purposes.</span>
+        </span>
+        <span class="custom-check"></span>
+      </label>
+      <label class="consent-checkbox modern">
+        <input type="checkbox" [(ngModel)]="patient.consentEmergency" [disabled]="saving" />
+        <span>
+          <span class="consent-label-main">Consent for Emergency Data Sharing</span>
+          <span class="consent-desc">Allow sharing of data with emergency services if needed.</span>
+        </span>
+        <span class="custom-check"></span>
+      </label>
+      <label class="consent-checkbox modern">
+        <input type="checkbox" [(ngModel)]="patient.consentGovernment" [disabled]="saving" />
+        <span>
+          <span class="consent-label-main">Consent for Government Access</span>
+          <span class="consent-desc">Allow access to data for government-mandated programs.</span>
+        </span>
+        <span class="custom-check"></span>
       </label>
     </div>
   </div>
