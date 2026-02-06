@@ -4,3 +4,4 @@ target/
 
 backend/.env
 backend/.env.local
+backend/.env.docker
