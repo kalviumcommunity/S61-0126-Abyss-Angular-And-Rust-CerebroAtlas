@@ -1,4 +1,4 @@
-use axum::{Json, extract::{State, Path}, routing::{get, post, put}, Router};
+use axum::{Json, extract::{State, Path}, routing::get, Router};
 use sqlx::PgPool;
 use crate::models::consent::Consent;
 use axum::http::StatusCode;

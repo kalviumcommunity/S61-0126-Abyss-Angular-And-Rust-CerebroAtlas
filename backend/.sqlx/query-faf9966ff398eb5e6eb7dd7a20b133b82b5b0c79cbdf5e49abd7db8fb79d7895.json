@@ -1,0 +1,46 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT * FROM consents WHERE id = $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 1,
+        "name": "patient_id",
+        "type_info": "Int4"
+      },
+      {
+        "ordinal": 2,
+        "name": "consent_type",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "granted",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 4,
+        "name": "created_at",
+        "type_info": "Timestamp"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Int4"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false,
+      true
+    ]
+  },
+  "hash": "faf9966ff398eb5e6eb7dd7a20b133b82b5b0c79cbdf5e49abd7db8fb79d7895"
+}

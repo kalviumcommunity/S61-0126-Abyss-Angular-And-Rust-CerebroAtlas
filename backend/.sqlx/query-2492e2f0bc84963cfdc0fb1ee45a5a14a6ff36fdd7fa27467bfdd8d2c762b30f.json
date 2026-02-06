@@ -1,0 +1,15 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "UPDATE consents SET granted = $1 WHERE id = $2",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Bool",
+        "Int4"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "2492e2f0bc84963cfdc0fb1ee45a5a14a6ff36fdd7fa27467bfdd8d2c762b30f"
+}
