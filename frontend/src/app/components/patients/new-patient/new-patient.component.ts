@@ -29,7 +29,10 @@ export class NewPatientComponent {
     contactRelationship: '',
     conditions: '',
     allergies: '',
-    notes: ''
+    notes: '',
+    consentResearch: false,
+    consentEmergency: false,
+    consentGovernment: false
   };
 
   saving: boolean = false;
@@ -70,7 +73,12 @@ export class NewPatientComponent {
       active_conditions: this.patient.conditions ? [this.patient.conditions] : [],
       known_allergies: this.patient.allergies ? [this.patient.allergies] : [],
       additional_notes: this.patient.notes || undefined,
-      status: 'active'
+      status: 'active',
+      consents: [
+        { consent_type: 'research', granted: this.patient.consentResearch },
+        { consent_type: 'emergency', granted: this.patient.consentEmergency },
+        { consent_type: 'government', granted: this.patient.consentGovernment }
+      ]
     };
 
 
