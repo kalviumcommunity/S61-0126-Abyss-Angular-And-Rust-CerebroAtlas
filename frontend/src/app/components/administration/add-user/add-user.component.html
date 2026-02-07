@@ -53,7 +53,10 @@
     <h2>Account Credentials</h2>
     <div class="grid two">
       <label>Username *<input [(ngModel)]="user.username" placeholder="Enter username" /></label>
-      <label>Initial Password *<input type="password" placeholder="Enter temporary password" /></label>
+      <label>Initial Password *<input type="password" [(ngModel)]="password" placeholder="Enter temporary password" /></label>
+      <div *ngIf="errorMsg" style="color: #dc2626; margin-top: 0.5rem; font-size: 0.97rem;">{{errorMsg}}</div>
+      <div *ngIf="successMsg" style="color: #059669; margin-top: 0.5rem; font-size: 0.97rem;">{{successMsg}}</div>
+      <div *ngIf="isLoading" style="color: #0ea5e9; margin-top: 0.5rem; font-size: 0.97rem;">Creating user...</div>
     </div>
     <div class="info-note">
       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
