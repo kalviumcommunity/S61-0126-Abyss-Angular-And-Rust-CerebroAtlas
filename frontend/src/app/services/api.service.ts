@@ -1,3 +1,4 @@
+import { HttpHeaders } from '@angular/common/http';
 // Administration API types
 export interface AdministrationStats {
   total_users: number;
@@ -68,6 +69,8 @@ export interface StatsResponse {
   completed: number;
   pending: number;
   lab_results: number;
+  prescriptions?: number;
+  imaging?: number;
   avg_wait_time?: string;
   data_completeness?: string;
 }
@@ -185,7 +188,9 @@ export class ApiService {
   }
 
   deletePatient(id: string): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/patients/${id}`);
+    const token = this.getToken();
+    const headers = token ? new HttpHeaders({ Authorization: `Bearer ${token}` }) : undefined;
+    return this.http.delete<void>(`${this.apiUrl}/patients/${id}`, { headers });
   }
 
   // Medical Records API

@@ -14,6 +14,7 @@ import { AdministrationResolver } from './components/administration/administrati
 import { AddUserComponent } from './components/administration/add-user/add-user.component';
 import { AuthGuard } from './services/auth.guard';
 import { DashboardResolver } from './components/dashboard/dashboard.resolver';
+import { PatientProfileComponent } from './components/patient-profile/patient-profile.component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'login' },
@@ -21,6 +22,7 @@ export const routes: Routes = [
   { path: 'dashboard', component: DashboardComponent, canActivate: [AuthGuard], resolve: { dashboardData: DashboardResolver } },
   { path: 'patients', component: PatientsComponent, canActivate: [AuthGuard] },
   { path: 'patients/new', component: NewPatientComponent, canActivate: [AuthGuard] },
+  { path: 'patients/:id', component: PatientProfileComponent, canActivate: [AuthGuard] },
   { path: 'medical-records', component: MedicalRecordsComponent, canActivate: [AuthGuard], resolve: { medicalRecordsData: MedicalRecordsResolver } },
   { path: 'consent-management', component: ConsentManagementComponent, canActivate: [AuthGuard] },
   { path: 'audit-logs', component: AuditLogsComponent, canActivate: [AuthGuard] },
