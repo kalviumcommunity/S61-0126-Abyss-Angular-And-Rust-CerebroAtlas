@@ -1,0 +1,218 @@
+.edit-actions {
+  margin-top: 1.2rem;
+  display: flex;
+  gap: 1rem;
+}
+.save-btn, .cancel-btn {
+  padding: 0.4em 1.2em;
+  border-radius: 6px;
+  border: none;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.save-btn {
+  background: #1976d2;
+  color: #fff;
+}
+.save-btn:hover {
+  background: #1565c0;
+}
+.cancel-btn {
+  background: #e0e0e0;
+  color: #333;
+}
+.cancel-btn:hover {
+  background: #bdbdbd;
+}
+.with-sidebar-layout {
+  display: flex;
+  min-height: 100vh;
+}
+.main-content {
+  flex: 1;
+  margin-left: 240px;
+  background: #f8fafc;
+  min-height: 100vh;
+  padding: 0;
+}
+
+.profile-container {
+  display: flex;
+  gap: 2.5rem;
+  margin: 2rem auto;
+  max-width: 1200px;
+  align-items: flex-start;
+}
+.profile-left {
+.profile-left {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  padding: 2rem 2.5rem;
+  min-width: 320px;
+  max-width: 340px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.profile-header-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+.edit-btn {
+  background: #e3f2fd;
+  color: #1976d2;
+  border: none;
+  border-radius: 6px;
+  padding: 0.4em 1em;
+  font-size: 1rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.edit-btn:hover {
+  background: #bbdefb;
+  color: #0d47a1;
+}
+.edit-btn .material-icons {
+  font-size: 1.1em;
+}
+}
+.avatar-lg {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #e0f7fa;
+  color: #00796b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+.patient-name {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.patient-meta {
+  color: #666;
+  font-size: 1.1rem;
+  margin-bottom: 1.2rem;
+}
+.patient-meta span {
+  margin-right: 0.5em;
+}
+.patient-contact-row {
+  color: #444;
+  margin-bottom: 0.5em;
+  display: flex;
+  align-items: center;
+  font-size: 1.05rem;
+}
+.icon.material-icons {
+  font-size: 1.2em;
+  margin-right: 0.3em;
+  vertical-align: middle;
+}
+.status-badges {
+  margin-top: 1rem;
+}
+.badge {
+  display: inline-block;
+  border-radius: 12px;
+  padding: 0.3em 1em;
+  margin: 0.2em 0.3em 0.2em 0;
+  font-size: 0.95em;
+  font-weight: 500;
+}
+.status-active {
+  background: #e6f4ea;
+  color: #388e3c;
+}
+.status-synced {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+.status-critical {
+  background: #ffebee;
+  color: #d32f2f;
+}
+.profile-right {
+  flex: 1;
+  display: flex;
+  gap: 2rem;
+}
+.nav-tabs-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 160px;
+}
+.nav-tabs-vertical button {
+  background: none;
+  border: none;
+  padding: 0.8em 1.2em;
+  text-align: left;
+  font-size: 1.08rem;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #333;
+  transition: background 0.2s, color 0.2s;
+}
+.nav-tabs-vertical button.active {
+  background: #e3f2fd;
+  color: #1976d2;
+  font-weight: 600;
+}
+.tab-content {
+  flex: 1;
+}
+.card-row {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+.card {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  padding: 1.5rem 2rem;
+  flex: 1;
+  min-width: 260px;
+}
+.badge-condition {
+  background: #e3f2fd;
+  color: #1976d2;
+}
+.badge-allergy {
+  background: #ffebee;
+  color: #d32f2f;
+}
+.empty {
+  color: #aaa;
+  font-style: italic;
+}
+.granted {
+  color: #388e3c;
+  font-weight: bold;
+}
+.denied {
+  color: #d32f2f;
+  font-weight: bold;
+}
+.loading, .error {
+  text-align: center;
+  margin-top: 2em;
+  font-size: 1.2em;
+}

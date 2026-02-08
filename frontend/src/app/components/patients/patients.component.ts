@@ -10,7 +10,7 @@ import { map, catchError, startWith, tap, mergeMap } from 'rxjs/operators';
 @Component({
   selector: 'app-patients',
   standalone: true,
-  imports: [CommonModule, FormsModule, DatePipe, RouterModule, Sidebar],
+  imports: [CommonModule, FormsModule, RouterModule, Sidebar],
   templateUrl: './patients.component.html',
   styleUrls: ['./patients.component.css']
 })
@@ -156,15 +156,7 @@ export class PatientsComponent {
   patientToDelete: Patient | null = null;
 
   viewPatient(id: string) {
-    this.patients$.pipe(
-      map(patients => patients.find(p => p.id === id)),
-      tap(patient => {
-        if (patient) {
-          this.selectedPatient = patient;
-          this.showDetailsModal = true;
-        }
-      })
-    ).subscribe();
+    this.router.navigate(['/patients', id]);
   }
 
   closeDetailsModal() {

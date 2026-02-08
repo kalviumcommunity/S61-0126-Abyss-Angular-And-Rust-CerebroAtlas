@@ -8,6 +8,58 @@ use serde_json;
 
 use crate::models::patient::Patient;
 use crate::models::error::ServiceError;
+use crate::models::consent::Consent;
+use crate::models::record::MedicalRecord;
+use axum::extract::Query;
+use serde::Serialize;
+#[derive(Serialize)]
+pub struct PatientProfile {
+    pub patient: Patient,
+    pub consents: Vec<Consent>,
+    pub medical_records: Vec<MedicalRecord>,
+}
+/// Get a detailed patient profile (patient, consents, records)
+pub async fn get_patient_profile(
+    Path(id): Path<i32>,
+    State(pool): State<PgPool>,
+) -> Result<Json<PatientProfile>, ServiceError> {
+    // Get patient
+    let patient = sqlx::query_as!(Patient,
+        r#"SELECT * FROM patients WHERE id = $1"#,
+        id
+    )
+    .fetch_optional(&pool)
+    .await
+    .map_err(|_| ServiceError::Unauthorized)?;
+    let patient = match patient {
+        Some(p) => p,
+        None => return Err(ServiceError::NotFound),
+    };
+
+    // Get consents
+    let consents = sqlx::query_as!(Consent,
+        r#"SELECT * FROM consents WHERE patient_id = $1"#,
+        id
+    )
+    .fetch_all(&pool)
+    .await
+    .unwrap_or_default();
+
+    // Get medical records
+    let medical_records = sqlx::query_as!(MedicalRecord,
+        r#"SELECT * FROM medical_records WHERE patient_id = $1"#,
+        id
+    )
+    .fetch_all(&pool)
+    .await
+    .unwrap_or_default();
+
+    Ok(Json(PatientProfile {
+        patient,
+        consents,
+        medical_records,
+    }))
+}
 
 use chrono::NaiveDate;
 use serde::Deserialize;
@@ -198,20 +250,35 @@ pub async fn update_patient(
     }
 }
 
+use axum::extract::Request;
+
 pub async fn delete_patient(
     Path(id): Path<i32>,
     State(pool): State<PgPool>,
+    req: Request,
 ) -> Result<StatusCode, ServiceError> {
+    // Debug: print all request headers
+    println!("[DELETE PATIENT DEBUG] Incoming request headers:");
+    for (name, value) in req.headers().iter() {
+        println!("  {}: {:?}", name, value);
+    }
     let result = sqlx::query!(
         "DELETE FROM patients WHERE id = $1",
         id
     )
     .execute(&pool)
-    .await
-    .map_err(|_| ServiceError::Unauthorized)?;
-    if result.rows_affected() > 0 {
-        Ok(StatusCode::NO_CONTENT)
-    } else {
-        Err(ServiceError::NotFound)
+    .await;
+    match result {
+        Ok(res) => {
+            if res.rows_affected() > 0 {
+                Ok(StatusCode::NO_CONTENT)
+            } else {
+                Err(ServiceError::NotFound)
+            }
+        }
+        Err(e) => {
+            eprintln!("[DELETE PATIENT ERROR] DB error: {:?}", e);
+            Err(ServiceError::InternalServerError)
+        }
     }
 }
