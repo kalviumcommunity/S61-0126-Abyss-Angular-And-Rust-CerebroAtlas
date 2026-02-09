@@ -250,8 +250,8 @@
           </select>
         </div>
         <div class="form-group">
-          <label>Provider <span class="required">*</span></label>
-          <input type="text" class="form-input" placeholder="Enter provider name" [(ngModel)]="newRecord.provider">
+          <label>Provider</label>
+          <input type="text" class="form-input" placeholder="Enter provider name (optional)" [(ngModel)]="newRecord.provider">
         </div>
       </div>
       <div class="form-group">
@@ -262,6 +262,15 @@
         <label>Description</label>
         <textarea class="form-textarea" placeholder="Enter record description or notes" rows="4" [(ngModel)]="newRecord.description"></textarea>
       </div>
+        <div class="form-group">
+          <label>Attachments</label>
+          <input type="file" class="form-input" multiple (change)="onFileSelected($event)">
+          <div *ngIf="newRecord.attachments && newRecord.attachments.length">
+            <ul>
+              <li *ngFor="let file of newRecord.attachments">{{file}}</li>
+            </ul>
+          </div>
+        </div>
     </div>
 
     <div class="modal-footer">
