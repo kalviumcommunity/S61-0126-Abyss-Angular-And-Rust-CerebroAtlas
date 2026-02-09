@@ -37,15 +37,26 @@ export class MedicalRecordsComponent implements OnInit {
   statsLoading = true;
   statsError = '';
 
-  newRecord = {
+  newRecord: any = {
     title: '',
     record_type: '',
     patient_id: '',
-    provider: '',
+    provider: undefined,
     description: '',
     date: '',
-    status: 'pending'
+    status: 'pending',
+    attachments: []
   };
+  onFileSelected(event: any): void {
+    const files: FileList = event.target.files;
+    if (files && files.length) {
+      // Cast FileList to File[]
+      const fileArray: File[] = Array.from(files) as File[];
+      this.newRecord.attachments = fileArray.map(file => file.name);
+    } else {
+      this.newRecord.attachments = [];
+    }
+  }
 
   constructor(private apiService: ApiService, private route: ActivatedRoute) {}
 
@@ -281,7 +292,8 @@ export class MedicalRecordsComponent implements OnInit {
           provider: '',
           description: '',
           date: '',
-          status: 'pending'
+          status: 'pending',
+          attachments: []
         };
         this.showNewRecordModal = false;
       },
