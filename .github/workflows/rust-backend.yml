@@ -1,27 +1,27 @@
-# Rust Backend CI temporarily disabled
-# name: Rust Backend CI
-# on:
-#   push:
-#     paths:
-#       - "backend/**"
-#       - ".github/workflows/rust-backend.yml"
-#   pull_request:
-#     paths:
-#       - "backend/**"
-#       - ".github/workflows/rust-backend.yml"
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
-#     defaults:
-#       run:
-#         working-directory: backend
-#     steps:
-#       - uses: actions/checkout@v4
-#       - name: Set up Rust
-#         uses: dtolnay/rust-toolchain@stable
-#         with:
-#           toolchain: stable
-#       - name: Build
-#         run: cargo build --verbose
-#       - name: Run tests
-#         run: cargo test --verbose
+
+name: Rust Backend CI
+on:
+	push:
+		paths:
+			- "backend/**"
+			- ".github/workflows/rust-backend.yml"
+	pull_request:
+		paths:
+			- "backend/**"
+			- ".github/workflows/rust-backend.yml"
+jobs:
+	build:
+		runs-on: ubuntu-latest
+		defaults:
+			run:
+				working-directory: backend
+		steps:
+			- uses: actions/checkout@v4
+			- name: Set up Rust
+				uses: dtolnay/rust-toolchain@stable
+				with:
+					toolchain: stable
+			- name: Build
+				run: cargo build --verbose
+			- name: Run tests
+				run: cargo test --verbose
