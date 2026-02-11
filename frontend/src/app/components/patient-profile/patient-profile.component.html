@@ -1,134 +1,540 @@
-
 <div class="with-sidebar-layout">
   <app-sidebar></app-sidebar>
   <main class="main-content">
-    <div *ngIf="loading" class="loading">Loading...</div>
-    <div *ngIf="error" class="error">{{ error }}</div>
-    <div *ngIf="!loading && patientProfile" class="profile-container">
-      <div class="profile-left">
-        <div class="profile-header-row">
-          <div class="avatar-lg">{{ (editMode ? editableProfile.first_name : patientProfile.first_name)[0] }}{{ (editMode ? editableProfile.last_name : patientProfile.last_name)[0] }}</div>
-          <button *ngIf="!editMode" class="edit-btn" (click)="onEditProfile()">
-            <span class="material-icons">edit</span> Edit Profile
+    <!-- Header with Navigation -->
+    <div class="page-header">
+      <button class="back-btn" (click)="navigateBack()">
+        <span class="material-icons">arrow_back</span>
+        Back to Patients
+      </button>
+      <h1 class="page-title">Patient Profile</h1>
+    </div>
+
+    <div *ngIf="loading" class="loading">
+      <span class="material-icons spinning">refresh</span>
+      Loading patient profile...
+    </div>
+    
+    <div *ngIf="error" class="error-banner">
+      <span class="material-icons">error_outline</span>
+      {{ error }}
+    </div>
+
+    <div *ngIf="!loading && patientProfile" class="profile-layout">
+      <!-- Left Sidebar - Patient Summary -->
+      <aside class="patient-sidebar">
+        <div class="patient-card">
+          <div class="avatar-section">
+            <div class="avatar-lg">
+              {{ patientProfile.first_name[0] }}{{ patientProfile.last_name[0] }}
+            </div>
+            <div class="patient-info-header">
+              <h2>{{ patientProfile.first_name }} {{ patientProfile.last_name }}</h2>
+              <p class="patient-id">ID: {{ patientProfile.id || 'N/A' }}</p>
+            </div>
+          </div>
+
+          <div class="quick-info">
+            <div class="info-item">
+              <span class="material-icons">cake</span>
+              <span>{{ getAge(patientProfile.date_of_birth) }} years old</span>
+            </div>
+            <div class="info-item">
+              <span class="material-icons">person</span>
+              <span>{{ patientProfile.gender | titlecase }}</span>
+            </div>
+            <div class="info-item">
+              <span class="material-icons">bloodtype</span>
+              <span>{{ patientProfile.blood_type || 'Not recorded' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="material-icons">phone</span>
+              <span>{{ patientProfile.phone_number }}</span>
+            </div>
+            <div class="info-item">
+              <span class="material-icons">location_on</span>
+              <span>{{ patientProfile.village || 'Not specified' }}</span>
+            </div>
+          </div>
+
+          <div class="status-section">
+            <span *ngIf="patientProfile.status === 'active'" class="badge status-active">
+              <span class="material-icons">check_circle</span> Active
+            </span>
+            <span *ngIf="patientProfile.sync_status === 'synced'" class="badge status-synced">
+              <span class="material-icons">cloud_done</span> Synced
+            </span>
+            <span *ngIf="patientProfile.critical_flag" class="badge status-critical">
+              <span class="material-icons">warning</span> Critical
+            </span>
+          </div>
+        </div>
+
+        <!-- Vertical Navigation -->
+        <nav class="tab-navigation">
+          <button 
+            [class.active]="selectedTab === 'overview'" 
+            (click)="selectedTab = 'overview'"
+            class="tab-btn">
+            <span class="material-icons">dashboard</span>
+            Overview
           </button>
-        </div>
-        <div class="patient-name">
-          <ng-container *ngIf="!editMode; else editName">
-            {{ patientProfile.first_name }} {{ patientProfile.last_name }}
-          </ng-container>
-          <ng-template #editName>
-            <input [(ngModel)]="editableProfile.first_name" placeholder="First Name" style="width: 45%; margin-right: 4px;" />
-            <input [(ngModel)]="editableProfile.last_name" placeholder="Last Name" style="width: 45%;" />
-          </ng-template>
-        </div>
-        <div class="patient-meta">
-          <ng-container *ngIf="!editMode; else editMeta">
-            <span>{{ getAge(patientProfile.date_of_birth) }} years</span>
-            <span>• {{ patientProfile.gender }}</span>
-            <span>• Blood Type: {{ patientProfile.blood_type || 'N/A' }}</span>
-          </ng-container>
-          <ng-template #editMeta>
-            <input [(ngModel)]="editableProfile.date_of_birth" type="date" style="width: 35%; margin-right: 4px;" />
-            <select [(ngModel)]="editableProfile.gender" style="width: 25%; margin-right: 4px;">
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-            </select>
-            <input [(ngModel)]="editableProfile.blood_type" placeholder="Blood Type" style="width: 30%;" />
-          </ng-template>
-        </div>
-        <div class="patient-contact-row">
-          <span class="icon material-icons">phone</span>
-          <ng-container *ngIf="!editMode; else editPhone">{{ patientProfile.phone_number }}</ng-container>
-          <ng-template #editPhone>
-            <input [(ngModel)]="editableProfile.phone_number" placeholder="Phone Number" style="width: 80%;" />
-          </ng-template>
-        </div>
-        <div class="patient-contact-row">
-          <span class="icon material-icons">location_on</span>
-          <ng-container *ngIf="!editMode; else editVillage">{{ patientProfile.village || 'N/A' }}</ng-container>
-          <ng-template #editVillage>
-            <input [(ngModel)]="editableProfile.village" placeholder="Village" style="width: 80%;" />
-          </ng-template>
-        </div>
-        <div class="patient-contact-row">
-          <span class="icon material-icons">event</span>
-          <ng-container *ngIf="!editMode; else editVisit">Last Visit: {{ patientProfile.next_visit || 'Not scheduled' }}</ng-container>
-          <ng-template #editVisit>
-            <input [(ngModel)]="editableProfile.next_visit" type="date" style="width: 80%;" />
-          </ng-template>
-        </div>
-        <div class="status-badges">
-          <span *ngIf="(editMode ? editableProfile.status : patientProfile.status) === 'active'" class="badge status-active">Active</span>
-          <span *ngIf="(editMode ? editableProfile.sync_status : patientProfile.sync_status) === 'synced'" class="badge status-synced">Synced</span>
-          <span *ngIf="(editMode ? editableProfile.critical_flag : patientProfile.critical_flag)" class="badge status-critical">Critical</span>
-        </div>
-        <div *ngIf="editMode" class="edit-actions">
-          <button class="save-btn" (click)="onSaveEdit()">Save</button>
-          <button class="cancel-btn" (click)="onCancelEdit()">Cancel</button>
-        </div>
-      </div>
-      <div class="profile-right">
-        <div class="nav-tabs-vertical">
-          <button [class.active]="selectedTab === 'overview'" (click)="selectedTab = 'overview'">Overview</button>
-          <button [class.active]="selectedTab === 'vitals'" (click)="selectedTab = 'vitals'">Vitals</button>
-          <button [class.active]="selectedTab === 'consultations'" (click)="selectedTab = 'consultations'">Consultations</button>
-          <button [class.active]="selectedTab === 'medications'" (click)="selectedTab = 'medications'">Medications</button>
-          <button [class.active]="selectedTab === 'consent'" (click)="selectedTab = 'consent'">Consent</button>
-        </div>
+          <button 
+            [class.active]="selectedTab === 'personal'" 
+            (click)="selectedTab = 'personal'"
+            class="tab-btn">
+            <span class="material-icons">person</span>
+            Personal Info
+          </button>
+          <button 
+            [class.active]="selectedTab === 'medical'" 
+            (click)="selectedTab = 'medical'"
+            class="tab-btn">
+            <span class="material-icons">medical_services</span>
+            Medical History
+          </button>
+          <button 
+            [class.active]="selectedTab === 'vitals'" 
+            (click)="selectedTab = 'vitals'"
+            class="tab-btn">
+            <span class="material-icons">monitor_heart</span>
+            Vitals
+          </button>
+          <button 
+            [class.active]="selectedTab === 'consultations'" 
+            (click)="selectedTab = 'consultations'"
+            class="tab-btn">
+            <span class="material-icons">event_note</span>
+            Consultations
+          </button>
+          <button 
+            [class.active]="selectedTab === 'medications'" 
+            (click)="selectedTab = 'medications'"
+            class="tab-btn">
+            <span class="material-icons">medication</span>
+            Medications
+          </button>
+          <button 
+            [class.active]="selectedTab === 'consent'" 
+            (click)="selectedTab = 'consent'"
+            class="tab-btn">
+            <span class="material-icons">verified_user</span>
+            Consent
+          </button>
+        </nav>
+      </aside>
+
+      <!-- Main Content Area -->
+      <div class="content-area">
         <div class="tab-content">
-          <ng-container [ngSwitch]="selectedTab">
-            <div *ngSwitchCase="'overview'">
-              <div class="card-row">
-                <div class="card">
-                  <h3><span class="icon material-icons">monitor_heart</span> Active Conditions</h3>
-                  <div *ngIf="patientProfile.active_conditions?.length; else noCond">
-                    <span *ngFor="let cond of patientProfile.active_conditions" class="badge badge-condition">{{ cond }}</span>
-                  </div>
-                  <ng-template #noCond><span class="empty">None</span></ng-template>
+          <!-- Overview Tab -->
+          <div *ngIf="selectedTab === 'overview'" class="tab-pane">
+            <div class="section-grid">
+              <div class="section-card">
+                <div class="card-header">
+                  <h3><span class="material-icons">person</span> Quick Summary</h3>
                 </div>
-                <div class="card">
-                  <h3><span class="icon material-icons">warning</span> Allergies</h3>
-                  <div *ngIf="patientProfile.known_allergies?.length; else noAllergy">
-                    <span *ngFor="let allergy of patientProfile.known_allergies" class="badge badge-allergy">{{ allergy }}</span>
-                  </div>
-                  <ng-template #noAllergy><span class="empty">None</span></ng-template>
-                </div>
-              </div>
-              <div class="card-row">
-                <div class="card">
-                  <h3>Contact Information</h3>
-                  <div><b>Full Address:</b> {{ patientProfile.address?.full_address || 'N/A' }}</div>
-                  <div><b>Emergency Contact:</b> {{ patientProfile.emergency_contact?.name || 'N/A' }} - {{ patientProfile.emergency_contact?.phone || '' }}</div>
-                  <div><b>National ID:</b> {{ patientProfile.address?.national_id || 'N/A' }}</div>
-                </div>
-                <div class="card">
-                  <h3>Consent Status</h3>
-                  <div *ngIf="patientProfile.consents?.length; else noConsent">
-                    <div *ngFor="let consent of patientProfile.consents">
-                      <span>{{ consent.type }}:</span>
-                      <span [class.granted]="consent.status === 'granted'" [class.denied]="consent.status === 'denied'">
-                        {{ consent.status | titlecase }}
-                      </span>
+                <div class="card-body">
+                  <div class="summary-grid">
+                    <div class="summary-item">
+                      <label>Full Name</label>
+                      <p>{{ patientProfile.first_name }} {{ patientProfile.last_name }}</p>
+                    </div>
+                    <div class="summary-item">
+                      <label>Age</label>
+                      <p>{{ getAge(patientProfile.date_of_birth) }} years</p>
+                    </div>
+                    <div class="summary-item">
+                      <label>Gender</label>
+                      <p>{{ patientProfile.gender | titlecase }}</p>
+                    </div>
+                    <div class="summary-item">
+                      <label>Blood Type</label>
+                      <p>{{ patientProfile.blood_type || 'Not recorded' }}</p>
+                    </div>
+                    <div class="summary-item">
+                      <label>Phone</label>
+                      <p>{{ patientProfile.phone_number }}</p>
+                    </div>
+                    <div class="summary-item">
+                      <label>Last Visit</label>
+                      <p>{{ patientProfile.next_visit || 'Not scheduled' }}</p>
                     </div>
                   </div>
-                  <ng-template #noConsent><span class="empty">No consents</span></ng-template>
+                </div>
+              </div>
+
+              <div class="section-card">
+                <div class="card-header">
+                  <h3><span class="material-icons">monitor_heart</span> Active Conditions</h3>
+                </div>
+                <div class="card-body">
+                  <div *ngIf="patientProfile.active_conditions?.length; else noConditions">
+                    <span *ngFor="let cond of patientProfile.active_conditions" class="badge badge-condition">
+                      {{ cond }}
+                    </span>
+                  </div>
+                  <ng-template #noConditions>
+                    <p class="empty-state">No active conditions recorded</p>
+                  </ng-template>
+                </div>
+              </div>
+
+              <div class="section-card">
+                <div class="card-header">
+                  <h3><span class="material-icons">warning</span> Allergies</h3>
+                </div>
+                <div class="card-body">
+                  <div *ngIf="patientProfile.known_allergies?.length; else noAllergies">
+                    <span *ngFor="let allergy of patientProfile.known_allergies" class="badge badge-allergy">
+                      {{ allergy }}
+                    </span>
+                  </div>
+                  <ng-template #noAllergies>
+                    <p class="empty-state">No known allergies</p>
+                  </ng-template>
                 </div>
               </div>
             </div>
-            <div *ngSwitchCase="'vitals'">
-              <div class="empty">No vitals data available.</div>
+          </div>
+
+          <!-- Personal Info Tab -->
+          <div *ngIf="selectedTab === 'personal'" class="tab-pane">
+            <div class="section-card">
+              <div class="card-header">
+                <h3><span class="material-icons">person</span> Personal Information</h3>
+                <button 
+                  *ngIf="!isEditing('personal')" 
+                  class="edit-btn-header" 
+                  (click)="toggleEditSection('personal')">
+                  <span class="material-icons">edit</span> Edit
+                </button>
+                <div *ngIf="isEditing('personal')" class="action-buttons">
+                  <button class="save-btn" (click)="saveEdit('personal')">
+                    <span class="material-icons">check</span> Save
+                  </button>
+                  <button class="cancel-btn" (click)="cancelEdit('personal')">
+                    <span class="material-icons">close</span> Cancel
+                  </button>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label>First Name</label>
+                    <input 
+                      *ngIf="isEditing('personal')" 
+                      [(ngModel)]="editableProfile.first_name" 
+                      class="form-input" 
+                      placeholder="First Name" />
+                    <p *ngIf="!isEditing('personal')">{{ patientProfile.first_name }}</p>
+                  </div>
+                  <div class="form-group">
+                    <label>Last Name</label>
+                    <input 
+                      *ngIf="isEditing('personal')" 
+                      [(ngModel)]="editableProfile.last_name" 
+                      class="form-input" 
+                      placeholder="Last Name" />
+                    <p *ngIf="!isEditing('personal')">{{ patientProfile.last_name }}</p>
+                  </div>
+                  <div class="form-group">
+                    <label>Date of Birth</label>
+                    <input 
+                      *ngIf="isEditing('personal')" 
+                      [(ngModel)]="editableProfile.date_of_birth" 
+                      type="date" 
+                      class="form-input" />
+                    <p *ngIf="!isEditing('personal')">{{ patientProfile.date_of_birth }}</p>
+                  </div>
+                  <div class="form-group">
+                    <label>Gender</label>
+                    <select 
+                      *ngIf="isEditing('personal')" 
+                      [(ngModel)]="editableProfile.gender" 
+                      class="form-input">
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="other">Other</option>
+                    </select>
+                    <p *ngIf="!isEditing('personal')">{{ patientProfile.gender | titlecase }}</p>
+                  </div>
+                  <div class="form-group">
+                    <label>Blood Type</label>
+                    <input 
+                      *ngIf="isEditing('personal')" 
+                      [(ngModel)]="editableProfile.blood_type" 
+                      class="form-input" 
+                      placeholder="e.g., A+" />
+                    <p *ngIf="!isEditing('personal')">{{ patientProfile.blood_type || 'Not recorded' }}</p>
+                  </div>
+                  <div class="form-group">
+                    <label>National ID</label>
+                    <input 
+                      *ngIf="isEditing('personal')" 
+                      [(ngModel)]="editableProfile.address.national_id" 
+                      class="form-input" 
+                      placeholder="National ID" />
+                    <p *ngIf="!isEditing('personal')">{{ patientProfile.address?.national_id || 'N/A' }}</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div *ngSwitchCase="'consultations'">
-              <div class="empty">No consultations data available.</div>
+
+            <div class="section-card">
+              <div class="card-header">
+                <h3><span class="material-icons">contacts</span> Contact Information</h3>
+                <button 
+                  *ngIf="!isEditing('contact')" 
+                  class="edit-btn-header" 
+                  (click)="toggleEditSection('contact')">
+                  <span class="material-icons">edit</span> Edit
+                </button>
+                <div *ngIf="isEditing('contact')" class="action-buttons">
+                  <button class="save-btn" (click)="saveEdit('contact')">
+                    <span class="material-icons">check</span> Save
+                  </button>
+                  <button class="cancel-btn" (click)="cancelEdit('contact')">
+                    <span class="material-icons">close</span> Cancel
+                  </button>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label>Phone Number</label>
+                    <input 
+                      *ngIf="isEditing('contact')" 
+                      [(ngModel)]="editableProfile.phone_number" 
+                      class="form-input" 
+                      placeholder="Phone Number" />
+                    <p *ngIf="!isEditing('contact')">{{ patientProfile.phone_number }}</p>
+                  </div>
+                  <div class="form-group">
+                    <label>Village</label>
+                    <input 
+                      *ngIf="isEditing('contact')" 
+                      [(ngModel)]="editableProfile.village" 
+                      class="form-input" 
+                      placeholder="Village" />
+                    <p *ngIf="!isEditing('contact')">{{ patientProfile.village || 'N/A' }}</p>
+                  </div>
+                  <div class="form-group full-width">
+                    <label>Full Address</label>
+                    <textarea 
+                      *ngIf="isEditing('contact')" 
+                      [(ngModel)]="editableProfile.address.full_address" 
+                      class="form-input" 
+                      rows="3" 
+                      placeholder="Full Address"></textarea>
+                    <p *ngIf="!isEditing('contact')">{{ patientProfile.address?.full_address || 'N/A' }}</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div *ngSwitchCase="'medications'">
-              <div class="empty">No medications data available.</div>
+
+            <div class="section-card">
+              <div class="card-header">
+                <h3><span class="material-icons">emergency</span> Emergency Contact</h3>
+                <button 
+                  *ngIf="!isEditing('emergency')" 
+                  class="edit-btn-header" 
+                  (click)="toggleEditSection('emergency')">
+                  <span class="material-icons">edit</span> Edit
+                </button>
+                <div *ngIf="isEditing('emergency')" class="action-buttons">
+                  <button class="save-btn" (click)="saveEdit('emergency')">
+                    <span class="material-icons">check</span> Save
+                  </button>
+                  <button class="cancel-btn" (click)="cancelEdit('emergency')">
+                    <span class="material-icons">close</span> Cancel
+                  </button>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="form-grid">
+                  <div class="form-group">
+                    <label>Contact Name</label>
+                    <input 
+                      *ngIf="isEditing('emergency')" 
+                      [(ngModel)]="editableProfile.emergency_contact.name" 
+                      class="form-input" 
+                      placeholder="Emergency Contact Name" />
+                    <p *ngIf="!isEditing('emergency')">{{ patientProfile.emergency_contact?.name || 'N/A' }}</p>
+                  </div>
+                  <div class="form-group">
+                    <label>Contact Phone</label>
+                    <input 
+                      *ngIf="isEditing('emergency')" 
+                      [(ngModel)]="editableProfile.emergency_contact.phone" 
+                      class="form-input" 
+                      placeholder="Emergency Contact Phone" />
+                    <p *ngIf="!isEditing('emergency')">{{ patientProfile.emergency_contact?.phone || 'N/A' }}</p>
+                  </div>
+                  <div class="form-group">
+                    <label>Relationship</label>
+                    <input 
+                      *ngIf="isEditing('emergency')" 
+                      [(ngModel)]="editableProfile.emergency_contact.relationship" 
+                      class="form-input" 
+                      placeholder="Relationship" />
+                    <p *ngIf="!isEditing('emergency')">{{ patientProfile.emergency_contact?.relationship || 'N/A' }}</p>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div *ngSwitchCase="'consent'">
-              <div class="empty">No additional consent data available.</div>
+          </div>
+
+          <!-- Medical History Tab -->
+          <div *ngIf="selectedTab === 'medical'" class="tab-pane">
+            <div class="section-card">
+              <div class="card-header">
+                <h3><span class="material-icons">monitor_heart</span> Active Conditions</h3>
+                <button 
+                  *ngIf="!isEditing('conditions')" 
+                  class="edit-btn-header" 
+                  (click)="toggleEditSection('conditions')">
+                  <span class="material-icons">edit</span> Edit
+                </button>
+                <div *ngIf="isEditing('conditions')" class="action-buttons">
+                  <button class="save-btn" (click)="saveEdit('conditions')">
+                    <span class="material-icons">check</span> Save
+                  </button>
+                  <button class="cancel-btn" (click)="cancelEdit('conditions')">
+                    <span class="material-icons">close</span> Cancel
+                  </button>
+                </div>
+              </div>
+              <div class="card-body">
+                <div *ngIf="!isEditing('conditions')">
+                  <div *ngIf="patientProfile.active_conditions?.length; else noConditionsData">
+                    <span *ngFor="let cond of patientProfile.active_conditions" class="badge badge-condition">
+                      {{ cond }}
+                    </span>
+                  </div>
+                  <ng-template #noConditionsData>
+                    <p class="empty-state">No active conditions recorded</p>
+                  </ng-template>
+                </div>
+                <div *ngIf="isEditing('conditions')" class="editable-list">
+                  <div *ngFor="let cond of editableProfile.active_conditions; let i = index; trackBy: trackByIndex" class="list-item-edit">
+                    <input [(ngModel)]="editableProfile.active_conditions[i]" class="form-input" placeholder="Condition name" />
+                    <button class="remove-btn" (click)="removeCondition(i)">
+                      <span class="material-icons">close</span>
+                    </button>
+                  </div>
+                  <button class="add-btn" (click)="addCondition()">
+                    <span class="material-icons">add</span> Add Condition
+                  </button>
+                </div>
+              </div>
             </div>
-          </ng-container>
+
+            <div class="section-card">
+              <div class="card-header">
+                <h3><span class="material-icons">warning</span> Known Allergies</h3>
+                <button 
+                  *ngIf="!isEditing('allergies')" 
+                  class="edit-btn-header" 
+                  (click)="toggleEditSection('allergies')">
+                  <span class="material-icons">edit</span> Edit
+                </button>
+                <div *ngIf="isEditing('allergies')" class="action-buttons">
+                  <button class="save-btn" (click)="saveEdit('allergies')">
+                    <span class="material-icons">check</span> Save
+                  </button>
+                  <button class="cancel-btn" (click)="cancelEdit('allergies')">
+                    <span class="material-icons">close</span> Cancel
+                  </button>
+                </div>
+              </div>
+              <div class="card-body">
+                <div *ngIf="!isEditing('allergies')">
+                  <div *ngIf="patientProfile.known_allergies?.length; else noAllergiesData">
+                    <span *ngFor="let allergy of patientProfile.known_allergies" class="badge badge-allergy">
+                      {{ allergy }}
+                    </span>
+                  </div>
+                  <ng-template #noAllergiesData>
+                    <p class="empty-state">No known allergies</p>
+                  </ng-template>
+                </div>
+                <div *ngIf="isEditing('allergies')" class="editable-list">
+                  <div *ngFor="let allergy of editableProfile.known_allergies; let i = index; trackBy: trackByIndex" class="list-item-edit">
+                    <input [(ngModel)]="editableProfile.known_allergies[i]" class="form-input" placeholder="Allergy name" />
+                    <button class="remove-btn" (click)="removeAllergy(i)">
+                      <span class="material-icons">close</span>
+                    </button>
+                  </div>
+                  <button class="add-btn" (click)="addAllergy()">
+                    <span class="material-icons">add</span> Add Allergy
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Vitals Tab -->
+          <div *ngIf="selectedTab === 'vitals'" class="tab-pane">
+            <div class="section-card">
+              <div class="card-header">
+                <h3><span class="material-icons">monitor_heart</span> Vital Signs</h3>
+              </div>
+              <div class="card-body">
+                <p class="empty-state">No vitals data available yet</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Consultations Tab -->
+          <div *ngIf="selectedTab === 'consultations'" class="tab-pane">
+            <div class="section-card">
+              <div class="card-header">
+                <h3><span class="material-icons">event_note</span> Consultation History</h3>
+              </div>
+              <div class="card-body">
+                <p class="empty-state">No consultations recorded yet</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Medications Tab -->
+          <div *ngIf="selectedTab === 'medications'" class="tab-pane">
+            <div class="section-card">
+              <div class="card-header">
+                <h3><span class="material-icons">medication</span> Current Medications</h3>
+              </div>
+              <div class="card-body">
+                <p class="empty-state">No medications prescribed</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Consent Tab -->
+          <div *ngIf="selectedTab === 'consent'" class="tab-pane">
+            <div class="section-card">
+              <div class="card-header">
+                <h3><span class="material-icons">verified_user</span> Consent Records</h3>
+              </div>
+              <div class="card-body">
+                <div *ngIf="patientProfile.consents?.length; else noConsents">
+                  <div class="consent-list">
+                    <div *ngFor="let consent of patientProfile.consents" class="consent-item">
+                      <div class="consent-type">{{ consent.type | titlecase }}</div>
+                      <div class="consent-status" [class.granted]="consent.status === 'granted'" [class.denied]="consent.status === 'denied'">
+                        <span class="material-icons">{{ consent.status === 'granted' ? 'check_circle' : 'cancel' }}</span>
+                        {{ consent.status | titlecase }}
+                      </div>
+                      <div class="consent-date" *ngIf="consent.date">{{ consent.date }}</div>
+                    </div>
+                  </div>
+                </div>
+                <ng-template #noConsents>
+                  <p class="empty-state">No consent records available</p>
+                </ng-template>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
