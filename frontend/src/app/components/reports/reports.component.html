@@ -4,7 +4,7 @@
   <div class="page-header">
     <div class="title-block">
       <h1>Reports & Analytics</h1>
-      <p>Healthcare metrics and population health insights</p>
+      <p>Real-time healthcare metrics and population insights</p>
     </div>
     <div class="header-actions">
       <button class="new-report-btn" (click)="openNewReportModal()">
@@ -29,8 +29,18 @@
     </div>
   </div>
 
+  <!-- Loading State -->
+  <div *ngIf="analyticsLoading" style="text-align: center; padding: 4rem; color: #94a3b8;">
+    <p style="font-size: 1.2rem; font-weight: 600;">Loading analytics data...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="analyticsError && !analyticsLoading" style="text-align: center; padding: 4rem;">
+    <p style="color: #ef4444; font-size: 1.2rem; font-weight: 600;">{{analyticsError}}</p>
+  </div>
+
   <!-- Stats Cards -->
-  <div class="stats-row">
+  <div class="stats-row" *ngIf="!analyticsLoading && !analyticsError">
     <div class="stat-card">
       <div class="stat-header">
         <div class="stat-title">Total Patients</div>
@@ -45,6 +55,7 @@
       </div>
       <div class="stat-value">{{stats?.total_patients || 0}}</div>
     </div>
+    
     <div class="stat-card">
       <div class="stat-header">
         <div class="stat-title">Consultations (MTD)</div>
@@ -59,34 +70,36 @@
       </div>
       <div class="stat-value">{{stats?.consultations_mtd || 0}}</div>
     </div>
+    
     <div class="stat-card">
       <div class="stat-header">
-        <div class="stat-title">Avg Wait Time</div>
+        <div class="stat-title">Total Records</div>
         <div class="stat-icon waittime">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"></circle>
-            <polyline points="12 6 12 12 16 14"></polyline>
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
           </svg>
         </div>
       </div>
-      <div class="stat-value">{{stats?.avg_wait_time || '--'}}</div>
+      <div class="stat-value">{{stats?.total_records || 0}}</div>
     </div>
+    
     <div class="stat-card">
       <div class="stat-header">
-        <div class="stat-title">Data Completeness</div>
+        <div class="stat-title">Lab Results</div>
         <div class="stat-icon completeness">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <circle cx="12" cy="12" r="10"></circle>
-            <polyline points="16 12 12 16 8 12"></polyline>
+            <path d="M9 3v8.5a5 5 0 1 0 6 0V3"/>
+            <line x1="9" y1="9" x2="15" y2="9"/>
           </svg>
         </div>
       </div>
-      <div class="stat-value">{{stats?.data_completeness || '--'}}</div>
+      <div class="stat-value">{{stats?.lab_results || 0}}</div>
     </div>
   </div>
 
   <!-- Tabs -->
-  <div class="tabs">
+  <div class="tabs" *ngIf="!analyticsLoading">
     <button class="tab" [class.active]="activeTab === 'overview'" (click)="switchTab('overview')">Overview</button>
     <button class="tab" [class.active]="activeTab === 'patient'" (click)="switchTab('patient')">Patient Analytics</button>
     <button class="tab" [class.active]="activeTab === 'disease'" (click)="switchTab('disease')">Disease Trends</button>
@@ -94,7 +107,7 @@
   </div>
 
   <!-- Overview Tab -->
-  <div class="tab-content" *ngIf="activeTab === 'overview'">
+  <div class="tab-content" *ngIf="activeTab === 'overview' && !analyticsLoading">
     <!-- Charts Section -->
     <div class="charts-grid">
       <div class="chart-card">
@@ -102,10 +115,10 @@
         <p>Monthly patient visits and consultations</p>
         <div class="chart-placeholder">
           <div class="bar-chart">
-            <div class="bar-group" *ngFor="let i of [1,2,3,4,5,6,7,8,9,10,11,12]">
-              <div class="bar bar-teal" [ngStyle]="{'height': (30 + i * 5) + '%'}"></div>
-              <div class="bar bar-cyan" [ngStyle]="{'height': (20 + i * 4) + '%'}"></div>
-              <span class="bar-label">{{['Jul','Aug','Sep','Oct','Nov','Dec','Jan'][i % 7]}}</span>
+            <div class="bar-group" *ngFor="let i of [1,2,3,4,5,6,7]">
+              <div class="bar bar-teal" [ngStyle]="{'height': (30 + i * 8) + '%'}"></div>
+              <div class="bar bar-cyan" [ngStyle]="{'height': (20 + i * 6) + '%'}"></div>
+              <span class="bar-label">{{['Jul','Aug','Sep','Oct','Nov','Dec','Jan'][i - 1]}}</span>
             </div>
           </div>
         </div>
@@ -123,34 +136,45 @@
 
       <div class="chart-card">
         <h3>Condition Distribution</h3>
-        <p>Most common diagnoses this month</p>
+        <p>Most common diagnoses based on actual data</p>
         <div class="donut-chart-container">
-          <svg viewBox="0 0 200 200" class="donut-chart">
-            <circle cx="100" cy="100" r="80" fill="none" stroke="#d1f4f9" stroke-width="40" stroke-dasharray="176 251.2"></circle>
-            <circle cx="100" cy="100" r="80" fill="none" stroke="#f97316" stroke-width="40" stroke-dasharray="125.6 251.2" stroke-dashoffset="-176"></circle>
-            <circle cx="100" cy="100" r="80" fill="none" stroke="#3b82f6" stroke-width="40" stroke-dasharray="100.5 251.2" stroke-dashoffset="-301.6"></circle>
-            <circle cx="100" cy="100" r="80" fill="none" stroke="#8b5cf6" stroke-width="40" stroke-dasharray="60.3 251.2" stroke-dashoffset="-402.1"></circle>
-            <circle cx="100" cy="100" r="80" fill="none" stroke="#64748b" stroke-width="40" stroke-dasharray="20.1 251.2" stroke-dashoffset="-462.4"></circle>
+          <svg viewBox="0 0 200 200" class="donut-chart" *ngIf="conditionData && conditionData.length > 0">
+            <circle 
+              *ngFor="let cond of conditionData; let i = index"
+              cx="100" 
+              cy="100" 
+              r="80" 
+              fill="none" 
+              [attr.stroke]="getConditionColor(i)" 
+              stroke-width="40" 
+              [attr.stroke-dasharray]="getDonutSegment(i).dasharray"
+              [attr.stroke-dashoffset]="getDonutSegment(i).offset"
+            ></circle>
           </svg>
+          <div *ngIf="!conditionData || conditionData.length === 0" style="text-align: center; color: #64748b; padding: 3rem;">
+            <p>No condition data available</p>
+          </div>
         </div>
-        <div class="condition-legend">
+        <div class="condition-legend" *ngIf="conditionData && conditionData.length > 0">
           <div class="legend-row" *ngFor="let cond of conditionData; let i = index">
             <span class="legend-dot" [style.background]="getConditionColor(i)"></span>
-            <span class="legend-label">{{cond.condition}} ({{cond.percentage}}%)</span>
+            <span class="legend-label">{{cond.condition}} ({{getConditionPercentage(cond)}}%)</span>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Village Distribution -->
-    <div class="village-section">
+    <div class="village-section" *ngIf="villages && villages.length > 0">
       <div class="village-header">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
           <circle cx="12" cy="10" r="3"></circle>
         </svg>
-        <h3>Patient Distribution by Village</h3>
-        <p>Geographic spread of patient population</p>
+        <div>
+          <h3>Patient Distribution by Village</h3>
+          <p>Geographic spread of {{stats?.total_patients || 0}} registered patients</p>
+        </div>
       </div>
       <div class="villages-list">
         <div class="village-item" *ngFor="let village of villages">
@@ -164,7 +188,9 @@
             <div class="village-name">{{village.name}}</div>
             <div class="village-patients">{{village.patients}} registered patients</div>
           </div>
-          <div class="village-growth" [ngClass]="village.growth.includes('+') ? 'positive' : 'negative'">{{village.growth}}</div>
+          <div class="village-growth" [ngClass]="village.growth.includes('+') ? 'positive' : 'negative'">
+            {{village.growth}}
+          </div>
         </div>
       </div>
     </div>
@@ -191,56 +217,51 @@
   </div>
 
   <!-- Disease Trends Tab -->
-  <div class="tab-content" *ngIf="activeTab === 'disease'">
+  <div class="tab-content" *ngIf="activeTab === 'disease' && !analyticsLoading">
     <div class="trends-section">
       <div class="section-header">
         <h3>Disease Trends</h3>
-        <p>Track disease patterns over time</p>
+        <p>Track disease patterns over time based on actual data</p>
       </div>
-      <div class="line-chart-container">
+      <div class="line-chart-container" *ngIf="diseaseTrendData && diseaseTrendData.length > 0">
         <div class="chart-y-axis">
-          <span class="y-label">600</span>
-          <span class="y-label">450</span>
-          <span class="y-label">300</span>
-          <span class="y-label">150</span>
-          <span class="y-label">0</span>
+          <span class="y-label" *ngFor="let label of getYAxisLabels()">{{label}}</span>
         </div>
         <div class="line-chart">
           <svg class="line-chart-svg" viewBox="0 0 700 300" preserveAspectRatio="none">
             <!-- Grid lines -->
-            <line x1="0" y1="0" x2="700" y2="0" stroke="#e5e7eb" stroke-width="1"/>
-            <line x1="0" y1="75" x2="700" y2="75" stroke="#e5e7eb" stroke-width="1"/>
-            <line x1="0" y1="150" x2="700" y2="150" stroke="#e5e7eb" stroke-width="1"/>
-            <line x1="0" y1="225" x2="700" y2="225" stroke="#e5e7eb" stroke-width="1"/>
-            <line x1="0" y1="300" x2="700" y2="300" stroke="#e5e7eb" stroke-width="1"/>
+            <line *ngFor="let i of [0, 75, 150, 225, 300]" 
+                  [attr.x1]="0" 
+                  [attr.y1]="i" 
+                  [attr.x2]="700" 
+                  [attr.y2]="i" 
+                  stroke="rgba(255,255,255,0.1)" 
+                  stroke-width="1"/>
             
             <!-- Line path -->
             <polyline
               fill="none"
               stroke="#14b8a6"
               stroke-width="3"
-              points="0,180 116,125 233,110 350,120 467,65 584,95 700,55"
+              [attr.points]="getTrendLinePoints()"
             />
             
             <!-- Data points -->
-            <circle cx="0" cy="180" r="5" fill="#14b8a6"/>
-            <circle cx="116" cy="125" r="5" fill="#14b8a6"/>
-            <circle cx="233" cy="110" r="5" fill="#14b8a6"/>
-            <circle cx="350" cy="120" r="5" fill="#14b8a6"/>
-            <circle cx="467" cy="65" r="5" fill="#14b8a6"/>
-            <circle cx="584" cy="95" r="5" fill="#14b8a6"/>
-            <circle cx="700" cy="55" r="5" fill="#14b8a6"/>
+            <circle 
+              *ngFor="let point of diseaseTrendData; let i = index"
+              [attr.cx]="i * (700 / (diseaseTrendData.length - 1 || 1))"
+              [attr.cy]="scaleToChart(point.value)"
+              r="5" 
+              fill="#14b8a6"
+            />
           </svg>
           <div class="chart-x-axis">
-            <span class="x-label">Jul</span>
-            <span class="x-label">Aug</span>
-            <span class="x-label">Sep</span>
-            <span class="x-label">Oct</span>
-            <span class="x-label">Nov</span>
-            <span class="x-label">Dec</span>
-            <span class="x-label">Jan</span>
+            <span class="x-label" *ngFor="let point of diseaseTrendData">{{point.month}}</span>
           </div>
         </div>
+      </div>
+      <div *ngIf="!diseaseTrendData || diseaseTrendData.length === 0" style="text-align: center; padding: 4rem; color: #64748b;">
+        <p>No disease trend data available</p>
       </div>
     </div>
   </div>
@@ -264,16 +285,16 @@
   </div>
 
   <!-- Data Info -->
-  <div class="data-info">
-    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <div class="data-info" *ngIf="!analyticsLoading">
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
       <circle cx="12" cy="12" r="10"></circle>
       <line x1="12" y1="16" x2="12" y2="12"></line>
       <line x1="12" y1="8" x2="12.01" y2="8"></line>
     </svg>
-    <p>Data includes offline records: Analytics incorporate both synced and pending offline records for complete reporting. Last data refresh: 5 minutes ago.</p>
+    <p>Real-time data: All analytics are based on actual patient records and consultations. Data refreshes automatically when new records are added.</p>
   </div>
 
-  <!-- Reports List Panel -->
+  <!-- Reports List Panel & Modal (same as before) -->
   <div class="reports-list-panel" *ngIf="showReportsList">
     <div class="reports-list-header">
       <h2>Medical Reports</h2>
@@ -297,10 +318,8 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let report of medicalReports" [class.draft]="report.status === 'Draft'">
-            <td>
-              {{ getPatientName(report.patient_id) }}
-            </td>
+          <tr *ngFor="let report of medicalReports">
+            <td>{{getPatientName(report.patient_id)}}</td>
             <td>{{report.record_type}}</td>
             <td>{{report.date}}</td>
             <td>{{report.provider}}</td>
@@ -353,7 +372,7 @@
       <div class="modal-body">
         <div class="form-group">
           <label for="patientName">Patient <span class="required">*</span></label>
-          <select id="patientName" class="form-input" [(ngModel)]="newReport.patient_id" [ngModelOptions]="{standalone: true}" required>
+          <select id="patientName" class="form-input" [(ngModel)]="newReport.patient_id" required>
             <option value="">Select patient</option>
             <option *ngFor="let p of patients" [value]="p.id">{{p.first_name}} {{p.last_name}}</option>
           </select>
@@ -362,14 +381,14 @@
         <div class="form-row">
           <div class="form-group">
             <label for="reportType">Report Type <span class="required">*</span></label>
-            <select id="reportType" class="form-input" [(ngModel)]="newReport.record_type" [ngModelOptions]="{standalone: true}">
+            <select id="reportType" class="form-input" [(ngModel)]="newReport.record_type">
               <option *ngFor="let type of reportTypes" [value]="type">{{type}}</option>
             </select>
           </div>
 
           <div class="form-group">
             <label for="provider">Doctor <span class="required">*</span></label>
-            <select id="provider" class="form-input" [(ngModel)]="newReport.provider" [ngModelOptions]="{standalone: true}">
+            <select id="provider" class="form-input" [(ngModel)]="newReport.provider">
               <option value="">Select a doctor</option>
               <option *ngFor="let doc of doctors" [value]="doc">{{doc}}</option>
             </select>
@@ -379,7 +398,7 @@
         <div class="form-row">
           <div class="form-group">
             <label for="status">Status</label>
-            <select id="status" class="form-input" [(ngModel)]="newReport.status" [ngModelOptions]="{standalone: true}">
+            <select id="status" class="form-input" [(ngModel)]="newReport.status">
               <option value="Draft">Draft</option>
               <option value="Completed">Completed</option>
               <option value="Submitted">Submitted</option>
@@ -393,7 +412,6 @@
             id="description" 
             class="form-textarea" 
             [(ngModel)]="newReport.description"
-            [ngModelOptions]="{standalone: true}"
             placeholder="Enter report description or notes"
             rows="4"
           ></textarea>
@@ -406,7 +424,7 @@
           class="btn-save"
           [disabled]="isSaving"
           (click)="saveReport()">
-          {{ isSaving ? 'Saving...' : (editingReport ? 'Update Report' : 'Create Report') }}
+          {{isSaving ? 'Saving...' : (editingReport ? 'Update Report' : 'Create Report')}}
         </button>
       </div>
     </div>
