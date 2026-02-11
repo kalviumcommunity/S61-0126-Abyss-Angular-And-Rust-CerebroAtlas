@@ -30,7 +30,8 @@ export class MedicalRecordsComponent implements OnInit {
   selectedStatuses: { [key: string]: boolean } = {
     'completed': true,
     'pending': true,
-    'active': true
+    'active': true,
+    'pending review': true
   };
 
   stats: StatsResponse | null = null;
@@ -41,22 +42,12 @@ export class MedicalRecordsComponent implements OnInit {
     title: '',
     record_type: '',
     patient_id: '',
-    provider: undefined,
+    provider: '',
     description: '',
     date: '',
     status: 'pending',
     attachments: []
   };
-  onFileSelected(event: any): void {
-    const files: FileList = event.target.files;
-    if (files && files.length) {
-      // Cast FileList to File[]
-      const fileArray: File[] = Array.from(files) as File[];
-      this.newRecord.attachments = fileArray.map(file => file.name);
-    } else {
-      this.newRecord.attachments = [];
-    }
-  }
 
   constructor(private apiService: ApiService, private route: ActivatedRoute) {}
 
@@ -65,22 +56,14 @@ export class MedicalRecordsComponent implements OnInit {
     this.route.data.subscribe((data: any) => {
       if (data.medicalRecordsData) {
         this.records = data.medicalRecordsData.records;
-        this.filteredRecords = data.medicalRecordsData.records;
         this.patients = data.medicalRecordsData.patients;
         this.loading = false;
-        // Set stats immediately for total_records
-        if (!this.stats) {
-          this.stats = {
-            total_patients: this.patients.length,
-            total_records: this.records.length,
-            consultations_mtd: 0,
-            completed: 0,
-            pending: 0,
-            lab_results: 0
-          };
-        } else {
-          this.stats.total_records = this.records.length;
-        }
+        
+        // Initialize filtered records
+        this.filterRecords();
+        
+        // Calculate stats from records
+        this.calculateStats();
       } else {
         this.loadRecords();
         this.loadPatients();
@@ -89,17 +72,38 @@ export class MedicalRecordsComponent implements OnInit {
     });
   }
 
+  calculateStats() {
+    const stats = {
+      total_patients: this.patients.length,
+      total_records: this.records.length,
+      consultations_mtd: this.records.filter(r => r.record_type === 'consultation').length,
+      completed: this.records.filter(r => r.status === 'completed').length,
+      pending: this.records.filter(r => r.status === 'pending' || r.status === 'pending review').length,
+      lab_results: this.records.filter(r => r.record_type === 'lab').length,
+      prescriptions: this.records.filter(r => r.record_type === 'prescription').length,
+      imaging: this.records.filter(r => r.record_type === 'imaging').length
+    };
+    
+    if (!this.stats) {
+      this.stats = stats;
+    } else {
+      // Merge with backend stats
+      this.stats = { ...this.stats, ...stats };
+    }
+  }
+
   loadStats() {
     this.statsLoading = true;
     this.statsError = '';
     this.apiService.getAnalytics().subscribe({
       next: (data: AnalyticsResponse) => {
-        this.stats = data.stats;
+        this.stats = { ...this.stats, ...data.stats };
         this.statsLoading = false;
       },
       error: (err) => {
         this.statsError = 'Failed to load stats';
         this.statsLoading = false;
+        console.error('Stats error:', err);
       }
     });
   }
@@ -110,7 +114,8 @@ export class MedicalRecordsComponent implements OnInit {
     this.apiService.getRecords().subscribe({
       next: (data) => {
         this.records = data;
-        this.filteredRecords = data;
+        this.filterRecords();
+        this.calculateStats();
         this.loading = false;
       },
       error: (err: any) => {
@@ -125,6 +130,7 @@ export class MedicalRecordsComponent implements OnInit {
     this.apiService.getPatients().subscribe({
       next: (data) => {
         this.patients = data;
+        this.calculateStats();
       },
       error: (err) => {
         console.error('Error loading patients:', err);
@@ -132,35 +138,94 @@ export class MedicalRecordsComponent implements OnInit {
     });
   }
 
-  // updateStats() removed: now stats come from backend
-
   filterRecords() {
-    let filtered = this.records;
+    let filtered = [...this.records];
 
+    // Filter by active tab
+    if (this.activeTab !== 'all') {
+      const tabTypeMap: { [key: string]: string } = {
+        'consultations': 'consultation',
+        'lab-results': 'lab',
+        'prescriptions': 'prescription',
+        'imaging': 'imaging'
+      };
+      
+      const recordType = tabTypeMap[this.activeTab];
+      if (recordType) {
+        filtered = filtered.filter(r => r.record_type === recordType);
+      }
+    }
+
+    // Filter by search query
     if (this.searchQuery.trim()) {
       const term = this.searchQuery.toLowerCase();
       filtered = filtered.filter(r =>
         r.title.toLowerCase().includes(term) ||
         r.provider.toLowerCase().includes(term) ||
-        r.record_type.toLowerCase().includes(term)
+        r.record_type.toLowerCase().includes(term) ||
+        this.getPatientName(r.patient_id).toLowerCase().includes(term)
       );
     }
 
-    if (this.activeTab === 'completed') {
-      filtered = filtered.filter(r => r.status === 'completed');
-    } else if (this.activeTab === 'pending') {
-      filtered = filtered.filter(r => r.status === 'pending');
+    // Filter by status
+    const activeStatuses = Object.keys(this.selectedStatuses).filter(s => this.selectedStatuses[s]);
+    if (activeStatuses.length > 0 && activeStatuses.length < Object.keys(this.selectedStatuses).length) {
+      filtered = filtered.filter(r => activeStatuses.includes(r.status.toLowerCase()));
+    }
+
+    // Filter by date range
+    if (this.dateRangeStart) {
+      const startDate = new Date(this.dateRangeStart);
+      filtered = filtered.filter(r => new Date(r.date) >= startDate);
+    }
+    if (this.dateRangeEnd) {
+      const endDate = new Date(this.dateRangeEnd);
+      filtered = filtered.filter(r => new Date(r.date) <= endDate);
     }
 
     this.filteredRecords = filtered;
   }
 
-  setTab(tab: string) {
+  switchTab(tab: string): void {
     this.activeTab = tab;
     this.filterRecords();
   }
 
+  onSearch(event: any): void {
+    this.searchQuery = event.target.value;
+    this.filterRecords();
+  }
+
+  toggleFilters(): void {
+    this.showFilters = !this.showFilters;
+  }
+
+  toggleStatusFilter(status: string): void {
+    this.selectedStatuses[status] = !this.selectedStatuses[status];
+    this.filterRecords();
+  }
+
+  clearFilters(): void {
+    this.searchQuery = '';
+    this.dateRangeStart = '';
+    this.dateRangeEnd = '';
+    Object.keys(this.selectedStatuses).forEach(status => {
+      this.selectedStatuses[status] = true;
+    });
+    this.filterRecords();
+  }
+
   openNewRecordModal() {
+    this.newRecord = {
+      title: '',
+      record_type: 'consultation',
+      patient_id: this.patients.length > 0 ? this.patients[0].id : '',
+      provider: '',
+      description: '',
+      date: new Date().toISOString().split('T')[0],
+      status: 'pending',
+      attachments: []
+    };
     this.showNewRecordModal = true;
   }
 
@@ -178,6 +243,24 @@ export class MedicalRecordsComponent implements OnInit {
     this.selectedRecord = null;
   }
 
+  createRecord() {
+    if (!this.newRecord.title || !this.newRecord.patient_id || !this.newRecord.date) {
+      alert('Please fill in all required fields');
+      return;
+    }
+
+    this.apiService.createRecord(this.newRecord).subscribe({
+      next: () => {
+        this.loadRecords();
+        this.closeNewRecordModal();
+      },
+      error: (err) => {
+        this.error = 'Failed to create record';
+        console.error('Error creating record:', err);
+      }
+    });
+  }
+
   deleteRecord(id: string) {
     if (confirm('Are you sure you want to delete this record?')) {
       this.apiService.deleteRecord(id).subscribe({
@@ -192,9 +275,25 @@ export class MedicalRecordsComponent implements OnInit {
     }
   }
 
+  onFileSelected(event: any): void {
+    const files: FileList = event.target.files;
+    if (files && files.length) {
+      const fileArray: File[] = Array.from(files);
+      this.newRecord.attachments = fileArray.map(file => file.name);
+    } else {
+      this.newRecord.attachments = [];
+    }
+  }
+
   getPatientName(patientId: string): string {
     const patient = this.patients.find(p => p.id === patientId);
     return patient ? `${patient.first_name} ${patient.last_name}` : 'Unknown';
+  }
+
+  getPatientInitials(patientId: string): string {
+    const name = this.getPatientName(patientId);
+    if (name === 'Unknown') return 'UN';
+    return name.split(' ').map(w => w[0]).join('').toUpperCase();
   }
 
   getCurrentRecords(): MedicalRecord[] {
@@ -205,49 +304,15 @@ export class MedicalRecordsComponent implements OnInit {
     const statusLower = status.toLowerCase();
     switch (statusLower) {
       case 'completed':
-      case 'active':
         return '#10b981';
+      case 'active':
+        return '#3b82f6';
       case 'pending review':
       case 'pending':
-        return '#f97316';
+        return '#f59e0b';
       default:
         return '#6b7280';
     }
-  }
-
-  switchTab(tab: string): void {
-    this.activeTab = tab;
-    this.filterRecords();
-  }
-
-  getPatientInitials(patientId: string): string {
-    const name = this.getPatientName(patientId);
-    return name.split(' ').map(w => w[0]).join('').toUpperCase();
-  }
-
-  toggleFilters(): void {
-    this.showFilters = !this.showFilters;
-  }
-
-  toggleStatusFilter(status: string): void {
-    if (this.selectedStatuses.hasOwnProperty(status)) {
-      this.selectedStatuses[status] = !this.selectedStatuses[status];
-    }
-  }
-
-  clearFilters(): void {
-    this.searchQuery = '';
-    this.dateRangeStart = '';
-    this.dateRangeEnd = '';
-    Object.keys(this.selectedStatuses).forEach(status => {
-      this.selectedStatuses[status] = true;
-    });
-    this.filterRecords();
-  }
-
-  onSearch(event: any): void {
-    this.searchQuery = event.target.value;
-    this.filterRecords();
   }
 
   exportRecords(): void {
@@ -278,29 +343,5 @@ export class MedicalRecordsComponent implements OnInit {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  }
-
-  createRecord() {
-    // Optionally validate required fields here
-    this.apiService.createRecord(this.newRecord).subscribe({
-      next: () => {
-        this.loadRecords();
-        this.newRecord = {
-          title: '',
-          record_type: '',
-          patient_id: '',
-          provider: '',
-          description: '',
-          date: '',
-          status: 'pending',
-          attachments: []
-        };
-        this.showNewRecordModal = false;
-      },
-      error: (err) => {
-        this.error = 'Failed to create record';
-        console.error('Error creating record:', err);
-      }
-    });
   }
 }
