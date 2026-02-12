@@ -7,76 +7,162 @@
     <button class="register-btn" [routerLink]="'/patients/new'">+ Register Patient</button>
   </div>
 
-  <div *ngIf="(error$ | async) as errorMsg" class="error-message" [hidden]="!errorMsg">{{ errorMsg }}</div>
+  <!-- Error Message -->
+  <div *ngIf="(error$ | async) as errorMsg" class="error-message" [hidden]="!errorMsg">
+    {{ errorMsg }}
+  </div>
 
-  <div>
-    <div class="search-filter-bar">
-      <input type="text" placeholder="Search by name, village, or condition..." [ngModel]="searchTerm" (ngModelChange)="searchTerm = $event" />
-      <button class="filter-btn" (click)="toggleFilterDropdown()">Filters</button>
-      <div class="filter-dropdown" *ngIf="showFilterDropdown">
-        <div class="filter-header">Filter Options</div>
-        <div class="filter-fields">
-          <div class="filter-field">
-            <label for="gender-select">Gender</label>
-            <select id="gender-select" [ngModel]="tempGenderFilter" (ngModelChange)="setGenderFilter($event)">
-              <option value="">All</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-            </select>
-          </div>
-          <div class="filter-field">
-            <label for="status-select">Status</label>
-            <select id="status-select" [ngModel]="tempStatusFilter" (ngModelChange)="setStatusFilter($event)">
-              <option value="">All</option>
-              <option value="active">Active</option>
-              <option value="critical">Critical</option>
-            </select>
-          </div>
+  <!-- Search and Filter Bar -->
+  <div class="search-filter-bar">
+    <input 
+      type="text" 
+      placeholder="Search by name, village, or condition..." 
+      [(ngModel)]="searchTerm" 
+    />
+    <button class="filter-btn" (click)="toggleFilterDropdown()">Filters</button>
+    
+    <!-- Filter Dropdown -->
+    <div class="filter-dropdown" *ngIf="showFilterDropdown">
+      <div class="filter-header">Filter Options</div>
+      <div class="filter-fields">
+        <div class="filter-field">
+          <label for="gender-select">Gender</label>
+          <select 
+            id="gender-select" 
+            [(ngModel)]="tempGenderFilter"
+          >
+            <option value="">All</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+          </select>
         </div>
-         <div class="filter-actions">
-           <button class="clear-btn" (click)="clearFilters()">Clear</button>
-           <button class="apply-btn" (click)="applyFilters()">Apply</button>
-         </div>
+        <div class="filter-field">
+          <label for="status-select">Status</label>
+          <select 
+            id="status-select" 
+            [(ngModel)]="tempStatusFilter"
+          >
+            <option value="">All</option>
+            <option value="active">Active</option>
+            <option value="critical">Critical</option>
+          </select>
+        </div>
+      </div>
+      <div class="filter-actions">
+        <button class="clear-btn" (click)="clearFilters()">Clear</button>
+        <button class="apply-btn" (click)="applyFilters()">Apply</button>
       </div>
     </div>
+  </div>
 
-    <div class="tabs">
-      <button [class.active]="(activeTab$ | async) === 'all'" (click)="setTab('all')">All Patients ({{ (filteredPatients$ | async)?.length || 0 }})</button>
-      <button [class.active]="(activeTab$ | async) === 'active'" (click)="setTab('active')">Active</button>
-      <button [class.active]="(activeTab$ | async) === 'critical'" (click)="setTab('critical')">Critical</button>
-    </div>
+  <!-- Tabs -->
+  <div class="tabs">
+    <button 
+      [class.active]="(activeTab$ | async) === 'all'" 
+      (click)="setTab('all')"
+    >
+      All Patients ({{ (filteredPatients$ | async)?.length || 0 }})
+    </button>
+    <button 
+      [class.active]="(activeTab$ | async) === 'active'" 
+      (click)="setTab('active')"
+    >
+      Active
+    </button>
+    <button 
+      [class.active]="(activeTab$ | async) === 'critical'" 
+      (click)="setTab('critical')"
+    >
+      Critical
+    </button>
+  </div>
 
-    <div class="patients-list">
-      <ng-container *ngIf="filteredPatients$ | async as filteredPatients">
-        <div *ngIf="filteredPatients.length === 0" class="no-data">{{ (loading$ | async) ? 'Loading patients...' : 'No patients found' }}</div>
-        <div class="patient-card" *ngFor="let patient of filteredPatients">
-          <div class="patient-header-row">
-            <div class="avatar">{{ getInitials(patient) }}</div>
-            <div class="status-bar">
-              <span class="status" [ngClass]="patient.status.toLowerCase() || 'active'">
-                <span *ngIf="patient.status.toLowerCase() === 'active'" class="material-icons icon" style="color:#16a34a; font-size:1.1rem; vertical-align:middle;">check_circle</span>
-                <span *ngIf="patient.status.toLowerCase() === 'active'" style="margin-left:0.2rem; color:#16a34a; font-weight:500;">Active</span>
-                <ng-container *ngIf="patient.status.toLowerCase() !== 'active'">{{ patient.status }}</ng-container>
+  <!-- Patient Cards -->
+  <div class="patients-list">
+    <ng-container *ngIf="filteredPatients$ | async as filteredPatients">
+      <div *ngIf="filteredPatients.length === 0" class="no-data">
+        {{ (loading$ | async) ? 'Loading patients...' : 'No patients found' }}
+      </div>
+      
+      <div class="patient-card" *ngFor="let patient of filteredPatients">
+        <div class="patient-header-row">
+          <div class="avatar">{{ getInitials(patient) }}</div>
+          <div class="status-bar">
+            <span class="status" [ngClass]="patient.status.toLowerCase() || 'active'">
+              <span 
+                *ngIf="patient.status.toLowerCase() === 'active'" 
+                class="material-icons icon" 
+                style="color:#16a34a; font-size:1.1rem; vertical-align:middle;"
+              >
+                check_circle
               </span>
-              <span class="status" *ngIf="patient.critical_flag" [ngClass]="'critical'">Critical</span>
-            </div>
+              <span 
+                *ngIf="patient.status.toLowerCase() === 'active'" 
+                style="margin-left:0.2rem; color:#16a34a; font-weight:500;"
+              >
+                Active
+              </span>
+              <ng-container *ngIf="patient.status.toLowerCase() !== 'active'">
+                {{ patient.status }}
+              </ng-container>
+            </span>
+            <span class="status critical" *ngIf="patient.critical_flag">
+              Critical
+            </span>
           </div>
-          <div class="patient-info">
-            <div class="name">{{ patient.first_name }} {{ patient.last_name }}</div>
-            <div class="details">{{ patient.gender }}</div>
-            <div class="location"><span class="material-icons icon">location_on</span>{{ patient.village || 'N/A' }}</div>
-            <div class="phone"><span class="material-icons icon">phone</span>{{ patient.phone_number }}</div>
-            <div class="next"><span class="material-icons icon">event</span>Next: {{ (patient.next_visit ? (patient.next_visit | date:'M/d/yyyy') : 'Not scheduled') }}</div>
-            <div class="tags">
-              <span class="tag" *ngFor="let condition of patient.active_conditions">{{ condition }}</span>
-            </div>
+        </div>
+        
+        <div class="patient-info">
+          <div class="name">{{ patient.first_name }} {{ patient.last_name }}</div>
+          <div class="details">{{ patient.gender }}</div>
+          <div class="location">
+            <span class="material-icons icon">location_on</span>
+            {{ patient.village || 'N/A' }}
           </div>
-          <div class="actions">
-            <a class="btn-view" [routerLink]="['/patients', patient.id]">View</a>
-            <button class="btn-delete" (click)="confirmDeletePatient(patient.id)">Delete</button>
+          <div class="phone">
+            <span class="material-icons icon">phone</span>
+            {{ patient.phone_number }}
           </div>
-        </div> <!-- end of .patient-card ngFor -->
-      </ng-container>
+          <div class="next">
+            <span class="material-icons icon">event</span>
+            Next: {{ patient.next_visit ? (patient.next_visit | date:'M/d/yyyy') : 'Not scheduled' }}
+          </div>
+          <div class="tags">
+            <span class="tag" *ngFor="let condition of patient.active_conditions">
+              {{ condition }}
+            </span>
+          </div>
+        </div>
+        
+        <div class="actions">
+          <a class="btn-view" [routerLink]="['/patients', patient.id]">View</a>
+          <button class="btn-delete" (click)="confirmDeletePatient(patient.id)">Delete</button>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal-overlay" *ngIf="showDeleteModal" (click)="cancelDeletePatient()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Confirm Delete</h2>
+      <button class="close-btn" (click)="cancelDeletePatient()">&times;</button>
     </div>
+    <div class="modal-body">
+      <div *ngIf="patientToDelete">
+        Are you sure you want to delete 
+        <strong>{{ patientToDelete.first_name }} {{ patientToDelete.last_name }}</strong>?
+      </div>
+      <div style="margin-top: 0.5rem; color: #64748b;">
+        This action cannot be undone.
+      </div>
+    </div>
+    <div class="modal-actions">
+      <button class="clear-btn" (click)="cancelDeletePatient()">Cancel</button>
+      <button class="apply-btn" (click)="deletePatientConfirmed()">Delete</button>
+    </div>
+  </div>
 </div>
