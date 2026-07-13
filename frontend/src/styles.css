@@ -18,8 +18,28 @@ body {
 }
 
 /* Global sidebar collapse styles */
+.dashboard-container,
+.patients-container,
+.new-patient-page,
+.main-content,
+.medical-records-container,
+.consent-management-container,
+.audit-logs-container,
+.reports-container,
+.admin-container,
+.add-user-page {
+	transition: margin-left 0.28s ease !important;
+}
+
 body.sidebar-collapsed .dashboard-container,
 body.sidebar-collapsed .patients-container,
-body.sidebar-collapsed .new-patient-page {
-	margin-left: 70px !important;
+body.sidebar-collapsed .new-patient-page,
+body.sidebar-collapsed .main-content,
+body.sidebar-collapsed .medical-records-container,
+body.sidebar-collapsed .consent-management-container,
+body.sidebar-collapsed .audit-logs-container,
+body.sidebar-collapsed .reports-container,
+body.sidebar-collapsed .admin-container,
+body.sidebar-collapsed .add-user-page {
+	margin-left: 68px !important;
 }

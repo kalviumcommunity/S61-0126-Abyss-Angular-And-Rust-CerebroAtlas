@@ -2,7 +2,7 @@
 .admin-container {
   margin-left: 240px;
   padding: 2.5rem;
-  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  background: #f8fafc;
   min-height: 100vh;
   font-family: 'Plus Jakarta Sans', 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
   color: #0f172a;
@@ -36,7 +36,7 @@
 .add-user-btn {
   padding: 0.85rem 1.5rem;
   border-radius: 12px;
-  background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+  background: #14b8a6;
   border: none;
   color: white;
   cursor: pointer;
@@ -50,7 +50,7 @@
 }
 
 .add-user-btn:hover {
-  background: linear-gradient(135deg, #0d9488 0%, #0a7a6d 100%);
+  background: #0d9488;
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(20, 184, 166, 0.45);
 }
@@ -70,88 +70,90 @@
 
 .stat-card {
   background: white;
-  border-radius: 20px;
-  padding: 2rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-  transition: all 0.3s ease;
-}
-
-.stat-card::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(20, 184, 166, 0.05) 0%, transparent 70%);
-  transform: rotate(30deg);
-  transition: all 0.4s ease;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  transition: all 0.2s ease;
 }
 
 .stat-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
-.stat-card:hover::before {
-  top: -40%;
-  right: -40%;
+.stat-content {
+  flex: 1;
+  text-align: left;
 }
 
 .stat-icon {
-  width: 64px;
-  height: 64px;
-  border-radius: 18px;
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 1.25rem;
-  position: relative;
-  z-index: 1;
+  flex-shrink: 0;
 }
 
 .stat-icon.users { 
-  background: linear-gradient(135deg, #a5f3fc 0%, #67e8f9 100%);
+  background: #dbeafe;
+  color: #3b82f6;
 }
 .stat-icon.active { 
-  background: linear-gradient(135deg, #86efac 0%, #4ade80 100%);
+  background: #dcfce7;
+  color: #22c55e;
 }
 .stat-icon.inactive { 
-  background: linear-gradient(135deg, #fde68a 0%, #fbbf24 100%);
+  background: #fee2e2;
+  color: #ef4444;
 }
 .stat-icon.roles { 
-  background: linear-gradient(135deg, #c4b5fd 0%, #a78bfa 100%);
+  background: #f3e8ff;
+  color: #a855f7;
 }
 
 .stat-icon svg {
-  width: 28px;
-  height: 28px;
-  stroke: #0f172a;
-  stroke-width: 2.5;
+  width: 24px;
+  height: 24px;
+  stroke: currentColor;
+  stroke-width: 2;
 }
 
 .stat-value {
-  font-size: 2.75rem;
-  font-weight: 900;
+  font-size: 2rem;
+  font-weight: 700;
   color: #0f172a;
   margin-bottom: 0.5rem;
-  position: relative;
-  z-index: 1;
-  letter-spacing: -0.02em;
 }
 
 .stat-label {
-  color: #64748b;
+  color: #6b7280;
   font-size: 0.95rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  position: relative;
-  z-index: 1;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.stat-change {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin-top: 0.5rem;
+}
+
+.stat-change.positive {
+  color: #10b981;
+}
+
+.stat-change svg {
+  width: 14px;
+  height: 14px;
 }
 
 /* Tabs */
@@ -181,7 +183,7 @@
 
 .tab.active {
   color: #0f172a;
-  background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);
+  background: #f0fdfa;
   box-shadow: 0 2px 8px rgba(20, 184, 166, 0.15);
 }
 
@@ -258,7 +260,7 @@
 }
 
 .user-item:hover {
-  background: linear-gradient(90deg, #f8fafc 0%, #f1f5f9 100%);
+  background: #f8fafc;
   transform: translateX(4px);
 }
 
@@ -284,16 +286,16 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, transparent 100%);
+  background: rgba(255,255,255,0.3);
 }
 
 .user-avatar.active {
-  background: linear-gradient(135deg, #a5f3fc 0%, #67e8f9 100%);
+  background: #a5f3fc;
   color: #0e7490;
 }
 
 .user-avatar.inactive {
-  background: linear-gradient(135deg, #fde68a 0%, #fbbf24 100%);
+  background: #fde68a;
   color: #92400e;
 }
 
@@ -335,7 +337,7 @@
 }
 
 .badge.role {
-  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  background: #f0f9ff;
   color: #075985;
   border: 1px solid #bae6fd;
 }
@@ -584,7 +586,7 @@ body.sidebar-collapsed .admin-container {
   display: flex;
   align-items: center;
   padding: 1.5rem 1.75rem;
-  background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+  background: #fafafa;
   border-radius: 16px;
   gap: 1.25rem;
   transition: all 0.3s;
@@ -614,36 +616,36 @@ body.sidebar-collapsed .admin-container {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, transparent 100%);
+  background: rgba(255,255,255,0.4);
 }
 
 .role-icon.red {
-  background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%);
+  background: #fecaca;
   color: #991b1b;
 }
 
 .role-icon.teal {
-  background: linear-gradient(135deg, #99f6e4 0%, #5eead4 100%);
+  background: #99f6e4;
   color: #115e59;
 }
 
 .role-icon.blue {
-  background: linear-gradient(135deg, #bfdbfe 0%, #93c5fd 100%);
+  background: #bfdbfe;
   color: #1e40af;
 }
 
 .role-icon.green {
-  background: linear-gradient(135deg, #bbf7d0 0%, #86efac 100%);
+  background: #bbf7d0;
   color: #166534;
 }
 
 .role-icon.amber {
-  background: linear-gradient(135deg, #fde68a 0%, #fcd34d 100%);
+  background: #fde68a;
   color: #92400e;
 }
 
 .role-icon.purple {
-  background: linear-gradient(135deg, #ddd6fe 0%, #c4b5fd 100%);
+  background: #ddd6fe;
   color: #5b21b6;
 }
 
@@ -832,7 +834,7 @@ body.sidebar-collapsed .admin-container {
 }
 
 .switch input:checked+.slider {
-  background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+  background: #14b8a6;
 }
 
 .switch input:checked+.slider:before {
@@ -1071,13 +1073,13 @@ body.sidebar-collapsed .admin-container {
 }
 
 .btn-create {
-  background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+  background: #14b8a6;
   color: white;
   box-shadow: 0 4px 14px rgba(20, 184, 166, 0.35);
 }
 
 .btn-create:hover:not(:disabled) {
-  background: linear-gradient(135deg, #0d9488 0%, #0a7a6d 100%);
+  background: #0d9488;
   transform: translateY(-2px);
   box-shadow: 0 6px 20px rgba(20, 184, 166, 0.45);
 }

@@ -24,6 +24,16 @@
   <!-- Stats Cards -->
   <div class="stats-row" *ngIf="!adminLoading && !adminError">
     <div class="stat-card">
+      <div class="stat-content">
+        <div class="stat-label">Total Users</div>
+        <div class="stat-value">{{stats.total_users}}</div>
+        <div class="stat-change positive">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="18 15 12 9 6 15"></polyline>
+          </svg>
+          +0% this week
+        </div>
+      </div>
       <div class="stat-icon users">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
@@ -32,22 +42,38 @@
           <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
         </svg>
       </div>
-      <div class="stat-value">{{stats.total_users}}</div>
-      <div class="stat-label">Total Users</div>
     </div>
     
     <div class="stat-card">
+      <div class="stat-content">
+        <div class="stat-label">Active Users</div>
+        <div class="stat-value">{{stats.active_users}}</div>
+        <div class="stat-change positive">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="18 15 12 9 6 15"></polyline>
+          </svg>
+          +0% this week
+        </div>
+      </div>
       <div class="stat-icon active">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
           <polyline points="22 4 12 14.01 9 11.01"></polyline>
         </svg>
       </div>
-      <div class="stat-value">{{stats.active_users}}</div>
-      <div class="stat-label">Active Users</div>
     </div>
     
     <div class="stat-card">
+      <div class="stat-content">
+        <div class="stat-label">Inactive Users</div>
+        <div class="stat-value">{{stats.inactive_users}}</div>
+        <div class="stat-change positive">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="18 15 12 9 6 15"></polyline>
+          </svg>
+          +0% this week
+        </div>
+      </div>
       <div class="stat-icon inactive">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="10"></circle>
@@ -55,18 +81,24 @@
           <line x1="9" y1="9" x2="15" y2="15"></line>
         </svg>
       </div>
-      <div class="stat-value">{{stats.inactive_users}}</div>
-      <div class="stat-label">Inactive Users</div>
     </div>
     
     <div class="stat-card">
+      <div class="stat-content">
+        <div class="stat-label">Roles</div>
+        <div class="stat-value">{{stats.roles}}</div>
+        <div class="stat-change positive">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="18 15 12 9 6 15"></polyline>
+          </svg>
+          +0% this week
+        </div>
+      </div>
       <div class="stat-icon roles">
         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
         </svg>
       </div>
-      <div class="stat-value">{{stats.roles}}</div>
-      <div class="stat-label">Roles</div>
     </div>
   </div>
 
