@@ -31,13 +31,12 @@ pub async fn login(
         ServiceError::Unauthorized
     })?;
 
-    // Debug: print query result
     if user.is_none() {
         println!("[LOGIN DEBUG] No user found for email='{}' and given password_hash.", payload.email);
         return Err(ServiceError::Unauthorized);
-    } else {
-        println!("[LOGIN DEBUG] User found for email='{}'!", payload.email);
     }
+
+    println!("[LOGIN DEBUG] User found for email='{}'!", payload.email);
 
     // Example response (replace with JWT or session logic as needed)
     let response = serde_json::json!({

@@ -1038,3 +1038,198 @@ body.sidebar-collapsed .reports-container {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+/* Light theme overrides for consistency with the rest of the app */
+.reports-container {
+  background: linear-gradient(135deg, #f8fafc 0%, #eef2f7 100%);
+  color: #0f172a;
+}
+
+.title-block h1 {
+  background: none;
+  -webkit-background-clip: initial;
+  -webkit-text-fill-color: initial;
+  color: #0f172a;
+}
+
+.title-block p {
+  color: #64748b;
+}
+
+.reports-list-btn,
+.time-select {
+  background: #ffffff;
+  color: #0f172a;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.reports-list-btn:hover {
+  background: #f8fafc;
+}
+
+.time-select option {
+  background: #ffffff;
+  color: #0f172a;
+}
+
+.stat-card,
+.chart-card,
+.village-section,
+.trends-section {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: #e2e8f0;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+}
+
+.stat-card::before {
+  background: radial-gradient(circle, rgba(20, 184, 166, 0.08) 0%, transparent 70%);
+}
+
+.stat-title,
+.chart-card p,
+.village-header p,
+.section-header p,
+.tab,
+.legend-item,
+.legend-row,
+.x-label,
+.y-label,
+.reports-table td,
+.data-info p {
+  color: #64748b;
+}
+
+.stat-value,
+.chart-card h3,
+.village-header h3,
+.section-header h3,
+.reports-list-header h2,
+.modal-header h2,
+.reports-table th,
+.form-group label {
+  color: #0f172a;
+}
+
+.tabs {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: #e2e8f0;
+}
+
+.tab.active {
+  color: white;
+}
+
+.tab:hover:not(.active) {
+  color: #0f172a;
+  background: #f8fafc;
+}
+
+.chart-legend,
+.condition-legend,
+.chart-x-axis,
+.reports-list-header,
+.modal-header,
+.modal-footer {
+  border-color: #e2e8f0;
+}
+
+.condition-legend,
+.legend-row:hover,
+.village-item,
+.reports-table thead,
+.reports-table tbody tr:hover,
+.reports-list-header,
+.modal-header,
+.modal-footer {
+  background: #ffffff;
+}
+
+.legend-row:hover,
+.village-item:hover,
+.reports-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+.village-item {
+  border-color: #e2e8f0;
+}
+
+.village-name,
+.village-patients,
+.legend-label,
+.data-info {
+  color: #334155;
+}
+
+.data-info {
+  background: #e0f2fe;
+  color: #0f172a;
+  border-color: #bae6fd;
+}
+
+.reports-list-panel,
+.modal-content {
+  background: #ffffff;
+  border-color: #e2e8f0;
+  box-shadow: 0 24px 80px rgba(15, 23, 42, 0.14);
+}
+
+.reports-list-panel {
+  border-left: 1px solid #e2e8f0;
+}
+
+.reports-list-header h2,
+.modal-header h2 {
+  color: #0f172a;
+}
+
+.close-btn,
+.action-buttons button,
+.btn-cancel {
+  background: #f8fafc;
+  color: #334155;
+  border-color: #cbd5e1;
+}
+
+.close-btn:hover,
+.action-buttons button:hover,
+.btn-cancel:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.reports-table thead {
+  background: #f8fafc;
+}
+
+.reports-table th {
+  border-bottom-color: #e2e8f0;
+}
+
+.reports-table td {
+  border-bottom-color: #e2e8f0;
+}
+
+.form-input,
+.form-textarea {
+  background: #ffffff;
+  color: #0f172a;
+  border-color: #cbd5e1;
+}
+
+.form-input:focus,
+.form-textarea:focus {
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.12);
+}
+
+.modal-header,
+.modal-footer,
+.reports-list-header {
+  background: #f8fafc;
+}
+
+.modal-content {
+  color: #0f172a;
+}
