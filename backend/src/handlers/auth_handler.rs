@@ -1,9 +1,10 @@
 use axum::{extract::{State, Json}, http::StatusCode, response::IntoResponse};
 use serde::Deserialize;
 use sqlx::PgPool;
+use bcrypt::verify;
 
 use crate::models::error::ServiceError;
-
+use crate::models::user::User;
 
 #[derive(Deserialize)]
 pub struct LoginRequest {
@@ -18,11 +19,11 @@ pub async fn login(
     // Debug: print incoming payload
     println!("[LOGIN DEBUG] Incoming payload: email='{}', password_hash='{}'", payload.email, payload.password_hash);
 
-    // Query the users table for the email and password_hash
-    let user = sqlx::query!(
-        "SELECT * FROM users WHERE email = $1 AND password_hash = $2",
-        payload.email,
-        payload.password_hash
+    // Query the users table for the email
+    let user = sqlx::query_as!(
+        User,
+        "SELECT * FROM users WHERE email = $1",
+        payload.email
     )
     .fetch_optional(&pool)
     .await
@@ -31,18 +32,24 @@ pub async fn login(
         ServiceError::Unauthorized
     })?;
 
-    if user.is_none() {
-        println!("[LOGIN DEBUG] No user found for email='{}' and given password_hash.", payload.email);
-        return Err(ServiceError::Unauthorized);
+    if let Some(user_record) = user {
+        // Detect if the stored hash is a bcrypt hash (starts with $2)
+        let matches = if user_record.password_hash.starts_with("$2") {
+            verify(&payload.password_hash, &user_record.password_hash).unwrap_or(false)
+        } else {
+            payload.password_hash == user_record.password_hash
+        };
+
+        if matches {
+            println!("[LOGIN DEBUG] User found and authenticated for email='{}'!", payload.email);
+            let response = serde_json::json!({
+                "token": "example.jwt.token",
+                "user": payload.email
+            });
+            return Ok((StatusCode::OK, Json(response)));
+        }
     }
 
-    println!("[LOGIN DEBUG] User found for email='{}'!", payload.email);
-
-    // Example response (replace with JWT or session logic as needed)
-    let response = serde_json::json!({
-        "token": "example.jwt.token",
-        "user": payload.email
-    });
-
-    Ok((StatusCode::OK, Json(response)))
+    println!("[LOGIN DEBUG] Authentication failed for email='{}'", payload.email);
+    Err(ServiceError::Unauthorized)
 }

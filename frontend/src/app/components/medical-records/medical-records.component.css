@@ -41,7 +41,7 @@ body.sidebar-collapsed .medical-records-container {
 	display: flex;
 	align-items: center;
 	gap: 8px;
-	background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+	background: #14b8a6;
 	color: white;
 	border: none;
 	border-radius: 10px;
@@ -54,7 +54,7 @@ body.sidebar-collapsed .medical-records-container {
 }
 
 .new-record-btn:hover {
-	background: linear-gradient(135deg, #0d9488 0%, #0a7a6d 100%);
+	background: #0d9488;
 	transform: translateY(-2px);
 	box-shadow: 0 6px 20px rgba(20, 184, 166, 0.4);
 }
@@ -74,60 +74,92 @@ body.sidebar-collapsed .medical-records-container {
 
 .summary-card {
 	background: white;
-	border-radius: 16px;
-	padding: 1.75rem;
-	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-	border: 1px solid #f1f5f9;
-	transition: all 0.3s ease;
+	border-radius: 12px;
+	padding: 1.5rem;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+	border: none;
+	display: flex;
+	justify-content: space-between;
+	align-items: flex-start;
+	transition: all 0.2s ease;
 }
 
 .summary-card:hover {
-	transform: translateY(-4px);
-	box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+	transform: translateY(-2px);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.summary-content {
+	flex: 1;
+	text-align: left;
 }
 
 .summary-icon {
-	width: 56px;
-	height: 56px;
-	border-radius: 14px;
+	width: 48px;
+	height: 48px;
+	border-radius: 10px;
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	margin-bottom: 1.25rem;
+	flex-shrink: 0;
 }
 
 .summary-icon.consultations {
-	background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+	background: #dcfce7;
+	color: #22c55e;
 }
 
 .summary-icon.lab-results {
-	background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+	background: #dbeafe;
+	color: #3b82f6;
 }
 
 .summary-icon.prescriptions {
-	background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+	background: #f3e8ff;
+	color: #a855f7;
 }
 
 .summary-icon.imaging {
-	background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+	background: #fed7aa;
+	color: #f97316;
 }
 
 .summary-icon svg {
-	width: 28px;
-	height: 28px;
+	width: 24px;
+	height: 24px;
+	stroke: currentColor;
 }
 
 .summary-label {
-	font-size: 0.9rem;
-	color: #64748b;
+	color: #6b7280;
+	font-size: 0.95rem;
 	font-weight: 500;
 	margin-bottom: 0.5rem;
 }
 
 .summary-value {
-	font-size: 2.25rem;
+	font-size: 2rem;
 	font-weight: 700;
 	color: #0f172a;
+	margin-bottom: 0.5rem;
+}
+
+.summary-trend {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	font-size: 0.85rem;
+	font-weight: 500;
+	margin-top: 0.5rem;
+}
+
+.summary-trend.positive {
+	color: #10b981;
+}
+
+.summary-trend svg {
+	width: 14px;
+	height: 14px;
 }
 
 /* Controls Row */
@@ -272,20 +304,20 @@ body.sidebar-collapsed .medical-records-container {
 }
 
 .record-icon.consultation {
-	background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+	background: #d1fae5;
 }
 
 .record-icon.lab,
 .record-icon.lab-result {
-	background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+	background: #dbeafe;
 }
 
 .record-icon.prescription {
-	background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+	background: #d1fae5;
 }
 
 .record-icon.imaging {
-	background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+	background: #fef3c7;
 }
 
 .record-icon svg {
@@ -818,13 +850,13 @@ body.sidebar-collapsed .medical-records-container {
 }
 
 .btn-save {
-	background: linear-gradient(135deg, #14b8a6 0%, #0d9488 100%);
+	background: #14b8a6;
 	color: white;
 	box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);
 }
 
 .btn-save:hover {
-	background: linear-gradient(135deg, #0d9488 0%, #0a7a6d 100%);
+	background: #0d9488;
 	transform: translateY(-2px);
 	box-shadow: 0 6px 20px rgba(20, 184, 166, 0.4);
 }
